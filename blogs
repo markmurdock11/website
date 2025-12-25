@@ -1,0 +1,123 @@
+<!-- =========================
+FILE: blogs.html
+========================= -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Blog Recommendations</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      max-width: 860px;
+      margin: 72px auto;
+      padding: 0 20px;
+      line-height: 1.65;
+      color: #111;
+      background: #fff;
+    }
+    a{ color:#000; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+    ul{ padding-left: 18px; }
+    li{ margin: 10px 0; }
+    h1{ font-size: 18px; font-weight: 600; }
+    h2{ margin-top: 34px; font-size: 14px; font-weight: 600; }
+    .back{ margin-top: 36px; }
+    .note{ font-size: 12px; color:#444; }
+    .small{ font-size: 12px; color:#444; }
+  </style>
+</head>
+<body>
+  <h1>blog recommendations</h1>
+
+  <h2>late 2023 reading</h2>
+  <ul>
+    <li><a href="https://simonsarris.substack.com" target="_blank" rel="noopener">Long Distance Thinking — Simon Sarris</a></li>
+    <li><a href="https://newcreativeera.com" target="_blank" rel="noopener">New Creative Era</a></li>
+    <li><a href="https://poetryfoundation.org" target="_blank" rel="noopener">One Art — Poetry Foundation</a></li>
+    <li><a href="https://davidphelps.substack.com" target="_blank" rel="noopener">Economics of Love — David Phelps</a></li>
+    <li><a href="https://scholars-stage.org" target="_blank" rel="noopener">On The Tolkienic Hero — T. Greer</a></li>
+    <li><a href="https://mylostwords.blogspot.com" target="_blank" rel="noopener">haruki murakami — sleep</a></li>
+    <li><a href="https://tabletmag.com" target="_blank" rel="noopener">Nadia Asparouhova (Tablet)</a></li>
+    <li><a href="https://medium.com" target="_blank" rel="noopener">Welcome to 2030… — Ida Auken (Medium)</a></li>
+    <li><a href="https://newcriterion.com" target="_blank" rel="noopener">The New Criterion</a></li>
+    <li><a href="https://phoenixmagazine.net" target="_blank" rel="noopener">Wake for Susan — Cormac McCarthy</a></li>
+  </ul>
+
+  <h2>2024 and such</h2>
+  <ul>
+    <li><a href="https://piratewires.com" target="_blank" rel="noopener">Revolution of the Broletariat — Pirate Wires</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Eternal_September" target="_blank" rel="noopener">Eternal September — Wikipedia</a></li>
+    <li><a href="https://www.noahpinion.blog/p/the-death-again-of-the-internet-as-we-know-it" target="_blank" rel="noopener">The Death (Again) of the Internet as We Know It — Noah Smith</a></li>
+    <li><a href="https://kyla.substack.com/p/when-you-destroy-the-tools-of-creativity" target="_blank" rel="noopener">When You Destroy the Tools of Creativity — Kyla Scanlon</a></li>
+    <li><a href="https://orwellfoundation.com/the-orwell-foundation/orwell/essays-and-other-works/why-i-write/" target="_blank" rel="noopener">Why I Write — Orwell Foundation</a></li>
+    <li><a href="https://visakanv.substack.com/p/facing-reality-pt-1" target="_blank" rel="noopener">facing reality, pt 1 — Visakan Veerasamy</a></li>
+    <li><a href="https://www.honest-broker.com/p/the-state-of-the-culture-2024" target="_blank" rel="noopener">The State of the Culture, 2024 — Ted Gioia</a></li>
+    <li><a href="https://x.com/anuatluru/status/1873855012251848760" target="_blank" rel="noopener">52 working theories (thread) — anu</a></li>
+  </ul>
+
+  <h2>things i read in 2022 and 2023</h2>
+  <ul>
+    <li><a href="https://www.oaktreecapital.com" target="_blank" rel="noopener">Sea Change — Oaktree</a></li>
+    <li><a href="https://web.stanford.edu/~chadj/IdeaPF.pdf" target="_blank" rel="noopener">Are Ideas Getting Harder to Find? (paper)</a></li>
+    <li><a href="https://jamesclear.com/book-summaries/enough" target="_blank" rel="noopener">"Enough" — John C. Bogle (via James Clear)</a></li>
+    <li><a href="https://poestories.com/read/ligeia" target="_blank" rel="noopener">Ligeia — Edgar Allan Poe</a></li>
+    <li><a href="https://slatestarcodex.com/2017/09/19/we-wrestle-not-with-flesh-and-blood-but-against-powers-and-principalities/" target="_blank" rel="noopener">We Wrestle Not With Flesh And Blood… — Slate Star Codex</a></li>
+    <li><a href="https://www.theparisreview.org/blog/2019/07/16/the-crane-wife/" target="_blank" rel="noopener">The Crane Wife — The Paris Review</a></li>
+  </ul>
+
+  <h2>2025 and such</h2>
+  <ul>
+    <li><a href="https://www.anthropic.com/research/building-effective-agents" target="_blank" rel="noopener">Building Effective Agents — Anthropic</a></li>
+    <li><a href="https://article.app" target="_blank" rel="noopener">How to Go Viral — dylan (article.app)</a></li>
+    <li><a href="https://paragraph.xyz" target="_blank" rel="noopener">time and the efficient markets hypothesis — paragraph.xyz</a></li>
+    <li><a href="https://kyla.substack.com/p/the-year-narrative-ate-reality" target="_blank" rel="noopener">The Year Narrative Ate Reality — Kyla Scanlon</a></li>
+    <li><a href="https://davidphelps.substack.com" target="_blank" rel="noopener">The Fat App Thesis — David Phelps</a></li>
+    <li><a href="https://alexw.substack.com/p/what-i-learned-in-2023" target="_blank" rel="noopener">What I Learned in 2023 — Alexandr Wang</a></li>
+  </ul>
+
+  <h2>misc (from your paste)</h2>
+  <ul>
+    <li><a href="https://oldcoinbad.com/p/long-degeneracy" target="_blank" rel="noopener">Long Degeneracy — oldcoinbad</a></li>
+    <li><a href="https://www.gurwinder.blog/p/how-social-media-shortens-your-life" target="_blank" rel="noopener">How Social Media Shortens Your Life — Gurwinder</a></li>
+    <li><a href="https://www.derekthompson.org/p/why-everything-became-television" target="_blank" rel="noopener">Why Everything Became Television — Derek Thompson</a></li>
+    <li><a href="https://archive.gyford.com/1997/wired-uk/2.10/features/manifesto.html" target="_blank" rel="noopener">Wired UK “Manifesto” (archive)</a></li>
+    <li><a href="https://archive.nytimes.com/www.nytimes.com/library/cyber/surf/072397mind-letter.html" target="_blank" rel="noopener">Gates “Open Letter to Hobbyists” (NYT archive)</a></li>
+    <li><a href="https://worrydream.com/refs/Bush%20-%20As%20We%20May%20Think%20(Life%20Magazine%209-10-1945).pdf" target="_blank" rel="noopener">As We May Think (PDF)</a></li>
+    <li><a href="https://kevinkelly.substack.com/p/everything-i-know-about-self-publishing" target="_blank" rel="noopener">Everything I Know About Self-Publishing — Kevin Kelly</a></li>
+    <li><a href="https://www.derekthompson.org/p/the-us-population-could-shrink-in" target="_blank" rel="noopener">The US Population Could Shrink… — Derek Thompson</a></li>
+    <li><a href="https://www.henrikkarlsson.xyz/p/writing-to-think" target="_blank" rel="noopener">Writing to Think — Henrik Karlsson</a></li>
+    <li><a href="https://murmurationstwo.substack.com/p/the-last-word-on-stablecoins-and" target="_blank" rel="noopener">The Last Word on Stablecoins and … — murmurationstwo</a></li>
+    <li><a href="https://www.cato.org/blog/fable-cats#_ftnref2" target="_blank" rel="noopener">A Fable of Cats — Cato</a></li>
+    <li><a href="https://usefulfictions.substack.com/p/50-things-i-know" target="_blank" rel="noopener">50 Things I Know — usefulfictions</a></li>
+    <li><a href="https://nabeelqu.substack.com/p/reflections-on-palantir" target="_blank" rel="noopener">Reflections on Palantir — Nabeel Qureshi</a></li>
+    <li><a href="https://www.techemails.com/p/mark-zuckerberg-facebook-strategy-tax" target="_blank" rel="noopener">Zuckerberg Facebook Strategy Tax — Tech Emails</a></li>
+    <li><a href="https://www.thediff.co/archive/what-happened-to-working-your-way-up-from-the-mailroom/" target="_blank" rel="noopener">Working Your Way Up From the Mailroom — The Diff</a></li>
+    <li><a href="https://docs.google.com/document/d/1-3q70tJV7A-Y99uGO6bd8Hrx4uE0iZtn-QrIa6wWag8/edit?tab=t.0" target="_blank" rel="noopener">Why We Want Robots at Work but Humans in Art (Google Doc)</a></li>
+    <li><a href="https://www.syncracy.io/writing/the-productive-cryptoeconomy" target="_blank" rel="noopener">The Productive Cryptoeconomy — syncracy</a></li>
+    <li><a href="https://cryptohayes.substack.com/p/quid-pro-stablecoin" target="_blank" rel="noopener">Quid Pro Stablecoin — Arthur Hayes</a></li>
+    <li><a href="https://www.cato.org/blog/deportations-add-almost-1-trillion-costs-gops-big-beautiful-bill" target="_blank" rel="noopener">Deportations add almost $1T costs… — Cato</a></li>
+    <li><a href="https://geohot.github.io/blog/jekyll/update/2025/04/22/a-way-forward.html" target="_blank" rel="noopener">A Way Forward — geohot</a></li>
+    <li><a href="https://www.noahpinion.blog/p/social-media-destroyed-one-of-americas" target="_blank" rel="noopener">Social media destroyed one of America’s… — Noahpinion</a></li>
+    <li><a href="https://www.speedwellmemos.com/p/an-interview-on-investing-with-speedwells" target="_blank" rel="noopener">Interview on investing — Speedwell</a></li>
+    <li><a href="https://x.com/quienesfacundo/status/1923109830186713587" target="_blank" rel="noopener">On fighting convenience (tweet) — quienesfacundo</a></li>
+    <li><a href="https://x.com/TraderNoah/status/1929467273669992637" target="_blank" rel="noopener">TraderNoah (tweet)</a></li>
+    <li><a href="https://nymag.com/nymetro/news/media/features/2472/" target="_blank" rel="noopener">Influencers / the “poverty elite” (NYMag)</a></li>
+    <li><a href="https://polymarketanalytics.com/research/a-brief-history-of-prediction-markets" target="_blank" rel="noopener">A Brief History of Prediction Markets — Polymarket Analytics</a></li>
+    <li><a href="https://www.palladiummag.com/2023/06/01/complex-systems-wont-survive-the-competence-crisis/" target="_blank" rel="noopener">Competence Crisis — Palladium</a></li>
+    <li><a href="https://www.nytimes.com/2025/05/23/opinion/trump-crypto-stablecoin.html" target="_blank" rel="noopener">Trump / crypto / stablecoin (NYT Opinion)</a></li>
+  </ul>
+
+  <h2>broken / need re-paste</h2>
+  <ul>
+    <li><span class="small">kwokchain “halo effect” (truncated)</span></li>
+    <li><span class="small">nybooks “generation why” (truncated)</span></li>
+    <li><span class="small">“…ke-it” (unknown truncated)</span></li>
+  </ul>
+
+  <p class="note">i can later add notes under each link (1–2 lines) without ruining the minimal vibe.</p>
+
+  <p class="back"><a href="index.html">← back</a></p>
+</body>
+</html>
