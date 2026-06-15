@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ireland, A Brief Visit</title>
+
+  <style>
+    :root {
+      --paper: #ffffff;
+      --text: #111111;
+      --green: #169b62;
+      --orange: #ff883e;
+      --max: 660px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.72;
+    }
+
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 48px 22px 88px;
+    }
+
+    h1 {
+      margin: 0 0 40px;
+      font-size: 34px;
+      line-height: 1.08;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+
+    section {
+      margin: 0;
+    }
+
+    p {
+      margin: 0 0 22px;
+    }
+
+    .flag {
+      width: 58px;
+      height: 42px;
+      margin: 0 0 32px;
+    }
+
+    .flag svg,
+    .hotel-doodle svg,
+    .sep svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .flag .flag-pole,
+    .flag .flag-outline {
+      fill: none;
+      stroke: var(--text);
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .flag .flag-green {
+      fill: var(--green);
+      stroke: none;
+    }
+
+    .flag .flag-white {
+      fill: #fff;
+      stroke: none;
+    }
+
+    .flag .flag-orange {
+      fill: var(--orange);
+      stroke: none;
+    }
+
+    .hotel-doodle {
+      width: 112px;
+      height: 92px;
+      margin: 10px auto 30px;
+      color: var(--text);
+      opacity: 0.92;
+    }
+
+    .hotel-doodle path,
+    .hotel-doodle line,
+    .hotel-doodle rect,
+    .hotel-doodle circle,
+    .sep path,
+    .sep line,
+    .sep rect,
+    .sep circle {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .sep {
+      width: 32px;
+      height: 22px;
+      margin: 18px auto 44px;
+      color: var(--text);
+      opacity: 0.78;
+    }
+
+    .svg-defs {
+      display: none;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        font-size: 17px;
+        line-height: 1.68;
+      }
+
+      main {
+        padding: 34px 20px 72px;
+      }
+
+      h1 {
+        font-size: 31px;
+        margin-bottom: 32px;
+      }
+
+      .sep {
+        margin-bottom: 38px;
+      }
+
+      .hotel-doodle {
+        width: 102px;
+        height: 84px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <svg class="svg-defs" aria-hidden="true">
+    <symbol id="icon-sign" viewBox="0 0 42 24">
+      <path d="M21 4 L21 22" />
+      <path d="M10 7 L31 7 L35 11 L31 15 L10 15Z" />
+      <path d="M15 11 L27 11" />
+    </symbol>
+
+    <symbol id="icon-bath" viewBox="0 0 42 24">
+      <path d="M9 15 L34 15 C33 19, 30 21, 24 21 L18 21 C13 21, 10 19, 9 15Z" />
+      <path d="M13 15 L13 11 C13 8, 15 7, 17 7" />
+      <path d="M18 10 C18 7, 21 7, 21 4" />
+      <path d="M25 10 C25 7, 28 7, 28 4" />
+    </symbol>
+
+    <symbol id="icon-table" viewBox="0 0 42 24">
+      <path d="M8 10 L34 10" />
+      <path d="M12 10 L10 21" />
+      <path d="M30 10 L32 21" />
+      <circle cx="15" cy="6" r="2" />
+      <circle cx="27" cy="6" r="2" />
+      <path d="M20 6 C21 4, 23 4, 24 6" />
+    </symbol>
+
+    <symbol id="icon-chair" viewBox="0 0 42 24">
+      <path d="M14 7 C20 5, 27 5, 30 10 L28 15 L14 15Z" />
+      <path d="M14 15 L12 21" />
+      <path d="M28 15 L31 21" />
+      <path d="M17 15 L17 20" />
+      <path d="M25 15 L25 20" />
+    </symbol>
+
+    <symbol id="icon-chat" viewBox="0 0 42 24">
+      <path d="M8 7 C8 4, 11 3, 15 3 L27 3 C31 3, 34 5, 34 9 L34 12 C34 16, 30 18, 24 18 L17 18 L10 21 L12 17 C9 16, 8 14, 8 11Z" />
+      <path d="M15 9 L27 9" />
+      <path d="M15 13 L23 13" />
+    </symbol>
+
+    <symbol id="icon-pint" viewBox="0 0 42 24">
+      <path d="M13 5 L29 5 L27 21 L15 21Z" />
+      <path d="M29 9 C36 8, 36 17, 28 16" />
+      <path d="M14 9 L28 9" />
+      <path d="M15 13 L27 13" />
+    </symbol>
+
+    <symbol id="icon-frame" viewBox="0 0 42 24">
+      <rect x="10" y="5" width="22" height="15" rx="1.5" />
+      <circle cx="17" cy="11" r="2" />
+      <path d="M13 18 C16 14, 19 14, 21 18" />
+      <path d="M21 18 C24 13, 28 13, 30 18" />
+    </symbol>
+
+    <symbol id="icon-receipt" viewBox="0 0 42 24">
+      <path d="M12 5 L30 5 L30 21 L27 19 L24 21 L21 19 L18 21 L15 19 L12 21Z" />
+      <path d="M16 10 L26 10" />
+      <path d="M16 14 L24 14" />
+      <path d="M16 18 L21 18" />
+    </symbol>
+
+    <symbol id="icon-key" viewBox="0 0 42 24">
+      <circle cx="12" cy="12" r="5" />
+      <path d="M17 12 L35 12" />
+      <path d="M27 12 L27 16" />
+      <path d="M32 12 L32 15" />
+    </symbol>
+
+    <symbol id="icon-ties" viewBox="0 0 42 24">
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="30" cy="12" r="4" />
+      <path d="M16 12 C20 8, 22 8, 26 12" />
+      <path d="M16 12 C20 16, 22 16, 26 12" />
+    </symbol>
+
+    <symbol id="icon-car" viewBox="0 0 42 24">
+      <path d="M8 15 L10 10 C11 8, 13 7, 16 7 L25 7 C28 7, 30 8, 32 11 L34 15" />
+      <path d="M7 15 L35 15 L35 19 L7 19Z" />
+      <circle cx="13" cy="19" r="2" />
+      <circle cx="29" cy="19" r="2" />
+    </symbol>
+
+    <symbol id="icon-tv" viewBox="0 0 42 24">
+      <rect x="9" y="6" width="24" height="14" rx="2" />
+      <path d="M17 22 L25 22" />
+      <path d="M21 20 L21 22" />
+    </symbol>
+
+    <symbol id="icon-bell" viewBox="0 0 42 24">
+      <path d="M12 17 C12 11, 16 7, 21 7 C26 7, 30 11, 30 17" />
+      <path d="M9 18 L33 18" />
+      <path d="M17 21 L25 21" />
+      <path d="M20 7 C20 5, 22 5, 22 7" />
+    </symbol>
+
+    <symbol id="icon-walk" viewBox="0 0 42 24">
+      <path d="M12 20 C15 16, 16 12, 15 8" />
+      <circle cx="15" cy="5" r="2" />
+      <path d="M25 20 C28 16, 29 12, 28 8" />
+      <circle cx="28" cy="5" r="2" />
+      <path d="M17 12 C20 14, 23 14, 26 12" />
+    </symbol>
+  </svg>
+
+  <main>
+    <div class="flag" aria-hidden="true">
+      <svg viewBox="0 0 70 50">
+        <path class="flag-pole" d="M8 5 L8 45" />
+        <path class="flag-outline" d="M8 7 C22 3, 38 11, 57 7 L57 30 C38 34, 22 26, 8 30Z" />
+        <path class="flag-green" d="M9 8 C18 6, 24 7, 29 9 L29 30 C22 27, 16 27, 9 29Z" />
+        <path class="flag-white" d="M29 9 C36 11, 42 11, 48 9 L48 31 C41 32, 35 31, 29 30Z" />
+        <path class="flag-orange" d="M48 9 C51 8, 54 8, 57 7 L57 30 C54 31, 51 31, 48 31Z" />
+      </svg>
+    </div>
+
+    <h1>Ireland, A Brief Visit</h1>
+
+    <section>
+      <p>I met the Emma I never could have known in sunny Ireland, in rainy Ireland, in the streets of Cork, her childhood home, her home away from her home in Vancouver.</p>
+      <p>We spent the week walking and driving and stumbling and eating and drinking down the roads of memories past and stories told. It was a week of nostalgia crossed with the sparkle of romance in a new place. Old made new again as Emma danced across the stones embedded with some of her most cherished memories on the long walk from The Maryborough Hotel to Cork. It was new made old as we drove past Emma’s childhood home, an adorably shaded two story in the heart of a green, green neighborhood that is now twenty seven years past its intended use.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-sign"></use></svg></div>
+
+    <section>
+      <p>There is a spa at The Maryborough Hotel, the famous-in-our-relationship hotel that Emma worked at as a teenager, that the Johnson family stayed at upon their arrival in Ireland, that hosted us for the week through the immense graciousness of the O’Sullivan family.</p>
+
+      <div class="hotel-doodle" aria-hidden="true">
+        <svg viewBox="0 0 160 130">
+          <path d="M24 113 C40 110, 54 114, 70 112 C87 110, 104 113, 119 112 C133 111, 142 113, 150 110" />
+          <path d="M38 108 L39 48 C52 43, 64 41, 80 41 C97 41, 112 43, 124 48 L125 108" />
+          <path d="M31 52 C45 44, 59 37, 79 37 C99 37, 118 44, 132 52" />
+          <path d="M57 39 C61 23, 70 17, 80 16 C91 17, 99 24, 103 39" />
+          <path d="M71 25 C76 21, 84 21, 89 25" />
+          <line x1="42" y1="67" x2="123" y2="67" />
+          <line x1="42" y1="88" x2="123" y2="88" />
+          <rect x="52" y="55" width="13" height="15" rx="1.5" />
+          <rect x="75" y="53" width="13" height="17" rx="1.5" />
+          <rect x="98" y="55" width="13" height="15" rx="1.5" />
+          <rect x="52" y="77" width="13" height="15" rx="1.5" />
+          <rect x="98" y="77" width="13" height="15" rx="1.5" />
+          <path d="M72 108 L72 96 C72 90, 78 86, 83 86 C89 86, 94 91, 94 97 L94 108" />
+          <circle cx="89" cy="101" r="1.5" />
+        </svg>
+      </div>
+
+      <p>The spa is adjacent to the gym and it provides guests of the Maryborough with a spacious sauna, a glorious shower, what has to be an award winning steam room, and a pool all shadowed in a sparsely lit three-room compound. I spent hours there and I have never felt more pampered, more calm. This trip is part of my sabbatical, which means no work, and this was the first place I found that I could actually let go of the stress and just think, without presumption.</p>
+      <p>A glorious, glorious place.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-bath"></use></svg></div>
+
+    <section>
+      <p>Hosting is of first nature to the Irish and I think I noticed this first because Emma and I shared the table for dinner with a new couple almost every night. Indian with Ben’s family, right off the plane. Isaac’s with the O’Sullivans. A five course homecooked meal with the hosts of Longueville House. Tapas and too many stouts with Danny.</p>
+      <p>There is conversation and then there are conversations and then there are conversationalists and then there is an Irish lad named Ben who picked me up from the airport in Dublin, took me to breakfast, drove me to Cork, and then hosted me and Emma for dinner. Five hours, no lulls, and a lot of Irish music.</p>
+      <p>An old friend to Emma, Ben was the start of my trip to Ireland and I thought a perfect enshrinement of what I feel Ireland does best: long friendship, genuine hosting, sarcastic conversation, and so much excitement for life.</p>
+      <p>What a host for our arrival to a new country.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-table"></use></svg></div>
+
+    <section>
+      <p>The thing with the hosting is that it seems to be second nature to the Irishmen, from the way their houses are set up to the coziness of their bars to their upbringing to the way they build their cities. It is a place to share experiences and to chat and I loved it.</p>
+      <p>I visited two homes and both had me while away a few minutes in perfectly constructed sitting rooms, with no TV, conversing separate from the kitchen. A small detail, but I find the architecture of such things to be quite important. It is a country of soft edges and big cushions, where family scrapbooks beg to be opened.</p>
+      <p>I find the pace of play in Ireland to be such a delight, with multiple courses and an understatement of the food on the table. I learned quickly that “just a bit” means quite a lot and a “quick, thrown together meal” means a five course home cooked lasagna and the only answer to “would you like more” is “absolutely” even if your seams are bursting forth inside the stomach.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-chair"></use></svg></div>
+
+    <section>
+      <p>Another thing I noticed is that Ireland is a chatty place. As Emma and I sat in the bar of the Maryborough for hours, she was working, I was reading, there was a constant uplifting babble going on that was optimistic and endearing and always on, a far cry from what you hear in North American places.</p>
+      <p>Conversation itself is personal and incredibly unprofessional and detail oriented. I think I met two people with near perfect memory, Ben and Joe, ingesting and remembering each name and nuance of a story and then embedding those details into later topics. Everybody I met remembered everything about The Johnson Family, Emma’s parents, asking after Mayne Island and Georgia and her now, and here they would fake hesitate, “three year old boy.”</p>
+      <p>There were many exclamations for Chantel and Doug, the future parents of what will be one of the luckiest girls in the world.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-chat"></use></svg></div>
+
+    <section>
+      <p>When it came to me, the dumb boyfriend, questions about Houston and brothers and Texas were all placed quite nicely into the conversation.</p>
+      <p>There is a certain bounce to an Irish conversation that is different from what I find in North America, which is usually tete a tete. One topic, both speakers hit on it, a new topic, both speakers share opinion, etc etc.</p>
+      <p>In Ireland, there is an opinion, then a story, then a follow up question, then another story, then a side comment, then, and this is where they show such care and earn their title as conversational extraordinaires, they come back and ask for your opinion on the original topic, to which a new set of rabbit holes are dug and escaped and by the time you finish speaking you realize that a question about how the weather is in Texas somehow ended up with someone pontificating on the difference between Beamish and Murphy’s or maybe a history on why the Irish do not like the English but also do not like the English but also how maybe the English are fine but also how the English are sort of crummy.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-pint"></use></svg></div>
+
+    <section>
+      <p>It is also a place that involves conversation about history and culture and the world but not necessarily the world we live in or the places we find ourselves. It is a place to talk about anything but ourselves, but really through the lens of family. Kids, cousins, aunts, uncles, parents, anyone with blood relations are fair game.</p>
+      <p>I found myself excited to be a brother and a son and a friend in Ireland and to share that excitement.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-frame"></use></svg></div>
+
+    <section>
+      <p>But really what you can see from a hosting standpoint is that the people of Ireland, and maybe this was just a small group of people and the rest of the country is full of jerks but I do not think so, love a slow pace and a long conversation and a cozy nook and to go out of their way to bring you into a comfortable, welcoming situation.</p>
+      <p>So many people went out of their way to pick Emma and me up during our trip and to walk us around and share their lives with us and, somehow, always, ALWAYS pick up the check. I don’t think I was able to pay for a single thing in Ireland and in the US, I am usually the one who prides himself on picking up the dinner bill with friends, as that is the point in life.</p>
+      <p>I’ve never been around such a welcoming group of people.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-receipt"></use></svg></div>
+
+    <section>
+      <p>The O’Sullivan family runs The Maryborough Hotel and that is important because that is where they hosted Emma and me, but what is most important is just the outlandish nature of their hosting. From a walk around Marina Market and University College Cork with Danny to dinner and a pint with Dan and Joe, Joe has my heart, with her memory and the love for gab, to a night out in Cork with Danny on Friday, where he so graciously left the baby at home with Dee, whom I never met, but hope to in the future because I heard so many great things, this family treated us so well.</p>
+      <p>If hosting is an art, and it is, then I met the Picasso family in Cork. That is the extent of my art knowledge, so please take this as a compliment haha.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-key"></use></svg></div>
+
+    <section>
+      <p>It seems, in Ireland, friendship runs deep, like family. The thing that amazed me so much about Ireland is how the Johnson Family had created such strong roots in the few years that they were there, but also how much effort the Irish seem to put into keeping ties across time and space. It is an effortful country for friendship.</p>
+      <p>These are people that had gone years without seeing each other, that have no reason to really stay in touch due to the continental divide and the years gone by, but obviously met each other with something near akin to love. It was such a thing to behold.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-ties"></use></svg></div>
+
+    <section>
+      <p>I had a dinner with the proprietors of Longueville House, wherein I had a four course meal and a pint of Murphy’s at their local. On the road to Blarney, on the way home in fact, at 10 pm, it stays light that late, we passed the Apple campus in Cork.</p>
+      <p>A compound upon a hill, even Cork cannot withstand the reach of technology.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-car"></use></svg></div>
+
+    <section>
+      <p>Yet despite that one scene, nowhere have I ever felt more detached from tech. Many rooms did not have TV screens and if they did, it was on sports, not the news or a movie. The people were not glued to their phones in public places and the conversations did not bounce to doom and gloom tech.</p>
+      <p>There was a brief bit about AI mentioned here or there, but never Claude versus Chat or AI versus environment or something like that, but mostly just like a “wow this feels like something crazy is happening that we don’t understand, but ok.”</p>
+      <p>I really loved that there was not a single mention of the SpaceX IPO, despite it happening while we were there.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-tv"></use></svg></div>
+
+    <section>
+      <p>In general, Ireland felt 10 years socially behind the US. Acai bowls and 2017 instagram-based restaurants and conversations about tech and culture, Katy Perry and Justin Trudeau mentioned multiple times. They were probably being nice to the American by not talking about Trump.</p>
+      <p>Lots of people mentioned, isolated, that the times now felt like 2008 wherein people in Ireland were getting ahead of their skis and that prices couldn’t sustain and that they were worried about a big crash coming.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-bell"></use></svg></div>
+
+    <section>
+      <p>A few other things:</p>
+      <p>Murphy’s, Guinness, Beamish: this is the ranking of stouts and there is really no other option. Murphy’s is like maple syrup and I already miss it. I know the stuff I can buy in Canada is going to be way worse.</p>
+      <p>SpitJack is a great restaurant: get the chicken and a salad and enjoy it.</p>
+      <p>The Maryborough Hotel is the Irish version of the hotel from Suite Life of Zach and Cody and it is ideal. It used to be an old house and it is quaint and if anybody finds themselves in Ireland or Cork, they must, MUST stay at The Maryborough.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-pint"></use></svg></div>
+
+    <section>
+      <p>At the end of the week, I kept thinking about how much of a person is built by the place that knew them before you did.</p>
+      <p>I met Emma in Vancouver, but I met another Emma in Cork, in the sitting rooms and bars and hotel corridors and long walks and too much food and five hour conversations with no lulls. I met the Emma who belonged to stories I had only heard and streets I had never walked and families who knew her parents and old friends who could pick us up at the airport and drive us across Ireland as though no time had passed.</p>
+      <p>I loved Ireland for the hosting and the chatting and the stout and the rain and the sun and the coziness and the strange feeling that the whole country had quietly agreed to keep some parts of life sacred, but really I loved Ireland because it let me see Emma as old made new and new made old.</p>
+      <p>Oh Ireland and the memory I now have, of Emma walking through a place that knew her before I did, and me getting to walk beside her.</p>
+    </section>
+    <div class="sep" aria-hidden="true"><svg><use href="#icon-walk"></use></svg></div>
+  </main>
+</body>
+</html>
