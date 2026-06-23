@@ -47,7 +47,7 @@
     .croatian-flag {
       width: 62px;
       height: 40px;
-      margin: 0 auto 30px;
+      margin: 0 auto 28px;
       border: 1px solid #ddd;
       background:
         linear-gradient(to bottom,
@@ -74,16 +74,21 @@
     }
 
     header {
+      width: 100vw;
       margin: 0 0 42px;
+      margin-left: 50%;
+      transform: translateX(-50%);
       text-align: center;
+      overflow: hidden;
+      padding: 0 14px;
     }
 
     h1 {
-      margin: 0;
-      font-size: clamp(1.42rem, 5.5vw, 2.9rem);
+      margin: 0 auto;
+      font-size: clamp(0.95rem, 2.78vw, 2.35rem);
       line-height: 1.05;
       font-weight: 800;
-      letter-spacing: -0.07em;
+      letter-spacing: -0.055em;
       white-space: nowrap;
       text-wrap: nowrap;
     }
@@ -170,11 +175,12 @@
 
       header {
         margin-bottom: 38px;
+        padding: 0 8px;
       }
 
       h1 {
-        font-size: clamp(1.18rem, 5.15vw, 2.05rem);
-        letter-spacing: -0.065em;
+        font-size: clamp(0.68rem, 2.72vw, 1.18rem);
+        letter-spacing: -0.035em;
         white-space: nowrap;
         text-wrap: nowrap;
       }
