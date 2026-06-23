@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>In Croatia There Is a Town Called Bjelovar | kram.bio</title>
+  <meta name="description" content="An essay about Bjelovar, Croatia, friendship, family, and being hosted.">
+  <meta property="og:title" content="In Croatia There Is a Town Called Bjelovar">
+  <meta property="og:description" content="A few days in Bjelovar that felt like a year.">
+  <meta property="og:type" content="article">
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --ink: #171717;
+      --muted: #77716a;
+      --red: #c82332;
+      --blue: #225091;
+      --max: 690px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 18px;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Courier New", Courier, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      line-height: 1.72;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      width: min(100% - 34px, var(--max));
+      margin: 0 auto;
+      padding: clamp(34px, 7vw, 72px) 0 70px;
+    }
+
+    .croatian-flag {
+      width: 62px;
+      height: 40px;
+      margin: 0 auto 30px;
+      border: 1px solid #ddd;
+      background:
+        linear-gradient(to bottom,
+          var(--red) 0 33.333%,
+          #fff 33.333% 66.666%,
+          var(--blue) 66.666% 100%);
+      position: relative;
+    }
+
+    .croatian-flag::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      transform: translate(-50%, -50%);
+      background:
+        linear-gradient(45deg, var(--red) 25%, transparent 25% 75%, var(--red) 75%),
+        linear-gradient(45deg, var(--red) 25%, transparent 25% 75%, var(--red) 75%);
+      background-size: 9px 9px;
+      background-position: 0 0, 4.5px 4.5px;
+      border: 1px solid rgba(20,20,20,0.12);
+    }
+
+    header {
+      margin: 0 0 42px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.42rem, 5.5vw, 2.9rem);
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: -0.07em;
+      white-space: nowrap;
+      text-wrap: nowrap;
+    }
+
+    article {
+      margin: 0 auto;
+    }
+
+    p {
+      margin: 0 0 1.35rem;
+      font-size: clamp(1.035rem, 2vw, 1.15rem);
+      font-weight: 400;
+      line-height: 1.74;
+      letter-spacing: -0.018em;
+    }
+
+    p:first-of-type {
+      font-weight: 400;
+    }
+
+    .paragraph-symbol {
+      width: 72px;
+      height: 34px;
+      margin: 1.85rem auto 2.15rem;
+      opacity: 0.68;
+    }
+
+    .paragraph-symbol svg {
+      display: block;
+      width: 72px;
+      height: 34px;
+      overflow: visible;
+    }
+
+    .paragraph-symbol path,
+    .paragraph-symbol circle {
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 1.85;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .paragraph-symbol .red {
+      stroke: var(--red);
+    }
+
+    .paragraph-symbol .redfill {
+      fill: var(--red);
+      stroke: none;
+    }
+
+    footer {
+      margin: 54px 0 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 620px) {
+      html {
+        font-size: 17px;
+      }
+
+      .page {
+        width: min(100% - 28px, var(--max));
+        padding-top: 28px;
+      }
+
+      .croatian-flag {
+        width: 54px;
+        height: 35px;
+        margin-bottom: 24px;
+      }
+
+      .croatian-flag::after {
+        width: 15px;
+        height: 15px;
+        background-size: 7.5px 7.5px;
+        background-position: 0 0, 3.75px 3.75px;
+      }
+
+      header {
+        margin-bottom: 38px;
+      }
+
+      h1 {
+        font-size: clamp(1.18rem, 5.15vw, 2.05rem);
+        letter-spacing: -0.065em;
+        white-space: nowrap;
+        text-wrap: nowrap;
+      }
+
+      p {
+        font-size: 1.02rem;
+        line-height: 1.66;
+        margin-bottom: 1.18rem;
+        font-weight: 400;
+      }
+
+      .paragraph-symbol {
+        transform: scale(0.9);
+        margin: 1.65rem auto 1.95rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header>
+      <div class="croatian-flag" aria-label="Croatian flag"></div>
+      <h1>In Croatia There Is a Town Called Bjelovar</h1>
+    </header>
+
+    <article>
+      <p>The thing they don’t tell you about taking a job in tech or a remote job or really any job in person is that if it goes really well or really bad, because relationships do best when there are peaks or valleys to celebrate or denigrate, the relationships you find along the way will be glorious and will take you to new corners of the world and into conversations that you never would have imagined, meeting people and seeing things that are the exact things that make life worth living.</p>
+
+      <div class="paragraph-symbol" aria-label="work / friendship">
+        <svg viewBox="0 0 80 36"><path d="M22 13h36v17H22z"/><path d="M31 13v-3h18v3"/><path class="red" d="M25 21h30"/><circle cx="22" cy="30" r="2"/><circle cx="58" cy="30" r="2"/></svg>
+      </div>
+<p>In Croatia, there is a town called Bjelovar and it is the hometown of Marko, my friend, my good friend, a new dad, husband to the pants-wearing Spela, son of the Jurina family, an older brother with intensity. Native to Croatia and now in Slovenia, Marko can always be found with a cigarette just being rolled, you never see him smoke it because he smokes as he lives and breathes. You only notice the rolling, the light break in the conversation that paces the day as he opens up his pack of tobacco and rips open a new filter, his eyes alit and mind still on whatever conspiracy theory topic is being thrown around, fingers on autopilot, rolling and rolling and rolling.</p>
+
+      <div class="paragraph-symbol" aria-label="Marko rolling tobacco">
+        <svg viewBox="0 0 80 36"><path d="M14 23h40"/><path class="red" d="M54 23h12"/><path d="M20 14c5-5 10-5 15 0"/><path d="M40 12c4-4 8-3 11 1"/></svg>
+      </div>
+<p>In Croatia there is a town called Bjelovar and there is a family called the Jurinas and they live on a street of about ten houses each with a green green yard and a unique floorplan and paint of different colors that all still come together into a cohesive unit that definitely feels like a neighborhood of a tight-knit group of people and this was proved out because there is much waving and stopping to say hello and laughing and smiling amongst the people that live on this street.</p>
+
+      <div class="paragraph-symbol" aria-label="the Jurina street">
+        <svg viewBox="0 0 80 36"><path d="M11 26h58"/><path d="M15 25v-9l8-6 8 6v9"/><path d="M36 25v-11l9-7 9 7v11"/><path d="M59 25v-8l7-5 7 5v8"/></svg>
+      </div>
+<p>And the Jurina house is a three-story build and it is three houses away from where they first lived on that street before buying the property that is now their home of 21 years or so and that is built to host in that it has a big dinner table as the focal point of the house and a kitchen with four little seats and then a terrace that can fit eight people easily and each of those people can have a glass of wine or two sitting next to them and a coffee mug and also a plate for cake and it was on this terrace that I spent the majority of my trip to Croatia, sitting and chatting and smiling and laughing as I lived a day in the life of the Jurinas as they sat out there and whiled the hot summer day away talking about nothing and living for everything and sipping on spritzes from 2pm to 10pm.</p>
+
+      <div class="paragraph-symbol" aria-label="the terrace">
+        <svg viewBox="0 0 80 36"><path d="M16 26h48"/><path d="M23 26v-9h34v9"/><path d="M29 17v9M40 17v9M51 17v9"/><circle class="redfill" cx="27" cy="12" r="3"/><circle cx="53" cy="12" r="3"/></svg>
+      </div>
+<p>In Croatia there is a town called Bjelovar and it is the hometown of Marko who is now the father of Max who is now two and a half and a sparkplug of a boy, who is the spitting image of his mother with that bleach blonde hair and those sparkling big blue emotionally playful eyelashed eyes and red red lips turned up into a sly smile but he is also the spitting image of his father not in the way he looks but in the way he moves, his hips waddling side to side as he walks and runs and rumbles and tumbles around the house.</p>
+
+      <div class="paragraph-symbol" aria-label="Max">
+        <svg viewBox="0 0 80 36"><circle cx="40" cy="12" r="6"/><path d="M40 18v12M29 23h22M34 31l6-7 6 7"/></svg>
+      </div>
+<p>Max speaks not a lick of English nor I a lick of Croatian or Slovenian and I also famously am not a huge kid guy but my goodness, Marko, my friend, getting to see his child and be the fun uncle and run around the front yard playing soccer and badminton with a two-and-a-half-year-old with endless energy babbling and laughing and communicating through body language and through emotion and through the physical objects of the world, it was a joy, it was a joy, it was a joy.</p>
+
+      <div class="paragraph-symbol" aria-label="front yard">
+        <svg viewBox="0 0 80 36"><circle cx="40" cy="18" r="12"/><path d="M40 6v24M28 18h24M32 9c5 7 5 11 0 18M48 9c-5 7-5 11 0 18"/></svg>
+      </div>
+<p>In Croatia there is a town called Bjelovar and for twelve days every year it hosts a festival and when I was lucky enough to visit it was the 30th anniversary and it was also the World Cup and also there was a new mayor recently elected and so the festival of a town for 40,000 was set up to host 250,000 and there were probably 500+ food carts and four different concert venues and the people were enthused and welcoming and the people were really there to drink and be merry and see the friends and families and Croatia.</p>
+
+      <div class="paragraph-symbol" aria-label="festival">
+        <svg viewBox="0 0 80 36"><path d="M15 16h50"/><path class="red" d="M20 16c0 8 10 8 10 0M30 16c0 8 10 8 10 0M40 16c0 8 10 8 10 0M50 16c0 8 10 8 10 0"/><path d="M22 29h36"/><path d="M30 29v-8h20v8"/></svg>
+      </div>
+<p>I went for the first three days of the festival, culminating in a concert by Petar Graso that I attended with Marko, his wife, his mother, his mother-in-law, his sister-in-law, his brother, and his sister-in-law’s boyfriend. It was a family affair and it was a Croatian affair and I was an American listening to a concert in a language I didn’t know surrounded by a family I had just met and thousands of people singing along to the songs of the day that were obviously about heartbreak but also love and also family and also life and I didn’t need to hear the words because the city of Bjelovar and the people and Petar Graso and Marko and his family translated the words through emotion and body language and lights and I loved it, I loved every second of it.</p>
+
+      <div class="paragraph-symbol" aria-label="concert">
+        <svg viewBox="0 0 80 36"><path d="M32 25V8l24-4v18"/><circle cx="26" cy="26" r="5"/><circle cx="50" cy="23" r="5"/><path class="red" d="M32 13l24-4"/></svg>
+      </div>
+<p>There are so many moments on this trip that are deeply personal but so universal that I just want to get them out of my head and into the world. The way that Marko and Spela, the two lovers who are so perfectly matched in giving each other shit but have been through so much, held hands in the yellow and pink light of the Petar Graso concert, singing words about love and dancing and staring at each other, forgetting the other people around them, turning it into a moment for two. The feeling I got when Max gave me a mimicked “nice” in English after giving me a fistbump on the way out and really the thrill I got for Marko and for Spela as I met Max and saw him being raised in such a loving house by parents being so intentional about giving him the freedom to explore and speak and saw how much he changed Marko for the better, for the better.</p>
+
+      <div class="paragraph-symbol" aria-label="small moments">
+        <svg viewBox="0 0 80 36"><path class="red" d="M40 29S23 19 27 10c3-7 10-4 13 2 3-6 10-9 13-2 4 9-13 19-13 19Z"/></svg>
+      </div>
+<p>On hearing about Marko’s past and how much he has changed and how he is a man of second and third and fourth chances who has lived hard but is now living so well and how there is so much to a person that takes so long to learn and that I had thought I knew him and what he was about but now after going to him and seeing him in his home and with his parents and his kid, wow, what a different visual.</p>
+
+      <div class="paragraph-symbol" aria-label="second chances">
+        <svg viewBox="0 0 80 36"><path d="M40 5l4 10 11 1-8 7 3 10-10-6-10 6 3-10-8-7 11-1 4-10Z"/></svg>
+      </div>
+<p>In Croatia there is a town called Bjelovar and as Marko and I walked down the streets of Bjelovar together and alone we were both so happy and the sun was shining and it was the afternoon and it was one of those moments in life where two friends meet and very few words are said but the words that are said mean so much because they express and they prove that yes, there is a bond here and it goes oh so deep and it is oh so beautiful and it is oh so the purpose of life.</p>
+
+      <div class="paragraph-symbol" aria-label="the walk">
+        <svg viewBox="0 0 80 36"><path d="M13 28c12-17 24 7 37-8 5-6 8-10 16-10"/><circle cx="29" cy="18" r="3"/><circle cx="43" cy="16" r="3"/></svg>
+      </div>
+<p>And so we walked down the street and we gave each other advice on the things we could give advice on and we asked questions and we told stories and we were a bit nostalgic but we were also so excited about the future and it was there that the two friends were fully unmasked to each other for the first time and that is a gorgeous thing when a friendship becomes a relationship, when what was a social thing becomes a family thing and we both realized in that moment that life is so good and that when we met four years ago we never could have imagined the places we would go nor the people we would become.</p>
+
+      <div class="paragraph-symbol" aria-label="four years">
+        <svg viewBox="0 0 80 36"><path d="M20 31L34 5M58 31L44 5"/><path class="red" d="M39 28v-4M39 20v-4M39 12V8"/></svg>
+      </div>
+<p>And if we went back to when we met and could see where we are now I think there would be a great pride in that which felt great but also in thinking that we realized that our next four years and the four after that would be the same and there we walked, two friends so adoring of the past, so thankful for their present, and so genuinely ready for a better future, and it was a Croatian man and an American man and the world worked in so many mysterious ways to bring us together and we really never should have met but there we were and there we will go down the path life gave us.</p>
+
+      <div class="paragraph-symbol" aria-label="missed Uber">
+        <svg viewBox="0 0 80 36"><circle cx="40" cy="20" r="12"/><path d="M40 13v8l6 4"/><path class="red" d="M25 8l-7 6M55 8l7 6"/></svg>
+      </div>
+<p>In Croatia there is a town called Bjelovar and it is one hour and eight minutes from the airport and while Uber allowed me to schedule a ride, the driver never showed up and the app sent me a notification at 6:26 for my 6:30am reservation that I was down and out and that no drivers were available which was not an exciting situation since my flight was at 9:05am and I had promised Emma, my love my love, that I would be back for dinner and dancing and a weekend in London.</p>
+
+      <div class="paragraph-symbol" aria-label="Dragan drives">
+        <svg viewBox="0 0 80 36"><path d="M15 23h50l-6-11H27l-12 11Z"/><circle cx="27" cy="27" r="4"/><circle cx="56" cy="27" r="4"/><path class="red" d="M31 12l-5 11M50 12l6 11"/></svg>
+      </div>
+<p>And so I scrambled up the stairs and shook Marko, my friend my friend, who was dead asleep because he was a Croatian through and through the night before, staying up till 4:30am celebrating in the streets of his hometown with the people of his hometown, and so I shook and shook and finally after a slap I awoke the beast that is my friend Marko and I explained the situation as he wiped the nap from his eyes and then he went to the room next door and he started talking in Croatian and all of a sudden his father, a big smiling but burly and bald and strong and hilarious but also definitely used to be a hardass of a man, came out and said “come Mark” because his English was better than Max’s but only by about 25 words and I went because this was not a man to keep waiting.</p>
+
+      <div class="paragraph-symbol" aria-label="coffee stop">
+        <svg viewBox="0 0 80 36"><path d="M25 14h28v8a12 12 0 0 1-24 0v-8Z"/><path d="M53 16h5a5 5 0 0 1 0 10h-5"/><path d="M27 31h26"/><path class="red" d="M31 9c-3-4 4-5 1-9M40 9c-3-4 4-5 1-9M49 9c-3-4 4-5 1-9"/></svg>
+      </div>
+<p>And we went into the garage and Dragan Jurina started driving me on that 68-minute drive to the airport around 7am and it was a wonderful ride, another moment where we lacked the language to speak in large sentences but mostly enjoyed each other’s company and the novelty of the moment and also the beauty of the landscape and we shared a few words about the trip and the road but it was mostly quiet but it was 100% beautiful and then about 45 minutes into the drive, around 7:45 and my flight boarding about 45 minutes away, I was asked if I wanted a coffee and I said yes.</p>
+
+      <div class="paragraph-symbol" aria-label="advice">
+        <svg viewBox="0 0 80 36"><path d="M24 7h26l7 7v17H24z"/><path d="M50 7v8h7"/><path class="red" d="M30 18h18M30 24h14"/></svg>
+      </div>
+<p>And so we stopped by the side of the road and found a little gas station and we, just 45 minutes before boarding and still 15 minutes from the airport, stopped for a cup of coffee and sat outside at the gas station and ordered two americanos and watched the sun rise and stared at each other and tried to figure out what we could say that the other would understand and then after about five minutes we went back into the car and we drove the last 15 minutes and I made it to my flight on time and made it back to London and it was glorious.</p>
+
+      <div class="paragraph-symbol" aria-label="bridges">
+        <svg viewBox="0 0 80 36"><path d="M12 27h56"/><path d="M20 27c8-16 32-16 40 0"/><path class="red" d="M24 22h32"/><path d="M28 27v-7M40 27v-11M52 27v-7"/></svg>
+      </div>
+<p>And there is just advice that I wish I could give myself which is to go out and travel more and to see your friends where they are and ask them to host you and to allow yourself to be hosted and to live a life that allows you to have the experiences that come with a weird group of people in weird places of the world doing weird things so that you can get pulled into that.</p>
+
+      <div class="paragraph-symbol" aria-label="Bjelovar">
+        <svg viewBox="0 0 80 36"><circle class="redfill" cx="40" cy="18" r="3.5"/><path d="M40 5c5 5 5 9 0 13-5-4-5-8 0-13ZM40 31c-5-5-5-9 0-13 5 4 5 8 0 13ZM27 18c5-5 9-5 13 0-4 5-8 5-13 0ZM53 18c-5 5-9 5-13 0 4-5 8-5 13 0Z"/></svg>
+      </div>
+<p>It’s the advice to never settle and to only allow myself to be deeply in love with who I am with and what I do and seeing Marko and Spela and Max was such a reminder for that. It is also a reminder that there are no burned bridges unless you really set fire to a structure and that Marko and I could’ve so easily not been friends when I left our little startup back in the day but we both intensely pushed back against that and now there I was in Croatia with his family and he has been to Texas with my family, and this is important and also a reminder.</p>
+
+      <div class="paragraph-symbol" aria-label="memory">
+        <svg viewBox="0 0 80 36"><circle class="redfill" cx="40" cy="18" r="3.5"/><path d="M40 5c5 5 5 9 0 13-5-4-5-8 0-13ZM40 31c-5-5-5-9 0-13 5 4 5 8 0 13ZM27 18c5-5 9-5 13 0-4 5-8 5-13 0ZM53 18c-5 5-9 5-13 0 4-5 8-5 13 0Z"/></svg>
+      </div>
+<p>In Croatia there is a town called Bjelovar and that is where I stayed for just a few days that felt like a year where I met my nephew of another family and deepened a friendship into a brotherhood and listened to a concert in another language and felt the love of a host family that shared so much in common with me outside of language.</p>
+
+      <div class="paragraph-symbol" aria-label="memory">
+        <svg viewBox="0 0 80 36"><circle class="redfill" cx="40" cy="18" r="3.5"/><path d="M40 5c5 5 5 9 0 13-5-4-5-8 0-13ZM40 31c-5-5-5-9 0-13 5 4 5 8 0 13ZM27 18c5-5 9-5 13 0-4 5-8 5-13 0ZM53 18c-5 5-9 5-13 0 4-5 8-5 13 0Z"/></svg>
+      </div>
+    </article>
+
+    <footer>kram.bio / bjelovar</footer>
+  </main>
+</body>
+</html>
