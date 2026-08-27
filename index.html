@@ -572,7 +572,7 @@
       const alphabeticTitle = (title) => title.replace(/^[^a-z0-9]+/i, "").trim();
       const orderedItems = [...media[category]].sort((a, b) => alphabeticTitle(a.title).localeCompare(alphabeticTitle(b.title), undefined, { sensitivity: "base", numeric: true }));
       libraryToggle.hidden = orderedItems.length <= 6;
-      libraryToggle.textContent = libraryExpanded ? "show fewer" : `show all ${orderedItems.length}`;
+      libraryToggle.textContent = libraryExpanded ? "show fewer" : "show all";
       const defaultCount = category === "all" ? 8 : 6;
       const visibleItems = libraryExpanded ? orderedItems : orderedItems.slice(0, defaultCount);
       mediaList.innerHTML = visibleItems.map((item) => `<li><a href="${item.url}" target="_blank" rel="noopener"><span>${item.title}</span></a></li>`).join("");
