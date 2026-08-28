@@ -729,3 +729,134 @@ html.knm-visual #kram-minimal-preview .knm-about-archive-link:hover { color: var
   html.knm-visual #kram-minimal-preview .kram-site-head nav a[href="#inbox"] { display: inline-flex; }
   html.knm-visual #kram-minimal-preview .kram-wordmark { min-height: 34px; padding: 0 10px 0 8px; }
 }
+
+/* One quiet orbital coordinate system for brand and navigation. */
+html.knm-visual #kram-minimal-preview .kram-site-head {
+  height: 68px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+html.knm-visual #kram-minimal-preview .kram-wordmark {
+  position: relative;
+  width: auto;
+  min-height: 40px;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  text-transform: lowercase;
+}
+html.knm-visual #kram-minimal-preview .kram-wordmark::before {
+  position: static;
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  content: "";
+  border-radius: 50%;
+  background: var(--knm-orange);
+  box-shadow: 0 0 10px rgba(255,104,31,.7);
+}
+html.knm-visual #kram-minimal-preview .kram-wordmark::after {
+  position: absolute;
+  left: -6px;
+  top: 14px;
+  width: 28px;
+  height: 10px;
+  content: "";
+  border: 1px solid rgba(255,104,31,.55);
+  border-radius: 50%;
+  transform: rotate(-13deg);
+  pointer-events: none;
+}
+html.knm-visual #kram-minimal-preview .kram-wordmark:hover {
+  border: 0;
+  background: transparent;
+  color: var(--knm-orange);
+}
+html.knm-visual #kram-minimal-preview .kram-site-head nav { gap: clamp(20px,2.5vw,38px); }
+html.knm-visual #kram-minimal-preview .kram-site-head nav a {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  text-transform: lowercase;
+}
+html.knm-visual #kram-minimal-preview .kram-site-head nav a[data-current="true"]::after {
+  width: 4px;
+  height: 4px;
+}
+html.knm-visual #kram-minimal-preview .kram-doors strong {
+  font-weight: 500;
+  letter-spacing: -.025em;
+  text-transform: lowercase;
+}
+html.knm-visual #kram-minimal-preview .kram-newsletter-line {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0;
+  color: var(--knm-paper);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  line-height: 1;
+  text-transform: lowercase;
+}
+html.knm-visual #kram-minimal-preview .kram-newsletter-line::before {
+  width: 38px;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg,rgba(255,104,31,.12),var(--knm-orange));
+}
+html.knm-visual #kram-minimal-preview .kram-newsletter-line::after {
+  position: absolute;
+  left: 34px;
+  width: 6px;
+  height: 6px;
+  content: "";
+  border-radius: 50%;
+  background: var(--knm-orange);
+  box-shadow: 0 0 10px rgba(255,104,31,.72);
+}
+html.knm-visual #kram-minimal-preview .kram-newsletter-line:hover { color: var(--knm-lime); }
+
+@media (max-width: 760px) {
+  html.knm-visual #kram-minimal-preview .kram-site-head,
+  html.knm-visual #kram-minimal-preview .kram-preview-stage[data-size="desktop"] .kram-site-head {
+    height: 60px;
+    min-height: 60px;
+  }
+  html.knm-visual #kram-minimal-preview .kram-wordmark,
+  html.knm-visual #kram-minimal-preview .kram-site-head nav a { font-size: 12px; }
+  html.knm-visual #kram-minimal-preview .kram-newsletter-line {
+    right: 18px;
+    bottom: 18px;
+    gap: 8px;
+    font-size: 11px;
+  }
+  html.knm-visual #kram-minimal-preview .kram-newsletter-line::before { width: 24px; }
+  html.knm-visual #kram-minimal-preview .kram-newsletter-line::after {
+    left: 20px;
+    width: 5px;
+    height: 5px;
+  }
+}
+
+@media (max-width: 430px) {
+  html.knm-visual #kram-minimal-preview .kram-site-head { gap: 10px; padding: 0 12px; }
+  html.knm-visual #kram-minimal-preview .kram-site-head nav { gap: 12px; }
+  html.knm-visual #kram-minimal-preview .kram-wordmark { min-height: 34px; padding: 0; }
+  html.knm-visual #kram-minimal-preview .kram-newsletter-line {
+    max-width: none;
+    justify-content: flex-start;
+    text-align: left;
+    white-space: nowrap;
+  }
+}
