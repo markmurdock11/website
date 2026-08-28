@@ -54,7 +54,7 @@
           homeTitle.textContent = "KRAM";
         }
         const homeIdentity = doc.querySelector(".kram-home-identity");
-        if (homeIdentity) homeIdentity.innerHTML = `I'm <a href="https://www.linkedin.com/in/mark-murdock-/" target="_blank" rel="noopener">Mark Murdock</a> but most people call me...`;
+        if (homeIdentity) homeIdentity.innerHTML = `I'm <a href="https://www.linkedin.com/in/mark-murdock-/" target="_blank" rel="noopener" aria-label="Mark Murdock on LinkedIn">Mark Murdock <span aria-hidden="true">↗</span></a> but most people call me...`;
         const homeCredo = doc.querySelector(".kram-home-copy > p:not(.kram-home-identity)");
         if (homeCredo) homeCredo.textContent = "my favorite thing is doing something for the first time.";
 
@@ -170,7 +170,7 @@
         }
         aboutIntro?.querySelector(".kram-about-lede")?.remove();
         if (aboutPath) {
-          aboutPath.innerHTML = `I'm semi-available for positioning, launches, and narrative work through <a href="https://aurient.ai/" target="_blank" rel="noopener">Aurient</a> with <a href="https://www.emmajoelle.com/" target="_blank" rel="noopener">Emma</a>.`;
+          aboutPath.innerHTML = `I'm semi-available for positioning, launches, and narrative work through <a href="https://aurient.ai/" target="_blank" rel="noopener">Aurient</a> with <a href="https://www.emmajoelle.com/" target="_blank" rel="noopener">Emma</a> and <a href="https://ldf.bio/" target="_blank" rel="noopener">LDF</a>.`;
           const currentCopy = doc.createElement("div");
           currentCopy.className = "knm-about-current-copy";
           aboutPath.before(currentCopy);
