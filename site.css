@@ -660,6 +660,8 @@ html.knm-visual #kram-minimal-preview .knm-about-archive-link:hover { color: var
   html.knm-visual #kram-minimal-preview .kram-home-copy h1,
   html.knm-visual #kram-minimal-preview .kram-preview-stage[data-size="desktop"] .kram-home-copy h1 { font-size: clamp(82px,27vw,112px); line-height: .78; }
   html.knm-visual #kram-minimal-preview .kram-home-copy .kram-home-identity { font-size: 12px; }
+  html.knm-visual #kram-minimal-preview .kram-home-copy .kram-home-identity a span { display: none; }
+  html.knm-visual #kram-minimal-preview .knm-career-name .knm-mobile-external-mark { display: none; }
   html.knm-visual #kram-minimal-preview .knm-mark-link { margin-top: 5px; font-size: 10px; }
   html.knm-visual #kram-minimal-preview .kram-page-head-writing h1,
   html.knm-visual #kram-minimal-preview .kram-preview-stage[data-size="desktop"] .kram-page-head-writing h1 { max-width: 7.4ch; font-size: clamp(56px,16vw,74px); }
