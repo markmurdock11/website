@@ -1,0 +1,86 @@
+{
+  "name": "Kram.bio Signal Atlas Assets",
+  "version": "1.1.0",
+  "base": "https://kram.bio/",
+  "visuals": [
+    {
+      "file": "home-arrival-v1.jpg",
+      "role": "land / arrival / homepage / LinkedIn banner base",
+      "focalZone": "right 30%",
+      "mobileCrop": "88% center"
+    },
+    {
+      "file": "writing-convergence-v1.jpg",
+      "role": "writing / convergence / editorial cover",
+      "focalZone": "center-right"
+    },
+    {
+      "file": "media-constellation-v1.jpg",
+      "role": "archive / saved signals / social post",
+      "focalZone": "center"
+    },
+    {
+      "file": "inbox-signal-v1.jpg",
+      "role": "inbox / recommendation / transmission",
+      "focalZone": "center-right"
+    },
+    {
+      "file": "about-relay-v2.jpg",
+      "role": "work / experience / relay / presentation",
+      "focalZone": "center"
+    },
+    {
+      "file": "about-relay-mobile-v2.jpg",
+      "role": "work / experience / vertical mobile relay",
+      "focalZone": "center"
+    },
+    {
+      "file": "human-connection-v1.jpg",
+      "role": "human / friendship / romance / connection",
+      "focalZone": "lower-right",
+      "copyZone": "upper-left 55%"
+    },
+    {
+      "file": "archive-library-v1.jpg",
+      "role": "ideas / reading / archive / curation",
+      "focalZone": "right-center",
+      "copyZone": "central lilac opening"
+    },
+    {
+      "file": "work-bridge-v1.jpg",
+      "role": "work / launches / infrastructure / connection",
+      "focalZone": "center",
+      "copyZone": "upper-center 55%"
+    },
+    {
+      "file": "mark-portrait.jpg",
+      "role": "Mark Murdock / primary profile likeness",
+      "crop": "circle; 50% horizontal, 24% vertical",
+      "restrictions": ["preserve likeness", "no path over eyes", "no path over mouth"]
+    }
+  ],
+  "systemFiles": [
+    { "file": "brand.html", "role": "visual specimen and format generator" },
+    { "file": "brand.md", "role": "human and agent production prompt" },
+    { "file": "brand-tokens.json", "role": "machine-readable rules and medium profiles" },
+    { "file": "brand.css", "role": "reference implementation for paths, points, type, and crops" }
+  ],
+  "signalOverlay": {
+    "source": "brand.css",
+    "referenceSelectors": [
+      ".atom-path",
+      ".atom-signal",
+      ".machine-path",
+      ".machine-point-a",
+      ".machine-point-b",
+      ".pfp-frame i",
+      ".pfp-frame b"
+    ],
+    "rule": "Recreate as controlled vector or layout layers. Never bake signal geometry into the generated raster base."
+  },
+  "type": {
+    "family": "Spectral",
+    "source": "https://fonts.google.com/specimen/Spectral",
+    "weights": [400, 500, 600]
+  }
+}

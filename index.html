@@ -26,7 +26,7 @@
       const requested = location.hash.slice(1);
       const initialPage = requested === "media" ? "writing" : (pages.has(requested) ? requested : "home");
       if (requested === "media") history.replaceState(null, "", `${location.pathname}${location.search}#writing`);
-      frame.src = `site-core.html?v=20260828a${initialPage === "home" ? "" : `#${initialPage}`}`;
+      frame.src = `site-core.html?v=20260828b${initialPage === "home" ? "" : `#${initialPage}`}`;
 
       const scene = (name, inner = "") => `<div class="knm-scene knm-scene-${name}" aria-hidden="true">${inner}</div>`;
 
@@ -38,7 +38,7 @@
         doc.documentElement.classList.add("knm-visual");
         const stylesheet = doc.createElement("link");
         stylesheet.rel = "stylesheet";
-        stylesheet.href = "site.css?v=20260828a";
+        stylesheet.href = "site.css?v=20260828c";
         doc.head.appendChild(stylesheet);
 
         const pointLink = (link, page, label) => {
@@ -129,6 +129,7 @@
           <img class="knm-home-art" src="home-arrival-v1.jpg" alt="" decoding="async" fetchpriority="high">
           <span class="knm-home-glow"></span>
         `));
+        homeHero?.insertAdjacentHTML("beforeend", `<a class="knm-brand-sun-link" href="brand.html" target="_top" aria-label="Open the Kram visual system"><span>Kram visual system</span></a>`);
 
         doc.querySelector(".kram-page-head-writing")?.insertAdjacentHTML("beforeend", scene("writing", `
           <img class="knm-writing-art" src="writing-convergence-v1.jpg" alt="" loading="lazy" decoding="async">

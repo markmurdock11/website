@@ -369,7 +369,7 @@ html.knm-visual #kram-minimal-preview .kram-external-mark { display: none; }
   html.knm-visual #kram-minimal-preview .kram-home-copy h1 { max-width: 5ch; font-size: clamp(66px, 21vw, 94px); }
   html.knm-visual #kram-minimal-preview .kram-home-copy .kram-home-identity { max-width: 28ch; gap: 5px; font-size: 8px; }
   html.knm-visual #kram-minimal-preview .kram-home-copy > p:last-child { max-width: 24ch; margin-top: 25px; font-size: 15px; }
-  html.knm-visual .knm-home-art { object-position: 68% center; }
+  html.knm-visual .knm-home-art { object-position: 88% center; }
   html.knm-visual .knm-scene-home::after { background: linear-gradient(180deg, rgba(229,213,241,.72) 0%, rgba(229,213,241,.18) 51%, transparent 67%); }
   html.knm-visual #kram-minimal-preview .kram-doors { left: 20px; right: auto; bottom: 22px; flex-direction: column; gap: 0; }
   html.knm-visual #kram-minimal-preview .kram-doors a { min-height: 38px; }
@@ -858,5 +858,39 @@ html.knm-visual #kram-minimal-preview .kram-newsletter-line:hover { color: var(-
     justify-content: flex-start;
     text-align: left;
     white-space: nowrap;
+  }
+}
+
+/* The sun already baked into the landscape is the only entrance to the visual system. */
+html.knm-visual #kram-minimal-preview .knm-brand-sun-link {
+  position: absolute;
+  z-index: 9;
+  left: 88.2%;
+  top: 65%;
+  width: clamp(68px,6vw,94px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  text-decoration: none;
+  transform: translate(-50%,-50%);
+}
+html.knm-visual #kram-minimal-preview .knm-brand-sun-link span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  html.knm-visual #kram-minimal-preview .knm-brand-sun-link {
+    left: 86.5%;
+    right: auto;
+    top: 68%;
+    width: 64px;
+    transform: translate(-50%,-50%);
   }
 }

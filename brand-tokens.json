@@ -1,0 +1,132 @@
+{
+  "$schema": "https://schemas.kram.bio/signal-atlas-v1.json",
+  "name": "Kram.bio Signal Atlas",
+  "version": "1.1.0",
+  "updated": "2026-08-28",
+  "thesis": "Every image is a diagram of an idea disguised as a landscape.",
+  "atom": ["field", "ground", "path", "witness", "destination"],
+  "visualModes": ["land", "human", "ideas", "work", "signal", "portrait"],
+  "copyModes": ["identity", "thesis", "belief", "archive", "future", "invite", "none"],
+  "color": {
+    "sky": { "value": "#E5D5F1", "role": "field and atmosphere", "share": "55–70%" },
+    "paper": { "value": "#F7F1F8", "role": "alternate reading field" },
+    "cloud": { "value": "#F1E9F7", "role": "light text on ink" },
+    "ink": { "value": "#151419", "role": "ground and hard contrast", "share": "25–40%" },
+    "orange": { "value": "#FF681F", "role": "movement and transmission", "share": "2–8%" },
+    "blue": { "value": "#175FF1", "role": "witness, subject, or discovery", "limit": "one focal mark" },
+    "lime": { "value": "#D7FF2F", "role": "destination, invitation, or active state", "limit": "one focal mark" }
+  },
+  "type": {
+    "family": "Spectral, Georgia, serif",
+    "weights": [400, 500, 600],
+    "display": { "lineHeight": "0.62–0.95", "letterSpacing": "-0.04em to -0.09em" },
+    "body": { "lineHeight": "1.35–1.55" },
+    "navigation": { "case": "lowercase", "size": "11–13px", "weight": 500 },
+    "labels": { "case": "uppercase", "size": "8–11px", "letterSpacing": "0.08–0.14em" },
+    "socialCopyLimit": "8 words"
+  },
+  "composition": {
+    "calmFieldMinimum": "55%",
+    "groundRange": "18–42%",
+    "groundMustTouchEdge": true,
+    "energyEventsPerScene": 1,
+    "pathLineMaximum": 3,
+    "focalOffsetFromCenter": "6–15%",
+    "preferredBalance": "asymmetric",
+    "events": ["horizon", "beam", "portal", "convergence", "orbit", "transmission"]
+  },
+  "layers": [
+    { "order": 1, "name": "rasterBase", "contents": "atmosphere, terrain, tactile texture, or portrait", "exclude": ["text", "dots", "paths", "orbits"] },
+    { "order": 2, "name": "signalOverlay", "contents": "controlled paths, orbits, beams, and orange/blue/lime points" },
+    { "order": 3, "name": "typography", "contents": "Spectral added in layout software" }
+  ],
+  "mediumProfiles": {
+    "linkedInProfile": {
+      "canvas": "1600 × 1600",
+      "ratio": "1:1",
+      "safeCrop": "circle",
+      "faceFill": "60–70%",
+      "eyeLine": "42% from top",
+      "outerSignalZone": "outer 12%",
+      "textAllowed": false,
+      "portraitRequired": true
+    },
+    "linkedInBanner": {
+      "workingCanvas": "3168 × 792",
+      "exportCanvas": "1584 × 396",
+      "ratio": "4:1",
+      "calmZone": "left 30%",
+      "eventZone": "right 60%",
+      "groundHeight": "20–32%",
+      "defaultText": "none"
+    },
+    "squarePost": {
+      "canvas": "1200 × 1200",
+      "ratio": "1:1",
+      "titleZone": "calm field opposite the event",
+      "copyLimit": "8 words"
+    },
+    "portraitPost": {
+      "canvas": "1080 × 1350",
+      "ratio": "4:5",
+      "protectedTypeZone": "upper or lower 28%",
+      "copyLimit": "8 words"
+    },
+    "essayImage": {
+      "canvas": "1800 × 1200",
+      "ratio": "3:2",
+      "defaultText": "none"
+    },
+    "cover": {
+      "canvas": "1920 × 1080",
+      "ratio": "16:9",
+      "copyLimit": "8 words"
+    },
+    "slide": {
+      "canvas": "1920 × 1080",
+      "ratio": "16:9",
+      "titleZone": "calm field",
+      "contentMode": "paper or ink reading surfaces"
+    },
+    "story": {
+      "canvas": "1080 × 1920",
+      "ratio": "9:16",
+      "protectedZones": "top and bottom 12%",
+      "pathBias": "vertical"
+    }
+  },
+  "portrait": {
+    "preserveLikeness": true,
+    "preserveSkinTone": true,
+    "pathMayCrossEyesOrMouth": false,
+    "primaryProfileMayBeAbstract": false,
+    "maximumOrbitCount": 1,
+    "maximumLimePoints": 1
+  },
+  "interface": {
+    "minimumTarget": "44px",
+    "breakpoints": { "primary": "760px", "narrow": "390px" },
+    "focus": { "outline": "2px solid #FF681F", "offset": "4px" },
+    "navigationCase": "lowercase",
+    "emojiAsInterface": false,
+    "reducedMotion": true
+  },
+  "avoid": [
+    "starfields by default",
+    "rockets by default",
+    "galaxies by default",
+    "zodiac forms",
+    "atom symbols",
+    "chrome",
+    "glass",
+    "neon grids",
+    "generic sci-fi UI",
+    "decorative constellations",
+    "card grids",
+    "hard containers",
+    "dashboard layouts",
+    "floating paths without origin or destination",
+    "filler copy",
+    "altering Mark Murdock's recognizable likeness"
+  ]
+}
