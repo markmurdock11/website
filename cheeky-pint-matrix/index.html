@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Make your own Tech Founder Beer Matrix. Drag the founders, add someone new, and export your chart.">
+<title>The Tech Founder Beer Matrix — make your own</title>
+<link rel="canonical" href="https://kram.bio/cheeky-pint-matrix">
+<meta property="og:title" content="The Tech Founder Beer Matrix">
+<meta property="og:description" content="Drag a face. Settle the argument. Make your own founder beer matrix.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kram.bio/cheeky-pint-matrix">
+
+<style>
+:root{color-scheme:light;--ink:#171717;--muted:#73736d;--line:#dfdfd8;--paper:#fff;--surface:#f4f4ef;--unit:1px;font-family:Arial,Helvetica,sans-serif;background:var(--surface);color:var(--ink)}
+*{box-sizing:border-box}
+body{margin:0}
+button,input,select{font:inherit}
+button,a,input,select,summary{-webkit-tap-highlight-color:transparent}
+button{color:inherit;cursor:pointer}
+button:disabled{cursor:default;opacity:.35}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #585858;outline-offset:4px}
+a{color:inherit}
+svg.icon{width:17px;height:17px;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.app{max-width:1360px;margin:0 auto;padding:28px 26px 18px}
+.masthead{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:20px}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.intro{font-size:16px;margin:7px 0 0;line-height:1.4}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;gap:8px;align-items:center;justify-content:center;min-height:40px;padding:10px 13px;border:1px solid var(--line);border-radius:7px;background:var(--paper);font-size:12px;font-weight:600;line-height:1.2;text-decoration:none;white-space:nowrap}
+.btn:hover:not(:disabled){background:#ebebe5}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:white}
+.btn.primary:hover:not(:disabled){background:#383833}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.ghost:hover:not(:disabled){background:#e9e9e3}
+.btn.icon-only{width:36px;min-height:36px;padding:8px}
+.btn.danger{color:#a02f25}
+.more{position:relative}
+.more>summary{list-style:none}
+.more>summary::-webkit-details-marker{display:none}
+.menu{position:absolute;right:0;top:calc(100% + 8px);min-width:232px;padding:6px;background:#fff;border:1px solid var(--line);border-radius:9px;box-shadow:0 12px 40px #00000016;z-index:60}
+.menu button{display:flex;align-items:center;gap:10px;border:0;background:none;width:100%;padding:11px 9px;font-size:12px;text-align:left;border-radius:4px}
+.menu button:hover{background:var(--surface)}
+.menu hr{border:0;border-top:1px solid var(--line);margin:5px 2px}
+.workbench{border:1px solid var(--line);border-radius:10px;overflow:clip;background:var(--paper);box-shadow:0 4px 18px #00000004}
+.controls{min-height:55px;background:#fcfcfa;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:8px 14px}
+.separator{height:20px;width:1px;background:var(--line);margin:0 5px}
+.count{font-size:11px;color:var(--muted);white-space:nowrap}
+.save-state{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap;margin-left:auto}
+.save-state::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.65}
+.save-state.warning{color:#9a3b27}
+.zoom{font-size:11px;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:7px 8px;max-width:110px}
+.finder{position:relative}
+.finder-field{height:35px;display:flex;align-items:center;gap:6px;padding:0 9px;border:1px solid var(--line);background:white;border-radius:6px}
+.finder-field input{width:130px;font-size:11px;border:0;outline:0;background:none;color:inherit;padding:0;height:100%}
+.finder-field:focus-within{outline:2px solid #777;outline-offset:2px}
+.search-results{position:absolute;top:42px;left:0;width:255px;max-height:310px;overflow:auto;border:1px solid var(--line);border-radius:7px;background:white;padding:5px;z-index:65;box-shadow:0 12px 25px #00000010}
+.search-results button{border:0;background:transparent;border-radius:4px;padding:10px;width:100%;text-align:left;font-size:12px;display:block}
+.search-results button:hover,.search-results button:focus{background:var(--surface)}
+.search-results p{font-size:12px;color:var(--muted);margin:12px}
+.viewport{width:100%;overflow:auto;overscroll-behavior-x:contain;scroll-behavior:auto;position:relative;background:#fff}
+.board{position:relative;width:100%;aspect-ratio:1/1;background:#fff;isolation:isolate;user-select:none;-webkit-user-select:none}
+.axes{position:absolute;width:100%;height:100%;inset:0;pointer-events:none;overflow:visible}
+.people{position:absolute;inset:0;pointer-events:none}
+.founder{position:absolute;transform:translate(-50%,-50%);width:calc(var(--unit)*70);height:calc(var(--unit)*70);padding:0;border:0;background:transparent;border-radius:50%;pointer-events:auto;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.founder:focus-visible{outline:none}
+.portrait{position:absolute;inset:0;overflow:hidden;border-radius:50%;outline:calc(var(--unit)*2) solid white;background:#efefea;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 calc(var(--unit)*.7) #deded7}
+.portrait img{position:absolute;max-width:none;display:block;pointer-events:none;-webkit-user-drag:none}
+.initials{font-size:calc(var(--unit)*22);font-weight:500;letter-spacing:-.04em;color:#8c8c83}
+.founder .name{position:absolute;top:calc(100% + var(--unit)*5);left:50%;transform:translateX(-50%);background:rgba(255,255,255,.97);padding:calc(var(--unit)*2) calc(var(--unit)*3);color:#111;white-space:nowrap;text-align:center;font:calc(var(--unit)*15)/1.1 "Times New Roman",Times,serif}
+.founder.above .name{top:auto;bottom:calc(100% + var(--unit)*5)}
+.founder .name span{display:block}
+.founder:hover,.founder.selected,.founder:focus-visible{z-index:30}
+.founder:hover .portrait{outline:calc(var(--unit)*2.5) solid #7d7d73}
+.founder.selected .portrait,.founder:focus-visible .portrait{outline:calc(var(--unit)*3) solid #252525;box-shadow:0 0 0 calc(var(--unit)*6) #ffffff}
+.founder.selected .name{font-weight:bold}
+.founder.dragging{cursor:grabbing;z-index:45}
+.founder.dragging .portrait{box-shadow:0 calc(var(--unit)*9) calc(var(--unit)*18) #0003;outline:calc(var(--unit)*3) solid #171717}
+.axis-glow{stroke:#939389;stroke-width:2.5;stroke-dasharray:5 5;opacity:0}
+.axis-glow.active{opacity:.75}
+.edit-bar{display:flex;align-items:center;gap:10px;min-height:47px;padding:8px 15px;border-top:1px solid var(--line);background:#fcfcfa;font-size:11px;color:var(--muted)}
+.edit-bar strong{color:var(--ink);font-weight:600}
+.edit-bar .btn{font-size:11px;min-height:30px;padding:7px 10px}
+.edit-bar .keys{margin-left:auto}
+.footnote{display:flex;justify-content:space-between;gap:15px;padding:12px 1px 0;line-height:1.5;color:var(--muted);font-size:11px}
+.footnote button{padding:0;border:0;background:none;color:inherit;font-size:inherit;text-decoration:underline;text-underline-offset:3px}
+dialog{max-height:calc(100dvh - 30px);border:1px solid var(--line);border-radius:13px;max-width:580px;width:calc(100% - 28px);padding:0;overflow:auto;background:#fff;color:var(--ink);box-shadow:0 24px 100px #0003}
+dialog::backdrop{background:#12120f70;backdrop-filter:blur(3px)}
+.dialog-head{display:flex;align-items:flex-start;justify-content:space-between;padding:23px 24px 12px}
+.dialog-head h2{font:700 28px/1.1 "Times New Roman",Times,serif;margin:0}
+.dialog-head p{font-size:12px;color:var(--muted);line-height:1.5;margin:7px 0 0}
+.dialog-body{padding:0 24px 20px}
+.dialog-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:15px 24px;border-top:1px solid var(--line);background:#fcfcfa;position:sticky;bottom:0}
+.dialog-actions .left{margin-right:auto}
+label.field{display:block;font-size:12px;font-weight:600;margin:13px 0 7px}
+input[type=text],input[type=url]{width:100%;height:41px;border:1px solid var(--line);border-radius:6px;padding:10px 11px;font-size:13px;background:#fff;color:var(--ink)}
+.finder-field input[type=text]{width:130px;border:0;border-radius:0;padding:0;height:100%;font-size:11px}
+.photo-editor{display:flex;gap:18px;align-items:center;margin:16px 0}
+#photoPreview{width:112px;height:112px;flex:none;display:block;border:1px solid var(--line);border-radius:50%;background:#f2f2ed}
+.photo-actions{display:flex;flex-direction:column;align-items:flex-start;gap:7px;flex:1}
+.small{font-size:11px;color:var(--muted);line-height:1.5;margin:0}
+.input-row{display:flex;gap:7px;align-items:center}
+.input-row input{flex:1;min-width:0}
+.link-button{border:0;padding:0;background:transparent;font-size:11px;text-decoration:underline;text-underline-offset:3px;color:var(--muted);cursor:pointer;text-align:left}
+.error{font-size:12px;line-height:1.5;color:#9a3225;margin:10px 0}
+.inline-info{font-size:11px;color:var(--muted);margin:7px 0}
+.crop-details{margin:14px 0 0;border-top:1px solid var(--line);padding:12px 0 0}
+.crop-details summary{font-size:12px;cursor:pointer;font-weight:600}
+.range-row{display:grid;grid-template-columns:64px 1fr 36px;gap:10px;align-items:center;font-size:11px;margin:12px 0}
+input[type=range]{width:100%;accent-color:#242424;cursor:pointer}
+.range-row output{font-size:10px;color:var(--muted);text-align:right}
+.position-box{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.position-title{font-size:12px;font-weight:600;display:block;margin-bottom:10px}
+.range-endpoints{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:5px}
+.position-box input[type=range]{margin:8px 0 6px}
+.check{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);margin-top:12px}
+.check input{accent-color:var(--ink)}
+.credits{max-width:720px}
+.credit-list{max-height:55vh;overflow:auto;border-top:1px solid var(--line)}
+.credit-row{display:grid;grid-template-columns:1fr 140px auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid #ecece7;font-size:12px}
+.credit-row .photo-state{font-size:10px;color:var(--muted)}
+.credit-row a{font-size:11px;text-underline-offset:3px}
+.credit-row button{font-size:11px;padding:5px 7px;min-height:28px}
+.credit-info{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 15px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#21211e;color:#fff;border-radius:8px;padding:12px 17px;max-width:min(600px,calc(100% - 24px));box-shadow:0 8px 25px #0002;font-size:12px;line-height:1.5;z-index:100;display:flex;gap:16px;align-items:center}
+.toast button{border:0;background:none;color:white;font-size:12px;font-weight:700;padding:0;text-decoration:underline;white-space:nowrap}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+[hidden]{display:none!important}
+html.embed .app{max-width:none;padding:0}
+html.embed .masthead{padding:16px 14px 0}
+html.embed .workbench{border-radius:0}
+html.embed .footnote{padding:10px 14px}
+@media(max-width:800px){.app{padding:18px 12px 12px}.masthead{align-items:flex-start;gap:15px;flex-direction:column;margin-bottom:15px}.actions{width:100%}.actions .primary{flex:1}.controls{padding:7px 8px;gap:4px;flex-wrap:wrap}.separator{margin:0 2px}.save-state{margin-left:auto}.count{display:none}.edit-bar .keys{display:none}.footnote{flex-direction:column;gap:3px}}
+@media(max-width:480px){.intro{font-size:14px}.eyebrow{font-size:9px}.actions{gap:6px}.btn{font-size:11px;padding:10px 11px}.finder-field input[type=text]{width:105px}.controls .separator{display:none}.save-state{font-size:10px;width:100%;padding:3px 5px 1px;order:5}.zoom{order:4}.zoom{margin-left:auto}.dialog-head{padding:20px 18px 12px}.dialog-body{padding:0 18px 18px}.dialog-actions{padding:13px 18px}#photoPreview{width:90px;height:90px}.photo-editor{gap:13px}.credit-row{grid-template-columns:1fr 85px auto;gap:7px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden">
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M5 16v5h14v-5"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="m8 4-5 5 5 5M3 9h10a7 7 0 0 1 0 14" transform="translate(0 -2)"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="m16 4 5 5-5 5m5-5H11a7 7 0 0 0 0 14" transform="translate(0 -2)"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M5 16v5h14v-5"/></symbol>
+<symbol id="i-code" viewBox="0 0 24 24"><path d="m7 6-6 6 6 6m10-12 6 6-6 6m-3-15-4 18"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 10a8 8 0 1 0-1 7M20 4v6h-6"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="m16 3 5 5-12 12-6 1 1-6L16 3Zm-3 3 5 5"/></symbol>
+<symbol id="i-photo" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5"/><path d="m3 18 6-6 4 4 4-5 4 5"/></symbol>
+</svg>
+<div class="app">
+<header class="masthead">
+<div><div class="eyebrow">The interactive edition</div><p class="intro">Drag a face. Settle the argument.</p></div>
+<div class="actions">
+<button class="btn primary" id="addFounder"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Add founder</button>
+<button class="btn" id="exportPNG"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Save PNG</button>
+<details class="more" id="moreMenu">
+<summary class="btn" aria-label="More options"><svg class="icon" aria-hidden="true"><use href="#i-more"/></svg>More</summary>
+<div class="menu">
+<button id="exportLayout"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Export layout file</button>
+<button id="importLayout"><svg class="icon" aria-hidden="true"><use href="#i-upload"/></svg>Import layout file</button>
+<button id="downloadHTML"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg>Download this as HTML</button>
+<hr>
+<button id="showCredits"><svg class="icon" aria-hidden="true"><use href="#i-photo"/></svg>Photos &amp; sources</button>
+<button id="retryPhotos"><svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>Retry missing photos</button>
+<hr>
+<button id="resetLayout"><svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>Reset to original</button>
+</div>
+</details>
+</div>
+</header>
+<main class="workbench">
+<div class="controls" aria-label="Matrix controls">
+<button class="btn ghost icon-only" id="undo" title="Undo (Ctrl/⌘ Z)" aria-label="Undo" disabled><svg class="icon" aria-hidden="true"><use href="#i-undo"/></svg></button>
+<button class="btn ghost icon-only" id="redo" title="Redo (Ctrl/⌘ Shift Z)" aria-label="Redo" disabled><svg class="icon" aria-hidden="true"><use href="#i-redo"/></svg></button>
+<span class="separator" aria-hidden="true"></span>
+<div class="finder">
+<div class="finder-field"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input id="search" type="text" placeholder="Find a founder…" aria-label="Find a founder" autocomplete="off" aria-controls="searchResults" aria-expanded="false"></div>
+<div class="search-results" id="searchResults" hidden></div>
+</div>
+<span class="count" id="founderCount"></span>
+<div class="save-state" id="saveState" role="status">Original layout</div>
+<label class="sr-only" for="zoom">Chart zoom</label><select id="zoom" class="zoom"><option value="1">Fit to screen</option><option value="1.5">150%</option><option value="2">200%</option><option value="3">300%</option></select>
+</div>
+<div class="viewport" id="viewport">
+<div class="board" id="board" role="group" aria-label="Tech founder beer matrix. Good hang at the top, bad hang at the bottom, beer sippers to the left, beer tankers to the right.">
+<svg class="axes" viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs><marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 8 4 0 8 2 4Z" fill="#171717"/></marker></defs>
+<rect width="1200" height="1200" fill="white"/>
+<g fill="#111" text-anchor="middle" font-family="'Times New Roman',Times,serif">
+<text x="600" y="60" font-size="48" font-weight="700">The Tech Founder Beer Matrix</text>
+<text x="600" y="135" font-size="25" font-weight="700">GOOD HANG</text>
+<text x="600" y="1165" font-size="25" font-weight="700">BAD HANG</text>
+<text x="48" y="661" font-size="23" font-weight="700">BEER</text>
+<text x="48" y="685" font-size="21" font-weight="700">SIPPERS</text>
+<text x="1151" y="661" font-size="23" font-weight="700">BEER</text>
+<text x="1151" y="685" font-size="20" font-weight="700">TANKERS</text>
+</g>
+<g stroke="#171717" stroke-width="1.7" fill="none" marker-end="url(#arrowhead)">
+<path d="M600 665V180"/><path d="M600 665V1126"/><path d="M600 665H1090"/><path d="M600 665H108"/>
+</g>
+<path id="snapX" class="axis-glow" d="M600 180V1126"/><path id="snapY" class="axis-glow" d="M108 665H1090"/>
+</svg>
+<div class="people" id="people"></div>
+</div>
+</div>
+<div class="edit-bar" id="editBar">
+<span id="selectionText">Click a face to edit its name or photo.</span>
+<button class="btn" id="editSelected" hidden><svg class="icon" aria-hidden="true"><use href="#i-edit"/></svg>Edit</button>
+<button class="btn ghost" id="removeSelected" hidden>Remove</button>
+<span class="keys" id="keyboardHint">Faces snap to the axes. Hold Alt to place freely.</span>
+</div>
+</main>
+<footer class="footnote">
+<span>Your changes save in this browser, not for everyone. Export a layout file to share an editable copy.</span>
+<button id="footerCredits"><span id="photoStatus">Loading headshots…</span> · Photo sources</button>
+</footer>
+</div>
+
+<dialog id="founderDialog" aria-labelledby="dialogTitle">
+<form id="founderForm">
+<div class="dialog-head"><div><h2 id="dialogTitle">Add a founder</h2><p id="dialogSubtitle">A name, a face, a questionable placement.</p></div><button type="button" class="btn ghost icon-only" data-close="founderDialog" aria-label="Close editor"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+<div class="dialog-body">
+<label class="field" for="founderName">Name</label>
+<input id="founderName" type="text" maxlength="70" required autocomplete="off" placeholder="Who’s joining?">
+<div class="photo-editor">
+<canvas id="photoPreview" width="240" height="240" role="img" aria-label="Headshot crop preview"></canvas>
+<div class="photo-actions">
+<button type="button" class="btn" id="choosePhoto"><svg class="icon" aria-hidden="true"><use href="#i-upload"/></svg>Upload a headshot</button>
+<p class="small">JPG, PNG, WebP, GIF or AVIF. Up to 12 MB.</p>
+<button type="button" class="link-button" id="wikiPhoto">Look for a Wikipedia photo</button>
+</div>
+</div>
+<input type="file" id="photoFile" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" hidden>
+<label class="field" for="photoURL">Or use an image URL</label>
+<div class="input-row"><input id="photoURL" type="url" placeholder="https://…" autocomplete="off"><button type="button" class="btn" id="loadPhotoURL">Load</button></div>
+<p class="inline-info" id="photoFeedback">A photo is optional. Initials appear until one is added.</p>
+<details class="crop-details" id="cropControls">
+<summary>Adjust photo crop</summary>
+<label class="range-row" for="cropX"><span>Horizontal</span><input id="cropX" type="range" min="0" max="1" step=".005"><output id="cropXValue"></output></label>
+<label class="range-row" for="cropY"><span>Vertical</span><input id="cropY" type="range" min="0" max="1" step=".005"><output id="cropYValue"></output></label>
+<label class="range-row" for="cropZoom"><span>Zoom</span><input id="cropZoom" type="range" min="1" max="7" step=".025"><output id="cropZoomValue"></output></label>
+<button type="button" class="link-button" id="resetCrop">Reset crop</button>
+</details>
+<div class="position-box">
+<span class="position-title">Placement</span>
+<label class="sr-only" for="positionX">Beer sipper to beer tanker</label><div class="range-endpoints"><span>← Beer sipper</span><span>Beer tanker →</span></div><input id="positionX" type="range" min="-100" max="100" step="1">
+<label class="sr-only" for="positionY">Bad hang to good hang</label><div class="range-endpoints"><span>← Bad hang</span><span>Good hang →</span></div><input id="positionY" type="range" min="-100" max="100" step="1">
+<label class="check"><input id="labelAbove" type="checkbox">Put the name above the photo</label>
+</div>
+<p id="formError" class="error" role="alert" hidden></p>
+</div>
+<div class="dialog-actions"><button type="button" id="removeFounder" class="btn ghost danger left" hidden>Remove founder</button><button type="button" class="btn" data-close="founderDialog">Cancel</button><button type="submit" class="btn primary" id="saveFounder">Add founder</button></div>
+</form>
+</dialog>
+
+<dialog class="credits" id="creditsDialog" aria-labelledby="creditsTitle">
+<div class="dialog-head"><div><h2 id="creditsTitle">Photos &amp; sources</h2><p>Actual photos. No generated faces.</p></div><button type="button" class="btn ghost icon-only" data-close="creditsDialog" aria-label="Close photo sources"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+<div class="dialog-body"><p class="credit-info">Source links are kept with each founder. A host may block downloads or change its photo. Upload a replacement when needed. Use photos you have permission to publish; linked sources retain their own rights and licenses.</p><div class="credit-list" id="creditList"></div></div>
+<div class="dialog-actions"><button class="btn" id="retryFromCredits">Retry missing photos</button><button class="btn primary" data-close="creditsDialog">Done</button></div>
+</dialog>
+<input type="file" id="layoutFile" accept="application/json,.json" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden><span id="toastText"></span><button id="toastUndo" hidden>Undo</button></div>
+<div class="sr-only" id="announcement" aria-live="polite"></div>
+<script id="matrix-data" type="application/json">{"version": 1, "layoutId": "mark-approved-v2", "people": [{"name": "Peter Thiel", "x": 90, "y": 166, "wiki": "Peter Thiel", "crop": null, "id": "peter-thiel"}, {"name": "Patrick Collison", "x": 182, "y": 228, "wiki": "Patrick Collison", "crop": null, "id": "patrick-collison"}, {"name": "John Collison", "x": 320, "y": 215, "wiki": "John Collison", "crop": null, "id": "john-collison"}, {"name": "Steve Wozniak", "x": 432, "y": 165, "wiki": "Steve Wozniak", "crop": null, "id": "steve-wozniak"}, {"name": "Jensen Huang", "x": 532, "y": 246, "wiki": "Jensen Huang", "crop": null, "id": "jensen-huang"}, {"name": "Jack Ma", "x": 702, "y": 245, "wiki": "Jack Ma", "crop": null, "id": "jack-ma"}, {"name": "Palmer Luckey", "x": 829, "y": 225, "wiki": "Palmer Luckey", "crop": null, "id": "palmer-luckey"}, {"name": "Richard Branson", "x": 1003, "y": 229, "wiki": "Richard Branson", "crop": null, "id": "richard-branson"}, {"name": "Steve Ballmer", "x": 1126, "y": 1075, "wiki": "Steve Ballmer", "crop": null, "id": "steve-ballmer"}, {"name": "Tobi Lütke", "x": 84, "y": 310, "wiki": "Tobias Lütke", "crop": null, "id": "tobi-l-tke"}, {"name": "Tim Cook", "x": 280, "y": 665, "wiki": "Tim Cook", "crop": null, "labelAbove": true, "id": "tim-cook"}, {"name": "Naval Ravikant", "x": 422, "y": 306, "wiki": "Naval Ravikant", "crop": null, "id": "naval-ravikant"}, {"name": "Mark Zuckerberg", "x": 174, "y": 374, "wiki": "Mark Zuckerberg", "crop": null, "id": "mark-zuckerberg"}, {"name": "Dylan Field", "x": 530, "y": 371, "wiki": "Dylan Field", "crop": null, "id": "dylan-field"}, {"name": "Brian Chesky", "x": 700, "y": 365, "wiki": "Brian Chesky", "crop": null, "id": "brian-chesky"}, {"name": "Brian Armstrong", "x": 811, "y": 348, "wiki": "Brian Armstrong (businessman)", "crop": null, "id": "brian-armstrong"}, {"name": "Marc Benioff", "x": 914, "y": 326, "wiki": "Marc Benioff", "crop": null, "id": "marc-benioff"}, {"x": 1033, "y": 355, "name": "Marc Andreessen", "wiki": "Marc Andreessen", "crop": [0.5, 0.43, 0.84], "url": "https://d1lamhf6l6yk6d.cloudfront.net/uploads/2023/04/Marc-Andreessen-3-1024x1024.png", "source": "https://a16z.com/author/marc-andreessen/", "sourceLabel": "a16z portrait", "id": "marc-andreessen"}, {"name": "Jack Dorsey", "x": 1140, "y": 338, "wiki": "Jack Dorsey", "crop": null, "id": "jack-dorsey"}, {"name": "Kevin Systrom", "x": 80, "y": 457, "wiki": "Kevin Systrom", "crop": null, "id": "kevin-systrom"}, {"x": 201, "y": 495, "name": "Anatoly Yakovenko", "wiki": null, "crop": [0.5, 0.43, 0.88], "url": "https://consensus.coindesk.com/site/consensus2026/images/userfiles/speakers/018c2e5d67fc8d1372f14a187f9aeb24.jpg", "source": "https://consensus.coindesk.com/agenda/speaker/-anatoly-yakovenko", "sourceLabel": "Consensus speaker portrait", "id": "anatoly-yakovenko"}, {"name": "Satya Nadella", "x": 300, "y": 511, "wiki": "Satya Nadella", "crop": null, "id": "satya-nadella"}, {"name": "Reed Hastings", "x": 423, "y": 513, "wiki": "Reed Hastings", "crop": null, "id": "reed-hastings"}, {"name": "Greg Brockman", "x": 706, "y": 482, "wiki": "Greg Brockman", "crop": null, "id": "greg-brockman"}, {"name": "Kyle Vogt", "x": 844, "y": 475, "wiki": "Kyle Vogt", "crop": null, "id": "kyle-vogt"}, {"x": 987, "y": 475, "name": "Pavel Durov", "wiki": "Pavel Durov", "crop": null, "id": "pavel-durov"}, {"name": "Garrett Camp", "x": 1127, "y": 460, "wiki": "Garrett Camp", "crop": null, "id": "garrett-camp"}, {"name": "Des Traynor", "x": 600, "y": 556, "wiki": null, "crop": [0.5, 0.44, 0.85], "url": "https://d33wubrfki0l68.cloudfront.net/adb601e24fbacc9f3fd70ac0187402e6d0c99016/8c969/img/speakers/des.jpg", "source": "https://2013.uxlondon.com/speakers/des", "id": "des-traynor"}, {"name": "Vitalik Buterin", "x": 420, "y": 720, "wiki": "Vitalik Buterin", "crop": null, "id": "vitalik-buterin"}, {"name": "Alex Karp", "x": 1124, "y": 565, "wiki": "Alex Karp", "crop": null, "id": "alex-karp"}, {"name": "Jeff Bezos", "x": 562, "y": 665, "wiki": "Jeff Bezos", "crop": null, "id": "jeff-bezos"}, {"x": 851, "y": 665, "name": "Alexandr Wang", "wiki": "Alexandr Wang", "crop": null, "id": "alexandr-wang"}, {"name": "Bill Gates", "x": 160, "y": 753, "wiki": "Bill Gates", "crop": null, "id": "bill-gates"}, {"name": "Sam Altman", "x": 284, "y": 742, "wiki": "Sam Altman", "crop": null, "id": "sam-altman"}, {"name": "Masayoshi Son", "x": 710, "y": 750, "wiki": "Masayoshi Son", "crop": null, "id": "masayoshi-son"}, {"name": "Elon Musk", "x": 837, "y": 768, "wiki": "Elon Musk", "crop": null, "id": "elon-musk"}, {"name": "Adam Neumann", "x": 991, "y": 750, "wiki": "Adam Neumann", "crop": null, "id": "adam-neumann"}, {"name": "Evan Spiegel", "x": 459, "y": 855, "wiki": "Evan Spiegel", "crop": null, "id": "evan-spiegel"}, {"name": "Chamath Palihapitiya", "x": 771, "y": 895, "wiki": "Chamath Palihapitiya", "crop": null, "id": "chamath-palihapitiya"}, {"name": "Larry Page", "x": 600, "y": 853, "wiki": "Larry Page", "crop": null, "id": "larry-page"}, {"name": "Larry Ellison", "x": 1124, "y": 826, "wiki": "Larry Ellison", "crop": null, "id": "larry-ellison"}, {"x": 99, "y": 947, "name": "Paul Graham", "wiki": "Paul Graham (programmer)", "crop": null, "id": "paul-graham"}, {"name": "Parag Agrawal", "x": 383, "y": 964, "wiki": "Parag Agrawal", "crop": null, "id": "parag-agrawal"}, {"name": "RJ Scaringe", "x": 600, "y": 1000, "wiki": "RJ Scaringe", "crop": null, "id": "rj-scaringe"}, {"name": "Jason Calacanis", "x": 756, "y": 1000, "wiki": "Jason Calacanis", "crop": null, "id": "jason-calacanis"}, {"name": "David Sacks", "x": 934, "y": 967, "wiki": "David Sacks", "crop": null, "id": "david-sacks"}, {"name": "Hiroshi Mikitani", "x": 1065, "y": 960, "wiki": "Hiroshi Mikitani", "crop": null, "id": "hiroshi-mikitani"}, {"name": "Demis Hassabis", "x": 188, "y": 1068, "wiki": "Demis Hassabis", "crop": null, "id": "demis-hassabis"}, {"name": "Dario Amodei", "x": 67, "y": 1100, "wiki": "Dario Amodei", "crop": null, "id": "dario-amodei"}, {"name": "Ilya Sutskever", "x": 472, "y": 1088, "wiki": "Ilya Sutskever", "crop": null, "id": "ilya-sutskever"}, {"name": "Balaji Srinivasan", "x": 892, "y": 1084, "wiki": "Balaji Srinivasan", "crop": null, "id": "balaji-srinivasan"}, {"name": "Travis Kalanick", "x": 1125, "y": 176, "wiki": "Travis Kalanick", "crop": null, "id": "travis-kalanick"}, {"name": "John Ternus", "x": 280, "y": 327, "wiki": "John Ternus", "crop": [0.51, 0.19, 0.48], "url": "https://www.apple.com/newsroom/images/2026/04/tim-cook-to-become-apple-executive-chairman-john-ternus-to-become-apple-ceo/article/Apple-John-Ternus_inline.jpg.large.jpg", "source": "https://www.apple.com/newsroom/2026/04/tim-cook-to-become-apple-executive-chairman-john-ternus-to-become-apple-ceo/", "sourceLabel": "Apple newsroom portrait", "id": "john-ternus"}, {"name": "Jeff Yan", "x": 422, "y": 411, "wiki": null, "crop": null, "url": "https://cdn.prod.website-files.com/6756df8f05088bc3e51c64ea/6a391d928b0e8ea8faa85d7e_Speaker-Name-Jeff-Yan.avif", "source": "https://token2049.com/singapore/speakers", "sourceLabel": "TOKEN2049 speaker portrait", "fallbackPhotos": [{"url": "https://image.fnnews.com/resource/media/image/2026/04/30/202604301502148133_l.png", "source": "https://www.fnnews.com/news/202604301454348265", "sourceLabel": "Financial News / KBW portrait", "crop": [0.5, 0.44, 0.92]}], "id": "jeff-yan"}]}</script>
+<script>
+'use strict';
+
+/*
+ * Standalone founder matrix. No build step or third-party JavaScript.
+ * Edit the JSON in #matrix-data to change the published default roster.
+ * Each visitor's working copy is stored locally; there is no shared backend.
+ */
+const $ = id => document.getElementById(id);
+const CONFIG = JSON.parse($('matrix-data').textContent);
+const STORAGE_KEY = 'founder-matrix:v1:' + CONFIG.layoutId;
+const CACHE_KEY = 'founder-matrix:photo-cache:v1';
+const SIZE = 1200, DIAMETER = 70, AXIS_X = 600, AXIS_Y = 665;
+const LIMITS = {left:48,right:1152,top:160,bottom:1100};
+const MAX_PEOPLE = 200, HISTORY_LIMIT = 30;
+const clone = value => JSON.parse(JSON.stringify(value));
+const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
+const uid = () => (globalThis.crypto?.randomUUID?.() || ('p-' + Date.now().toString(36) + Math.random().toString(36).slice(2)));
+const initials = name => name.trim().split(/\s+/).map(w=>w[0]).filter(Boolean).slice(0,2).join('').toUpperCase();
+const snapshot = () => JSON.stringify(people);
+const imageKey = p => JSON.stringify([p.url||'',p.wiki||'',p.fallbackPhotos||[]]);
+const wikiLink = title => 'https://en.wikipedia.org/wiki/' + encodeURIComponent(title.replaceAll(' ','_'));
+let people = clone(CONFIG.people), selectedId = null, editor = null, drag = null;
+let past = [], future = [], saveTimer, toastTimer, busyPhotos = false;
+let dom = new Map(), media = new Map(), photoCache = {};
+let storageOK = true, loadNotice = '', keyboardBefore = null, keyboardTimer, photoRun = 0;
+let viewScale = 1, resizedUnit = 1, dialogGeneration = 0, exportBusy = false;
+const measure = document.createElement('canvas').getContext('2d');
+
+function safeURL(value,allowData=false){
+  if(typeof value!=='string' || !value) return null;
+  if(allowData && /^data:image\/(jpeg|png|webp|gif|avif);base64,[a-z0-9+/=\s]+$/i.test(value) && value.length<=1200000) return value;
+  try { const u=new URL(value); return ['https:','http:'].includes(u.protocol) && !u.username && !u.password && u.href.length<6000 ? u.href : null; } catch { return null; }
+}
+function cleanCrop(c){return Array.isArray(c)&&c.length===3&&c.every(Number.isFinite)?[clamp(c[0],0,1),clamp(c[1],0,1),clamp(c[2],1/7,1)]:null;}
+function cleanRoster(input){
+  if(!Array.isArray(input) || input.length>MAX_PEOPLE) throw new Error('A layout must contain no more than '+MAX_PEOPLE+' founders.');
+  const ids=new Set(),names=new Set();
+  return input.map((p,i)=>{
+    if(!p || typeof p.name!=='string' || !p.name.trim() || p.name.trim().length>70 || !Number.isFinite(p.x)||!Number.isFinite(p.y)) throw new Error('Founder '+(i+1)+' has an invalid name or position.');
+    const name=p.name.trim(), nameKey=name.toLocaleLowerCase();
+    if(names.has(nameKey))throw new Error('Duplicate founder: '+name); names.add(nameKey);
+    let id=typeof p.id==='string'&&/^[a-zA-Z0-9_-]{1,90}$/.test(p.id)?p.id:uid();
+    if(ids.has(id))id=uid();ids.add(id);
+    const r={id,name,x:clamp(p.x,LIMITS.left,LIMITS.right),y:clamp(p.y,LIMITS.top,LIMITS.bottom),crop:cleanCrop(p.crop),labelAbove:!!p.labelAbove};
+    if(typeof p.wiki==='string'&&p.wiki.length<160)r.wiki=p.wiki;
+    const url=safeURL(p.url,true); if(url)r.url=url;
+    const source=safeURL(p.source); if(source)r.source=source;
+    if(typeof p.sourceLabel==='string')r.sourceLabel=p.sourceLabel.slice(0,100);
+    if(p.local && r.url?.startsWith('data:'))r.local=true;
+    if(Array.isArray(p.fallbackPhotos))r.fallbackPhotos=p.fallbackPhotos.slice(0,3).map(a=>({url:safeURL(a.url),source:safeURL(a.source),sourceLabel:typeof a.sourceLabel==='string'?a.sourceLabel.slice(0,100):'',crop:cleanCrop(a.crop)})).filter(a=>a.url);
+    return r;
+  });
+}
+try{
+  const cached=localStorage.getItem(STORAGE_KEY);
+  if(cached){const data=JSON.parse(cached);if(data.version===1){people=cleanRoster(data.people);loadNotice='Your saved layout is back.';}}
+  const pc=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}');
+  if(pc && typeof pc==='object' && !Array.isArray(pc))photoCache=pc;
+}catch(e){storageOK=false;loadNotice='Browser storage is unavailable or the saved layout could not be read. Your edits still work; export a layout file to keep them.';}
+
+function showToast(message,undoable=false){
+  $('toastText').textContent=message; $('toastUndo').hidden=!undoable; $('toast').hidden=false;
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,undoable?6500:5000);
+}
+function announce(s){$('announcement').textContent=s;}
+function saveLocal(){
+  clearTimeout(saveTimer);
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify({version:1,people}));
+    storageOK=true;$('saveState').textContent='Saved in this browser';$('saveState').classList.remove('warning');
+  }catch(e){
+    storageOK=false;$('saveState').textContent='Not saved · export your layout';$('saveState').classList.add('warning');
+    showToast('Browser storage is unavailable or full. Export your layout file to keep these changes.');
+  }
+}
+function scheduleSave(){
+  $('saveState').textContent='Saving…';
+  clearTimeout(saveTimer);saveTimer=setTimeout(saveLocal,160);
+}
+function updateHistory(){
+  $('undo').disabled=!past.length; $('redo').disabled=!future.length;
+}
+function remember(before){
+  if(before===snapshot())return false;
+  past.push(before);if(past.length>HISTORY_LIMIT)past.shift();future=[];updateHistory();scheduleSave();return true;
+}
+function undo(){
+  finishKeyboard();
+  if(!past.length)return;
+  future.push(snapshot());people=JSON.parse(past.pop());selectedId=null;syncPeople();updateHistory();scheduleSave();loadPhotos();announce('Undone.');
+}
+function redo(){
+  finishKeyboard();
+  if(!future.length)return;
+  past.push(snapshot());people=JSON.parse(future.pop());selectedId=null;syncPeople();updateHistory();scheduleSave();loadPhotos();announce('Redone.');
+}
+function selection(){
+  const p=people.find(p=>p.id===selectedId);
+  $('selectionText').textContent=p?p.name:'Click a face to edit its name or photo.';
+  $('selectionText').style.fontWeight=p?'600':'';
+  $('selectionText').style.color=p?'#171717':'';
+  $('editSelected').hidden=!p;$('removeSelected').hidden=!p;
+  $('keyboardHint').textContent=p?'Arrow keys nudge · Shift moves farther · Enter edits':'Faces snap to the axes. Hold Alt to place freely.';
+  for(const [id,el] of dom)el.classList.toggle('selected',id===selectedId);
+}
+function select(id,focus=false){
+  selectedId=id;selection();
+  if(focus)dom.get(id)?.focus({preventScroll:true});
+}
+function nameLines(name){
+  measure.font='15px "Times New Roman",Times,serif';
+  if(measure.measureText(name).width<=134)return [name];
+  const parts=name.split(/\s+/);if(parts.length<2)return[name];
+  return [parts.slice(0,-1).join(' '),parts.at(-1)];
+}
+function cropBox(image,crop){
+  const w=image.naturalWidth||image.width,h=image.naturalHeight||image.height;
+  const c=crop||[.5,h>w?.32:.43,.9];
+  const side=clamp(Math.min(w,h)*c[2],1,Math.min(w,h));
+  return [clamp(c[0]*w-side/2,0,w-side),clamp(c[1]*h-side/2,0,h-side),side,side];
+}
+function metaCrop(p,m){return p.crop || m?.suggestedCrop || null;}
+function setPosition(el,p){
+  el.style.left=(p.x/12)+'%';el.style.top=(p.y/12)+'%';
+  el.classList.toggle('above',!!p.labelAbove);
+}
+function positionDescription(p){
+  const x=Math.abs(p.x-600)<2?'neutral on beer':p.x<600?'beer sipper':'beer tanker';
+  const y=Math.abs(p.y-665)<2?'neutral hang':p.y<665?'good hang':'bad hang';
+  return p.name+', '+y+', '+x+'. Drag to move. Press Enter to edit, or use arrow keys to move.';
+}
+function paintPerson(p){
+  const el=dom.get(p.id);if(!el)return;
+  setPosition(el,p);
+  el.setAttribute('aria-label',positionDescription(p));
+  const label=el.querySelector('.name');label.replaceChildren(...nameLines(p.name).map(line=>{const span=document.createElement('span');span.textContent=line;return span;}));
+  const frame=el.querySelector('.portrait'),m=media.get(p.id);
+  if(m?.image && m.key===imageKey(p)){
+    let img=frame.querySelector('img');if(!img){frame.replaceChildren();img=document.createElement('img');img.alt='';img.draggable=false;frame.append(img);}
+    if(img.getAttribute('src')!==m.image.src)img.src=m.image.src;
+    const [sx,sy,side]=cropBox(m.image,metaCrop(p,m));
+    img.style.width=(m.image.naturalWidth/side*100)+'%';img.style.height=(m.image.naturalHeight/side*100)+'%';
+    img.style.left=(-sx/side*100)+'%';img.style.top=(-sy/side*100)+'%';
+    el.dataset.photo=m.safe?'ready':'preview';
+  }else{
+    frame.replaceChildren();
+    const span=document.createElement('span');span.className='initials';span.textContent=initials(p.name);frame.append(span);
+    el.dataset.photo=m?.status==='failed'?'missing':'pending';
+  }
+}
+function syncPeople(){
+  const ids=new Set(people.map(p=>p.id));
+  for(const[id,el]of dom)if(!ids.has(id)){el.remove();dom.delete(id);}
+  for(const p of people){
+    if(!dom.has(p.id)){
+      const el=document.createElement('button');el.type='button';el.className='founder';el.dataset.id=p.id;
+      const frame=document.createElement('span');frame.className='portrait';
+      const name=document.createElement('span');name.className='name';
+      el.append(frame,name);$('people').append(el);dom.set(p.id,el);
+    }
+    paintPerson(p);
+  }
+  $('founderCount').textContent=people.length+' founders';
+  if(selectedId&&!ids.has(selectedId))selectedId=null;
+  selection();photoStatus();
+}
+function photoStatus(){
+  const loaded=people.filter(p=>media.get(p.id)?.image).length;
+  const missing=people.filter(p=>media.get(p.id)?.status==='failed').length;
+  $('photoStatus').textContent=loaded+' / '+people.length+' photos'+(busyPhotos?' loading':missing?' · '+missing+' unavailable':'');
+  if($('creditsDialog').open)renderCredits();
+}
+function resize(){
+  resizedUnit=$('board').getBoundingClientRect().width/1200;
+  $('board').style.setProperty('--unit',resizedUnit+'px');
+}
+const observer=new ResizeObserver(resize);observer.observe($('board'));
+function setZoom(value){
+  viewScale=value;$('board').style.width=(value*100)+'%';resize();
+}
+$('zoom').addEventListener('change',()=>setZoom(Number($('zoom').value)));
+
+function boardPoint(e){
+  const r=$('board').getBoundingClientRect();
+  return {x:(e.clientX-r.left)*SIZE/r.width,y:(e.clientY-r.top)*SIZE/r.height};
+}
+function snapPosition(x,y,free=false){
+  let sx=false,sy=false;
+  if(!free){if(Math.abs(x-600)<=9){x=600;sx=true;}if(Math.abs(y-665)<=9){y=665;sy=true;}}
+  return {x:clamp(x,LIMITS.left,LIMITS.right),y:clamp(y,LIMITS.top,LIMITS.bottom),sx,sy};
+}
+$('people').addEventListener('pointerdown',e=>{
+  const el=e.target.closest('.founder');
+  if(!el || (e.pointerType==='mouse'&&e.button!==0)||drag)return;
+  finishKeyboard();
+  const p=people.find(p=>p.id===el.dataset.id);if(!p)return;
+  e.preventDefault();select(p.id,true);
+  const pt=boardPoint(e);
+  drag={id:p.id,el,pointerId:e.pointerId,before:snapshot(),originX:p.x,originY:p.y,offsetX:pt.x-p.x,offsetY:pt.y-p.y,clientX:e.clientX,clientY:e.clientY,moved:false};
+  try{el.setPointerCapture(e.pointerId);}catch{}
+});
+$('people').addEventListener('pointermove',e=>{
+  if(!drag||e.pointerId!==drag.pointerId)return;
+  e.preventDefault();
+  if(!drag.moved && Math.hypot(e.clientX-drag.clientX,e.clientY-drag.clientY)<4)return;
+  drag.moved=true;drag.el.classList.add('dragging');
+  const p=people.find(p=>p.id===drag.id),pt=boardPoint(e);
+  const v=snapPosition(pt.x-drag.offsetX,pt.y-drag.offsetY,e.altKey);
+  p.x=Math.round(v.x*10)/10;p.y=Math.round(v.y*10)/10;
+  setPosition(drag.el,p);
+  $('snapX').classList.toggle('active',v.sx);$('snapY').classList.toggle('active',v.sy);
+});
+function finishDrag(e,cancel=false){
+  if(!drag||e&&e.pointerId!==drag.pointerId)return;
+  const d=drag;drag=null;
+  d.el.classList.remove('dragging');
+  $('snapX').classList.remove('active');$('snapY').classList.remove('active');
+  try{if(d.el.hasPointerCapture(d.pointerId))d.el.releasePointerCapture(d.pointerId);}catch{}
+  if(cancel){const p=people.find(p=>p.id===d.id);p.x=d.originX;p.y=d.originY;paintPerson(p);return;}
+  if(d.moved){remember(d.before);paintPerson(people.find(p=>p.id===d.id));announce('Moved '+people.find(p=>p.id===d.id).name+'.');}
+  else openEditor(d.id);
+}
+$('people').addEventListener('pointerup',e=>finishDrag(e));
+$('people').addEventListener('pointercancel',e=>finishDrag(e,true));
+$('people').addEventListener('lostpointercapture',e=>{if(drag&&drag.pointerId===e.pointerId)finishDrag(e,true);});
+$('people').addEventListener('click',e=>{if(e.detail===0){const el=e.target.closest('.founder');if(el)openEditor(el.dataset.id);}});
+$('board').addEventListener('pointerdown',e=>{if(!e.target.closest('.founder'))select(null);});
+function finishKeyboard(){
+  clearTimeout(keyboardTimer);
+  if(keyboardBefore!==null){remember(keyboardBefore);keyboardBefore=null;}
+}
+$('people').addEventListener('keydown',e=>{
+  const el=e.target.closest('.founder');if(!el)return;
+  const p=people.find(p=>p.id===el.dataset.id);if(!p)return;
+  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){
+    e.preventDefault();select(p.id);if(keyboardBefore===null)keyboardBefore=snapshot();
+    const d=e.shiftKey?20:5;
+    p.x=clamp(p.x+(e.key==='ArrowRight'?d:e.key==='ArrowLeft'?-d:0),LIMITS.left,LIMITS.right);
+    p.y=clamp(p.y+(e.key==='ArrowDown'?d:e.key==='ArrowUp'?-d:0),LIMITS.top,LIMITS.bottom);
+    paintPerson(p);clearTimeout(keyboardTimer);keyboardTimer=setTimeout(finishKeyboard,300);
+  }else if(e.key==='Delete'||e.key==='Backspace'){
+    e.preventDefault();removePerson(p.id);
+  }else if(e.key==='Escape'){select(null);el.blur();}
+});
+$('people').addEventListener('focusin',e=>{const el=e.target.closest('.founder');if(el)select(el.dataset.id);});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    $('moreMenu').open=false;closeSearch();
+    if(drag){e.preventDefault();finishDrag(null,true);}
+  }
+  if(e.target.closest('input,textarea,select,[contenteditable=true]') || $('founderDialog').open || $('creditsDialog').open)return;
+  const modifier=e.ctrlKey||e.metaKey;
+  if(modifier&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();}
+  if(modifier&&e.key.toLowerCase()==='y'){e.preventDefault();redo();}
+});
+function removePerson(id){
+  finishKeyboard();
+  const p=people.find(p=>p.id===id);if(!p)return;
+  const before=snapshot();people=people.filter(p=>p.id!==id);
+  if(selectedId===id)selectedId=null;syncPeople();remember(before);showToast(p.name+' removed.',true);
+}
+function closeSearch(){$('searchResults').hidden=true;$('search').setAttribute('aria-expanded','false');}
+function search(){
+  const term=$('search').value.trim().toLocaleLowerCase();
+  const matches=people.filter(p=>p.name.toLocaleLowerCase().includes(term)).slice(0,12);
+  const r=$('searchResults');r.replaceChildren();
+  if(!matches.length){const empty=document.createElement('p');empty.textContent='No matches. Add someone new above.';r.append(empty);}
+  for(const p of matches){
+    const b=document.createElement('button');b.type='button';b.textContent=p.name;
+    b.onclick=()=>{$('search').value='';closeSearch();select(p.id,true);dom.get(p.id)?.scrollIntoView({block:'nearest',inline:'nearest'});openEditor(p.id);};
+    r.append(b);
+  }
+  r.hidden=false;$('search').setAttribute('aria-expanded','true');
+}
+$('search').addEventListener('input',search);$('search').addEventListener('focus',search);
+$('search').addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'){e.preventDefault();$('searchResults').querySelector('button')?.focus();}
+  if(e.key==='Escape')closeSearch();
+});
+document.addEventListener('pointerdown',e=>{
+  if(!e.target.closest('.finder'))closeSearch();
+  if(!e.target.closest('#moreMenu'))$('moreMenu').open=false;
+});
+
+async function fetchJSON(url,timeout=10000){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);
+  try{const r=await fetch(url,{signal:controller.signal,credentials:'omit',referrerPolicy:'no-referrer'});if(!r.ok)throw new Error('The photo source returned '+r.status+'.');return await r.json();}
+  finally{clearTimeout(timer);}
+}
+function loadImage(url,cors=true,timeout=8500){
+  return new Promise((resolve,reject)=>{
+    const image=new Image();if(cors)image.crossOrigin='anonymous';image.referrerPolicy='no-referrer';
+    const timer=setTimeout(()=>{image.onload=null;image.onerror=null;image.src='';reject(new Error('Photo download timed out.'));},timeout);
+    image.onload=()=>{clearTimeout(timer);if(image.naturalWidth)resolve(image);else reject(new Error('This file is not a readable image.'));};
+    image.onerror=()=>{clearTimeout(timer);reject(new Error('Photo unavailable or blocked by its host.'));};image.src=url;
+  });
+}
+function cachePhoto(wiki,r){photoCache[wiki]={...r,at:Date.now()};}
+function cachedPhoto(wiki){
+  const r=photoCache[wiki];return r&&Date.now()-r.at<7*24*60*60*1000&&safeURL(r.url)?r:null;
+}
+function savePhotoCache(){
+  try{
+    const entries=Object.entries(photoCache).filter(([,v])=>v&&Date.now()-v.at<7*24*60*60*1000).slice(-250);
+    localStorage.setItem(CACHE_KEY,JSON.stringify(Object.fromEntries(entries)));
+  }catch{}
+}
+async function wikiBatch(titles){
+  const params=new URLSearchParams({action:'query',format:'json',formatversion:'2',origin:'*',prop:'pageimages',piprop:'thumbnail|name|original',pilicense:'any',pithumbsize:'600',pilimit:'50',redirects:'1',titles:titles.join('|')});
+  const result=await fetchJSON('https://en.wikipedia.org/w/api.php?'+params);
+  if(result.error)throw new Error(result.error.info||'Wikipedia lookup failed.');
+  const q=result.query||{},aliases=new Map([...(q.normalized||[]),...(q.redirects||[])].map(r=>[r.from,r.to])),res=new Map();
+  for(const title of titles){
+    let n=title;for(let i=0;i<8&&aliases.has(n);i++)n=aliases.get(n);
+    const page=(q.pages||[]).find(p=>p.title===n),url=safeURL(page?.thumbnail?.source||page?.original?.source);
+    if(url){const r={url,source:wikiLink(page.title),sourceLabel:'Wikipedia',fileName:page.pageimage||null};cachePhoto(title,r);res.set(title,r);}
+  }
+  savePhotoCache();return res;
+}
+async function lookupWiki(name){
+  const cached=cachedPhoto(name);if(cached)return cached;
+  const result=await wikiBatch([name]),found=result.get(name);
+  if(!found)throw new Error('No photo found for that name. Upload a headshot or paste an image URL.');
+  return found;
+}
+async function pool(items,fn,limit=6){
+  let cursor=0;
+  async function worker(){while(cursor<items.length)await fn(items[cursor++]);}
+  await Promise.all(Array.from({length:Math.min(limit,items.length)},worker));
+}
+let queuePhotoPass=false;
+async function loadPhotos(force=false){
+  if(busyPhotos){queuePhotoPass=true;return;}
+  busyPhotos=true;photoStatus();
+  const pending=people.filter(p=>{
+    const m=media.get(p.id);
+    return !m||m.key!==imageKey(p)||(force&&(!m.image||!m.safe));
+  });
+  const unresolved=[...new Set(pending.filter(p=>!p.url&&p.wiki&&!cachedPhoto(p.wiki)).map(p=>p.wiki))];
+  for(const p of pending)media.set(p.id,{key:imageKey(p),status:'loading',safe:false,source:p.source||(p.wiki?wikiLink(p.wiki):null)});
+  for(let i=0;i<unresolved.length;i+=50){try{await wikiBatch(unresolved.slice(i,i+50));}catch{}}
+  await pool(pending,async p=>{
+    const key=imageKey(p),m=media.get(p.id);
+    if(!m||m.key!==key)return;
+    const wiki=p.wiki?cachedPhoto(p.wiki):null;
+    const candidates=[];
+    if(p.url)candidates.push({url:p.url,source:p.source,sourceLabel:p.sourceLabel,crop:p.crop});
+    else if(wiki)candidates.push(wiki);
+    candidates.push(...(p.fallbackPhotos||[]));
+    if(p.url&&wiki&&wiki.url!==p.url)candidates.push(wiki);
+    let found=null,lastError='No photo added.',firstPreview=null;
+    for(const c of candidates){
+      if(!safeURL(c.url,true))continue;
+      try{const image=await loadImage(c.url);found={image,safe:true,...c};break;}
+      catch(e){lastError=e.message;if(!firstPreview)firstPreview=c;}
+    }
+    // Preview-only images are never drawn to the export canvas: that would taint it.
+    if(!found&&firstPreview){
+      try{found={...firstPreview,image:await loadImage(firstPreview.url,false,6000),safe:false};}
+      catch(e){lastError=e.message;}
+    }
+    if(media.get(p.id)!==m)return; // A photo was replaced while this request was running.
+    const current=people.find(a=>a.id===p.id);
+    if(!current||imageKey(current)!==key)return;
+    if(found){
+      Object.assign(m,{image:found.image,safe:found.safe,status:found.safe?'ready':'preview',url:found.url,source:found.source||(p.wiki?wikiLink(p.wiki):null),sourceLabel:found.sourceLabel||(p.local?'Uploaded photo':p.wiki?'Wikipedia':'Photo source'),suggestedCrop:found.crop||null,fileName:found.fileName||null,error:found.safe?'':'Visible here, but this host blocks PNG export. Upload the photo to include it in the PNG.'});
+    }else Object.assign(m,{status:'failed',safe:false,error:p.wiki&&!p.url&&!wiki?'Wikipedia photo lookup unavailable. Upload a photo or retry.':lastError});
+    paintPerson(current);
+    if(editor?.originalId===current.id && !editor.busy && imageKey(editor.person)===imageKey(current)){
+      editor.meta=m;setCropControls();drawPreview();photoFeedback();
+    }
+    photoStatus();
+  });
+  busyPhotos=false;photoStatus();
+  if(queuePhotoPass){queuePhotoPass=false;loadPhotos();}
+}
+function renderCredits(){
+  const list=$('creditList');list.replaceChildren();
+  for(const p of people){
+    const m=media.get(p.id),row=document.createElement('div');row.className='credit-row';
+    const info=document.createElement('div'),name=document.createElement('div'),status=document.createElement('div');
+    name.textContent=p.name;status.className='photo-state';
+    status.textContent=m?.status==='ready'?'Photo ready':m?.status==='preview'?'View only · upload for PNG':m?.status==='loading'?'Loading…':'No photo · initials shown';
+    if(m?.error)status.title=m.error;info.append(name,status);
+    const links=document.createElement('div'),source=safeURL(m?.source||p.source||(p.wiki?wikiLink(p.wiki):null));
+    if(source){const a=document.createElement('a');a.href=source;a.target='_blank';a.rel='noopener noreferrer';a.textContent=m?.sourceLabel||p.sourceLabel||'Photo source';links.append(a);}
+    else{const s=document.createElement('span');s.className='small';s.textContent=p.local?'Your upload':'—';links.append(s);}
+    if(m?.fileName){const a=document.createElement('a');a.href='https://commons.wikimedia.org/wiki/'+encodeURIComponent('File:'+m.fileName);a.target='_blank';a.rel='noopener noreferrer';a.textContent='Image / license';a.style.display='block';a.style.marginTop='4px';links.append(a);}
+    const b=document.createElement('button');b.className='btn';b.type='button';b.textContent='Edit';b.onclick=()=>{$('creditsDialog').close();openEditor(p.id);};
+    row.append(info,links,b);list.append(row);
+  }
+}
+function showCredits(){closeMenus();renderCredits();$('creditsDialog').showModal();}
+function drawPhoto(ctx,p,m,x,y,d,allowUnsafe=false){
+  ctx.save();ctx.beginPath();ctx.arc(x,y,d/2,0,Math.PI*2);ctx.clip();
+  if(m?.image&&(m.safe||allowUnsafe)){
+    const box=cropBox(m.image,metaCrop(p,m));ctx.drawImage(m.image,...box,x-d/2,y-d/2,d,d);
+  }else{
+    ctx.fillStyle='#efefea';ctx.fillRect(x-d/2,y-d/2,d,d);
+    ctx.fillStyle='#8c8c83';ctx.font=(d*.315)+'px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(initials(p.name),x,y);
+  }
+  ctx.restore();ctx.beginPath();ctx.arc(x,y,d/2,0,Math.PI*2);ctx.strokeStyle='#fff';ctx.lineWidth=d/35;ctx.stroke();
+}
+function xToSlider(x){return (x-600)/5.52;}
+function sliderToX(v){return 600+Number(v)*5.52;}
+function yToSlider(y){return y<665?(665-y)/5.05:(665-y)/4.35;}
+function sliderToY(v){return 665-Number(v)*(Number(v)>=0?5.05:4.35);}
+function setCropControls(){
+  if(!editor)return;
+  const image=editor.meta?.image,c=editor.person.crop||editor.meta?.suggestedCrop||[.5,image&&image.naturalHeight>image.naturalWidth?.32:.43,.9];
+  $('cropX').value=c[0];$('cropY').value=c[1];$('cropZoom').value=1/c[2];
+  cropValues();
+}
+function cropValues(){
+  $('cropXValue').textContent=Math.round(Number($('cropX').value)*100)+'%';
+  $('cropYValue').textContent=Math.round(Number($('cropY').value)*100)+'%';
+  $('cropZoomValue').textContent=Number($('cropZoom').value).toFixed(1)+'×';
+}
+function drawPreview(){
+  if(!editor)return;
+  // Resizing also clears any taint left by a preview-only external photo.
+  const c=$('photoPreview');c.width=240;c.height=240;
+  const ctx=c.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,240,240);
+  drawPhoto(ctx,{...editor.person,name:$('founderName').value||'?'},editor.meta,120,120,236,true);
+}
+function photoFeedback(){
+  const m=editor?.meta;
+  $('photoFeedback').textContent=m?.image?(m.safe?'Photo ready. Use the crop controls to frame the face.':'This photo is visible, but its host blocks PNG export. Upload a copy to include it in the PNG.'):'A photo is optional. Initials appear until one is added.';
+}
+function openEditor(id=null){
+  finishKeyboard();closeSearch();closeMenus();
+  if(!id&&people.length>=MAX_PEOPLE){showToast('This matrix supports up to '+MAX_PEOPLE+' founders. Remove one before adding another.');return;}
+  const existing=id?people.find(p=>p.id===id):null;
+  if(id&&!existing)return;
+  const p=existing?clone(existing):{id:uid(),name:'',x:600,y:665,crop:null,labelAbove:false};
+  editor={person:p,originalId:existing?.id||null,meta:existing?media.get(id):null,generation:++dialogGeneration,busy:false};
+  $('dialogTitle').textContent=existing?'Edit founder':'Add a founder';
+  $('dialogSubtitle').textContent=existing?'Change the photo, name, or placement.':'A name, a face, a questionable placement.';
+  $('founderName').value=p.name;$('photoURL').value=p.url&&!p.url.startsWith('data:')?p.url:'';
+  $('photoFile').value='';$('formError').hidden=true;$('cropControls').open=false;
+  $('labelAbove').checked=!!p.labelAbove;
+  $('positionX').value=xToSlider(p.x);$('positionY').value=yToSlider(p.y);
+  $('removeFounder').hidden=!existing;$('saveFounder').textContent=existing?'Save changes':'Add founder';$('saveFounder').disabled=false;
+  $('loadPhotoURL').disabled=false;$('wikiPhoto').disabled=false;$('choosePhoto').disabled=false;
+  setCropControls();drawPreview();photoFeedback();
+  $('founderDialog').showModal();
+  if(!existing)$('founderName').focus();else $('saveFounder').focus();
+}
+function setFormError(message){$('formError').textContent=message;$('formError').hidden=!message;}
+function setPhotoBusy(value){
+  if(!editor)return;editor.busy=value;
+  $('saveFounder').disabled=value;$('loadPhotoURL').disabled=value;$('wikiPhoto').disabled=value;$('choosePhoto').disabled=value;
+}
+async function changeDraftPhoto(factory){
+  if(!editor||editor.busy)return false;
+  const draft=editor;setFormError('');setPhotoBusy(true);$('photoFeedback').textContent='Loading photo…';
+  try{
+    const result=await factory();
+    if(editor!==draft||!$('founderDialog').open)return false;
+    const p=draft.person;
+    Object.assign(p,{url:result.url,source:result.source||null,sourceLabel:result.sourceLabel||null,crop:null,wiki:result.wiki||null,local:!!result.local});
+    delete p.fallbackPhotos;
+    draft.meta={image:result.image,safe:result.safe,status:result.safe?'ready':'preview',key:imageKey(p),url:result.url,source:result.source||null,sourceLabel:result.sourceLabel||null,fileName:result.fileName||null};
+    $('photoURL').value=result.url.startsWith('data:')?'':result.url;
+    setCropControls();drawPreview();photoFeedback();return true;
+  }catch(e){if(editor===draft){setFormError(e.message||'Could not load this photo.');photoFeedback();}return false;}
+  finally{if(editor===draft)setPhotoBusy(false);}
+}
+async function getRemotePhoto(url){
+  const safe=safeURL(url);if(!safe)throw new Error('Use a complete http:// or https:// image URL.');
+  try{return{url:safe,image:await loadImage(safe),safe:true,source:safe,sourceLabel:'Image source'};}
+  catch{try{return{url:safe,image:await loadImage(safe,false,6000),safe:false,source:safe,sourceLabel:'Image source'};}catch{throw new Error('That image could not be loaded. Try uploading the photo instead.');}}
+}
+async function filePhoto(file){
+  if(file.size>12*1024*1024)throw new Error('Choose an image smaller than 12 MB.');
+  if(!['image/jpeg','image/png','image/webp','image/gif','image/avif'].includes(file.type))throw new Error('Use a JPG, PNG, WebP, GIF, or AVIF image.');
+  const u=URL.createObjectURL(file);
+  try{
+    const original=await loadImage(u);
+    const scale=Math.min(1,640/Math.max(original.naturalWidth,original.naturalHeight));
+    const c=document.createElement('canvas');c.width=Math.max(1,Math.round(original.naturalWidth*scale));c.height=Math.max(1,Math.round(original.naturalHeight*scale));
+    const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(original,0,0,c.width,c.height);
+    const url=c.toDataURL('image/jpeg',.9);
+    return{url,image:await loadImage(url),safe:true,source:null,sourceLabel:'Uploaded photo',local:true};
+  }finally{URL.revokeObjectURL(u);}
+}
+$('choosePhoto').onclick=()=>$('photoFile').click();
+$('photoFile').onchange=e=>{const f=e.target.files?.[0];if(f)changeDraftPhoto(()=>filePhoto(f));};
+$('loadPhotoURL').onclick=()=>changeDraftPhoto(()=>getRemotePhoto($('photoURL').value.trim()));
+$('wikiPhoto').onclick=()=>{
+  const name=$('founderName').value.trim();
+  if(!name){setFormError('Enter a name first.');$('founderName').focus();return;}
+  changeDraftPhoto(async()=>{const r=await lookupWiki(name),photo=await getRemotePhoto(r.url);return{...photo,...r,wiki:name};});
+};
+$('founderName').oninput=drawPreview;
+for(const id of ['cropX','cropY','cropZoom'])$(id).oninput=()=>{
+  if(!editor)return;
+  editor.person.crop=[Number($('cropX').value),Number($('cropY').value),1/Number($('cropZoom').value)];
+  cropValues();drawPreview();
+};
+$('resetCrop').onclick=()=>{if(editor){editor.person.crop=null;setCropControls();drawPreview();}};
+$('positionX').oninput=()=>{if(editor)editor.person.x=Math.round(sliderToX($('positionX').value)*10)/10;};
+$('positionY').oninput=()=>{if(editor)editor.person.y=Math.round(sliderToY($('positionY').value)*10)/10;};
+$('founderForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!editor||editor.busy)return;
+  const draft=editor,name=$('founderName').value.trim();
+  if(!name){setFormError('Enter a name.');return;}
+  if(people.some(p=>p.id!==draft.originalId&&p.name.toLocaleLowerCase()===name.toLocaleLowerCase())){setFormError('That founder is already on the matrix. Find them using search.');return;}
+  const typed=$('photoURL').value.trim();
+  if(typed&&typed!==draft.person.url){if(!await changeDraftPhoto(()=>getRemotePhoto(typed)))return;}
+  if(editor!==draft)return;
+  const before=snapshot();
+  draft.person.name=name;draft.person.labelAbove=$('labelAbove').checked;
+  if(draft.originalId){people=people.map(p=>p.id===draft.originalId?clone(draft.person):p);}
+  else people.push(clone(draft.person));
+  if(draft.meta?.image)media.set(draft.person.id,{...draft.meta,key:imageKey(draft.person)});
+  selectedId=draft.person.id;$('founderDialog').close();editor=null;
+  syncPeople();remember(before);loadPhotos();
+  dom.get(selectedId)?.focus({preventScroll:true});
+  showToast(draft.originalId?'Founder updated.':'Founder added. Drag them to their rightful spot.',true);
+});
+$('removeFounder').onclick=()=>{if(editor?.originalId){const id=editor.originalId;$('founderDialog').close();editor=null;removePerson(id);}};
+$('founderDialog').addEventListener('close',()=>{editor=null;dialogGeneration++;});
+for(const button of document.querySelectorAll('[data-close]'))button.onclick=()=>$(button.dataset.close).close();
+
+function closeMenus(){$('moreMenu').open=false;}
+function downloadBlob(blob,name){
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=name;a.style.display='none';document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+function exportedLayout(){return{type:'tech-founder-beer-matrix',version:1,exportedAt:new Date().toISOString(),people:clone(people)};}
+function exportLayout(){
+  finishKeyboard();closeMenus();
+  downloadBlob(new Blob([JSON.stringify(exportedLayout(),null,2)],{type:'application/json'}),'my-founder-matrix.json');
+  showToast('Layout exported. The file includes placements and any photos you uploaded.');
+}
+async function importLayout(file){
+  if(!file)return;
+  try{
+    if(file.size>16*1024*1024)throw new Error('Choose a layout file smaller than 16 MB.');
+    const data=JSON.parse(await file.text());
+    if(data.type!=='tech-founder-beer-matrix'||data.version!==1)throw new Error('Choose a layout exported from this matrix.');
+    const next=cleanRoster(data.people);
+    if(!confirm('Replace your current layout with this file? You can undo this change.'))return;
+    finishKeyboard();const before=snapshot();people=next;selectedId=null;syncPeople();remember(before);loadPhotos();showToast('Layout imported.',true);
+  }catch(e){showToast(e.message||'This layout file could not be imported.');}
+  finally{$('layoutFile').value='';}
+}
+function resetLayout(){
+  closeMenus();
+  if(!confirm('Reset everyone to the original lineup and positions? Your added founders will be removed. You can undo this change.'))return;
+  finishKeyboard();const before=snapshot();people=clone(CONFIG.people);selectedId=null;syncPeople();remember(before);loadPhotos();showToast('Original lineup restored.',true);
+}
+function downloadHTML(){
+  finishKeyboard();closeMenus();
+  const doc=document.documentElement.cloneNode(true);
+  doc.classList.remove('embed');
+  const data={version:1,layoutId:'published-'+uid(),people:clone(people)};
+  doc.querySelector('#matrix-data').textContent=JSON.stringify(data).replace(/</g,'\\u003c');
+  doc.querySelector('#people').replaceChildren();
+  doc.querySelector('#searchResults').replaceChildren();
+  doc.querySelector('#searchResults').hidden=true;
+  doc.querySelector('#creditList').replaceChildren();
+  doc.querySelector('#toast').hidden=true;
+  doc.querySelectorAll('dialog[open],details[open]').forEach(el=>el.removeAttribute('open'));
+  doc.querySelector('#board').style.width='100%';
+  doc.querySelector('#board').style.removeProperty('--unit');
+  doc.querySelectorAll('.axis-glow').forEach(el=>el.classList.remove('active'));
+  doc.querySelector('#selectionText').textContent='Click a face to edit its name or photo.';
+  doc.querySelector('#editSelected').hidden=true;doc.querySelector('#removeSelected').hidden=true;
+  doc.querySelector('#saveState').textContent='Original layout';
+  doc.querySelector('#saveState').classList.remove('warning');
+  doc.querySelector('#photoStatus').textContent='Loading headshots…';
+  doc.querySelector('#undo').disabled=true;doc.querySelector('#redo').disabled=true;
+  // No user content is interpolated into executable JavaScript.
+  downloadBlob(new Blob(['<!doctype html>\n'+doc.outerHTML],{type:'text/html;charset=utf-8'}),'cheeky-pint-matrix.html');
+  showToast('HTML exported with your current lineup as its default.');
+}
+function canvasText(ctx,s,x,y,font){
+  ctx.fillStyle='#111';ctx.font=font;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(s,x,y);
+}
+function arrow(ctx,x1,y1,x2,y2){
+  ctx.strokeStyle='#171717';ctx.fillStyle='#171717';ctx.lineWidth=1.7;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1),d=11;ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-d*Math.cos(a-.48),y2-d*Math.sin(a-.48));ctx.lineTo(x2-d*Math.cos(a+.48),y2-d*Math.sin(a+.48));ctx.closePath();ctx.fill();
+}
+function drawExport(roster,imageMap){
+  const c=document.createElement('canvas');c.width=3600;c.height=3600;
+  const ctx=c.getContext('2d');ctx.scale(3,3);ctx.fillStyle='#fff';ctx.fillRect(0,0,1200,1200);
+  canvasText(ctx,'The Tech Founder Beer Matrix',600,44,'bold 48px "Times New Roman",Times,serif');
+  canvasText(ctx,'GOOD HANG',600,127,'bold 25px "Times New Roman",Times,serif');
+  canvasText(ctx,'BAD HANG',600,1157,'bold 25px "Times New Roman",Times,serif');
+  arrow(ctx,600,665,600,180);arrow(ctx,600,665,600,1126);arrow(ctx,600,665,1090,665);arrow(ctx,600,665,108,665);
+  canvasText(ctx,'BEER',48,653,'bold 23px "Times New Roman",Times,serif');
+  canvasText(ctx,'SIPPERS',48,677,'bold 21px "Times New Roman",Times,serif');
+  canvasText(ctx,'BEER',1151,653,'bold 23px "Times New Roman",Times,serif');
+  canvasText(ctx,'TANKERS',1151,677,'bold 20px "Times New Roman",Times,serif');
+  for(const p of roster){
+    drawPhoto(ctx,p,imageMap.get(p.id),p.x,p.y,DIAMETER);
+    const lines=nameLines(p.name);
+    lines.forEach((line,i)=>{
+      const y=p.labelAbove?p.y-DIAMETER/2-14-(lines.length-1-i)*16:p.y+DIAMETER/2+14+i*16;
+      ctx.font='15px "Times New Roman",Times,serif';const w=ctx.measureText(line).width;
+      ctx.fillStyle='white';ctx.fillRect(p.x-w/2-3,y-8,w+6,16);
+      canvasText(ctx,line,p.x,y,'15px "Times New Roman",Times,serif');
+    });
+  }
+  return c;
+}
+async function savePNG(){
+  if(exportBusy)return;finishKeyboard();
+  const roster=clone(people),imageMap=new Map(media);
+  const notReady=roster.filter(p=>!imageMap.get(p.id)?.image||!imageMap.get(p.id)?.safe);
+  if(notReady.length&&!confirm(notReady.length+' photo'+(notReady.length===1?' is':'s are')+' missing or blocked for export. Save using initials for those founders? To include their photos instead, upload replacements in the editor.'))return;
+  exportBusy=true;$('exportPNG').disabled=true;
+  try{
+    const canvas=drawExport(roster,imageMap);
+    const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('The browser could not create the PNG.')),'image/png'));
+    const name='my-tech-founder-beer-matrix.png';
+    const file=new File([blob],name,{type:'image/png'});
+    if(/iPhone|iPad|iPod/.test(navigator.userAgent)&&navigator.canShare?.({files:[file]})){
+      try{await navigator.share({files:[file],title:'The Tech Founder Beer Matrix'});return;}catch(e){if(e.name==='AbortError')return;}
+    }
+    downloadBlob(blob,name);showToast('PNG saved at 3600 × 3600.');
+  }catch(e){showToast('PNG export failed: '+e.message);}
+  finally{exportBusy=false;$('exportPNG').disabled=false;}
+}
+$('addFounder').onclick=()=>openEditor();
+$('editSelected').onclick=()=>{if(selectedId)openEditor(selectedId);};
+$('removeSelected').onclick=()=>{if(selectedId)removePerson(selectedId);};
+$('undo').onclick=undo;$('redo').onclick=redo;$('toastUndo').onclick=()=>{undo();$('toast').hidden=true;};
+$('exportPNG').onclick=savePNG;$('exportLayout').onclick=exportLayout;
+$('importLayout').onclick=()=>{closeMenus();$('layoutFile').click();};
+$('layoutFile').onchange=e=>importLayout(e.target.files?.[0]);
+$('downloadHTML').onclick=downloadHTML;$('resetLayout').onclick=resetLayout;
+$('showCredits').onclick=showCredits;$('footerCredits').onclick=showCredits;
+function retryPhotos(){
+  closeMenus();
+  // Do not send simultaneous duplicate requests.
+  if(busyPhotos){showToast('Photos are still loading.');return;}
+  showToast('Retrying unavailable photos…');loadPhotos(true);
+}
+$('retryPhotos').onclick=retryPhotos;$('retryFromCredits').onclick=retryPhotos;
+window.addEventListener('pagehide',()=>{if(saveTimer){clearTimeout(saveTimer);saveLocal();}});
+if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');
+function reportHeight(){
+  if(window.parent!==window)window.parent.postMessage({type:'founder-matrix:height',height:Math.ceil(document.querySelector('.app').getBoundingClientRect().height)},'*');
+}
+new ResizeObserver(()=>requestAnimationFrame(reportHeight)).observe(document.body);
+syncPeople();resize();updateHistory();
+$('saveState').textContent=loadNotice&&storageOK?'Saved layout restored':storageOK?'Original layout':'Not saved · export your layout';
+$('saveState').classList.toggle('warning',!storageOK);
+if(loadNotice&&!storageOK)showToast(loadNotice);
+loadPhotos();
+</script>
+</body>
+</html>
