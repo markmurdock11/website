@@ -490,7 +490,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-11.1">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-11.2">
   <header class="nb-header">
     <div><p class="nb-eyebrow">Kram + Emma</p><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">new game</button>
@@ -1625,15 +1625,15 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
   function receipt(view) {
     const r = view.receipt, target = fields.settlement; target.replaceChildren();
     target.setAttribute('aria-label', r.kind === 'expense' ? 'Your expense receipt' : 'Your sale receipt');
-    target.append(el('p', 'nb-settlement-company', r.companyName), el('h2', 'nb-settlement-title', r.headline), el('p', 'nb-settlement-story', r.body));
-    const cash = el('p', 'nb-settlement-cash', money(r.kind === 'expense' ? Math.abs(r.cashChange) : r.received)); cash.append(el('small', '', r.kind === 'expense' ? 'Paid from your bank' : 'Cash received before equity tax')); target.append(cash);
+    target.append(el('p', 'nb-settlement-company', r.companyName), el('h2', 'nb-settlement-title', r.headline), el('p', 'nb-settlement-story', r.kind === 'expense' || r.body === 'Your payout is below.' ? '' : r.body));
+    const cash = el('p', 'nb-settlement-cash', money(r.kind === 'expense' ? Math.abs(r.cashChange) : r.received)); cash.append(el('small', '', r.kind === 'expense' ? 'Paid from your bank' : 'Cash received. Tax not included.')); target.append(cash);
     const bank = el('div', 'nb-settlement-bank'); bank.append(el('small', '', 'Cash in your bank'), el('strong', '', money(r.bankBefore) + ' → ' + money(r.bankAfter))); target.append(bank);
     if (r.rows && r.rows.length) {
       const details = el('details', 'nb-settlement-details'), dl = el('dl', 'nb-settlement-rows');
       r.rows.forEach(row => { const n = el('div', 'nb-settlement-row'); n.append(el('dt', '', row.label), el('dd', '', typeof row.value === 'number' ? money(row.value) : row.value)); dl.append(n); });
       details.append(el('summary', '', r.kind === 'expense' ? 'Bill details' : 'Sale details'), dl); target.append(details);
     }
-    if (r.note && r.note !== 'Equity taxes are not calculated.') target.append(el('p', 'nb-settlement-note', r.note));
+    if (r.kind !== 'expense' && r.note && r.note !== 'Equity taxes are not calculated.') target.append(el('p', 'nb-settlement-note', r.note));
     const previous = state;
     view.actions.forEach(a => { const b = el('button', 'nb-settlement-continue', a.label); const timing = timeHint(a); if (timing) b.append(el('small', 'nb-action-time', timing)); b.type = 'button'; b.addEventListener('click', () => { if (state !== previous || b.disabled) return; b.disabled = true; act(a.id); }); target.append(b); });
   }
