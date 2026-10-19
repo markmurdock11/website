@@ -94,6 +94,8 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
 .nb-action-label{font-size:18px;font-weight:600;line-height:1.2}
 .nb-action-value{font-size:27px;font-weight:400;line-height:1.13;letter-spacing:-.035em;margin-top:7px;font-variant-numeric:tabular-nums}
 .nb-action-detail{font-size:13px;line-height:1.4;color:var(--nb-muted);margin-top:7px;white-space:pre-line;text-wrap:pretty}
+.nb-action:disabled{opacity:.72}
+.nb-action:disabled:hover{background:var(--nb-paper)}
 .nb-actions[data-single="true"]{grid-template-columns:1fr;max-width:430px}
 .nb-actions[data-single="true"] .nb-action{background:var(--nb-ink);color:var(--nb-paper)}
 .nb-actions[data-single="true"] .nb-action-detail{color:#d8cce1}
@@ -514,7 +516,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-13">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-14">
   <header class="nb-header">
     <div><p class="nb-eyebrow">Kram + Emma</p><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">new game</button>
@@ -881,7 +883,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   var VERSION = 10;
   var constants = Object.freeze({ START_CASH: 12000, LIVING_COST: 3500, LAWYER_COST: 5000, ACCOUNTANT_COST: 2000, PREFERENCE: 2000000, JOBS: 2 });
   var eventTypes = ['dilution', 'burnout', 'layoff', 'contract_clause', 'accounting'];
-  var stages = ['choose_company','offer','contract','career_draw','company_draw','dilution','burnout','layoff','contract_check','new_role','company_result','public_sale','job_offer','exercise','receipt','result'];
+  var stages = ['choose_company','offer','contract','career_draw','company_draw','dilution','burnout','layoff','contract_check','new_role','company_result','public_sale','job_offer','first_job_complete','exercise','receipt','result'];
   var secondNames = { space: { A: 'Atlas Launch', B: 'Beacon Orbit', C: 'Relay Space', D: 'Meridian Aerospace' }, climate: { A: 'Ember Storage', B: 'Field Current', C: 'Greenline Energy', D: 'Grid North' }, software: { A: 'Threadbox', B: 'Deskline', C: 'Clearpath Software', D: 'Openfield Systems' } };
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
   function cents(x) { return Math.round((x + Number.EPSILON) * 100) / 100; }
@@ -951,19 +953,20 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     else next(s);
   }
   function depart(s, c, reason) {
-    c.employed = false; c.departedMonth = s.month; c.departureReason = reason; c.cancelled = c.grant - c.earned; c.status = 'former';
+    c.employed = false; c.departedMonth = s.month; c.departureReason = reason; c.cancelled = c.grant - c.earned; if (!c.resolved) c.status = 'former';
     var lost = 0;
     if (reason !== 'layoff' && !c.clauseRemoved) { lost = Math.floor(c.options / 2); c.options -= lost; c.lostOptions += lost; }
     s.activeJobId = null; s.activePay = reason === 'layoff' || s.jobCount === 1 ? 0 : c.newJobPay;
     s.pendingDeparture = { companyId: c.id, gapMonths: reason === 'layoff' ? 3 : 0 };
     s.focusCompanyId = c.id; s.stage = 'exercise';
-    s.feedback = (lost ? count(lost) + ' earned options cancelled under your contract. ' : '') + count(c.cancelled) + ' unearned options ended.';
+    s.feedback = (lost ? count(lost) + ' earned options cancelled under your contract. ' : '') + (c.cancelled ? count(c.cancelled) + ' unearned options ended.' : '');
   }
   function priority(event) { return { gap_end: 0, career: 1, job_offer: 2, company_outcome: 3, public_sale: 4 }[event.kind]; }
   function dilute(c) { c.preferredShares += (1000000+c.preferredShares)*.25; c.financingRounds++; }
   function next(s) {
     s.pendingReceipt = null; s.currentEvent = null;
     if (s.jobCount === 2 && s.companies.every(function (c) { return c.resolved; })) { s.stage = 'result'; s.focusCompanyId = null; s.feedback = ''; return; }
+    if (s.jobCount === 1 && s.companies[0].resolved && s.companies[0].employed) { s.stage = 'first_job_complete'; s.focusCompanyId = s.companies[0].id; s.feedback = ''; return; }
     while (s.events.length) {
       s.events.sort(function (a,b) { return a.month - b.month || priority(a) - priority(b) || a.id - b.id; });
       var event = s.events.shift(), c = company(s, event.companyId);
@@ -1049,15 +1052,20 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     if(s.stage==='dilution'||s.stage==='new_role'||s.stage==='company_result')return [option('continue','Continue','','','primary')];
     if(s.stage==='receipt')return [option('continue_receipt','Continue','','The payment is already recorded.','primary')];
     if(s.stage==='layoff')return [option('review_options','Review your options','','3 months without salary before your next job.','primary')];
-    if(s.stage==='burnout')return [option('leave_burnout','Leave this job','','Stop earning more options.','primary'),option('stay_job','Keep working','','Keep earning this grant.')];
+    if(s.stage==='burnout')return [option('leave_burnout','Leave and review shares','','Stop earning more options.','primary'),option('stay_job','Keep working','','Keep earning this grant.')];
     if(s.stage==='job_offer') {
-      var arr=[option('leave_job',s.jobCount===1?'Find your next startup':'Take the higher salary',s.jobCount===1?'Choose a new company':money(c.newJobPay)+' / month',s.jobCount===1?'Your old equity stays tracked.':'No new startup grant.','primary')];
+      var arr=[option('leave_job','Leave and review shares',s.jobCount===1?'':money(c.newJobPay)+' / month','Choose whether to buy your earned options.','primary')];
       if(s.month-c.startMonth<48)arr.push(option('stay_job','Stay here',money(c.pay)+' / month',s.jobCount===1?'Revisit in 12 months.':'Keep earning through year four.'));
+      else if(s.jobCount===1&&!c.exitRevealed)arr.push(option('stay_job','See company outcome','','Keep this job for now.'));
       return arr;
     }
+    if(s.stage==='first_job_complete')return [option('leave_job','Next startup','','Review your equity before leaving.','primary')];
     if(s.stage==='exercise') {
       var cost=c.options*c.strike,reserve=s.pendingDeparture.gapMonths*3500,list=[];
-      if(c.options>0&&cost+reserve<=s.bank)list.push(option('buy_options','Buy '+count(c.options)+' shares','Pay '+money(cost),money(s.bank-cost)+' left in your bank.','primary'));
+      if(c.options>0) {
+        var buy=option('buy_options','Buy '+count(c.options)+' shares','Pay '+money(cost),cost+reserve>s.bank?'Not enough cash. '+(reserve?'Keep '+money(reserve)+' for 3 months without salary.':'You have '+money(s.bank)+'.'):money(s.bank-cost)+' left in your bank.','primary');
+        buy.disabled=cost+reserve>s.bank;list.push(buy);
+      }
       list.push(option('expire_options',c.options?'Let the options expire':'Continue',c.options?'Keep '+money(s.bank):'',cost+reserve>s.bank?(reserve?'Buying must leave '+money(reserve)+' for 3 months without salary.':'You need '+money(cost)+'. You have '+money(s.bank)+'.'):'No shares bought.'));
       return list;
     }
@@ -1071,7 +1079,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   }
   function act(state,id,payload) {
     if(!validate(state))throw new RangeError('The saved career is not valid.');
-    if(!actions(state).some(function(a){return a.id===id;}))throw new RangeError('That action is not available.');
+    if(!actions(state).some(function(a){return a.id===id&&!a.disabled;}))throw new RangeError('That action is not available.');
     if(id==='restart')return create();
     var s=clone(state),c=company(s);s.choices.push({month:s.month,companyId:s.focusCompanyId,stage:s.stage,id:id});
     if(id==='choose_company')chooseCompany(s,payload||{});
@@ -1084,7 +1092,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     else if(id==='review_options')depart(s,c,'layoff');
     else if(id==='leave_burnout')depart(s,c,'burnout');
     else if(id==='leave_job')depart(s,c,'voluntary');
-    else if(id==='stay_job') {if(s.stage==='job_offer'&&s.jobCount===1)schedule(s,Math.min(c.startMonth+48,s.month+12),'job_offer',c.id);next(s);}
+    else if(id==='stay_job') {if(s.stage==='job_offer'&&s.jobCount===1&&s.month-c.startMonth<48)schedule(s,Math.min(c.startMonth+48,s.month+12),'job_offer',c.id);next(s);}
     else if(id==='buy_options'||id==='expire_options') {
       if(id==='buy_options'){var cost=c.options*c.strike;debit(s,cost,'share_purchase',c.id,'Bought earned options as shares.');s.purchaseCosts=cents(s.purchaseCosts+cost);c.purchaseCosts=cents(c.purchaseCosts+cost);c.shares+=c.options;}
       else c.expired+=c.options;c.options=0;completeDeparture(s);
@@ -1109,12 +1117,17 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     else if(s.stage==='burnout'){v.headline='You are burned out.';v.body='Leave now or keep working for more equity.';}
     else if(s.stage==='layoff'){v.headline='You were laid off.';v.body='Your earned options remain. The next job starts in three months.';}
     else if(s.stage==='job_offer'){v.headline=s.jobCount===1?'Ready for your next startup?':'A higher salary is available.';v.body=s.month-c.startMonth>=48?'Your four-year grant is fully earned.':s.jobCount===1?'Leave now or spend another year here.':'The new role pays '+money(c.newJobPay)+' a month, with no new startup grant.';}
-    else if(s.stage==='exercise'){v.headline='Buy your shares?';v.body=count(c.options)+' earned options let you buy at '+money(c.strike)+' each.';v.detail='You have 90 days to buy after leaving. The model resolves that decision now. Shares can become worthless. Buying must leave enough for a known salary gap.';}
+    else if(s.stage==='first_job_complete'){v.headline='Your next startup.';v.body='Review your shares before job two.';}
+    else if(s.stage==='exercise'){
+      v.headline=c.options?'Buy your shares?':'No options left to buy.';
+      v.body=c.options?count(c.options)+' earned options let you buy at '+money(c.strike)+' each.':c.shares?'You keep '+count(c.shares)+' shares.':c.sold?'Your shares were sold. The cash is in your bank.':c.outcome==='acquisition_low'||c.outcome==='acquisition_high'?'The sale paid nothing for your options.':'No options remain to buy.';
+      v.detail=c.options?'You have 90 days to buy after leaving. The model resolves that decision now. Shares can become worthless. Buying must leave enough for a known salary gap.':v.body;
+    }
     else if(s.stage==='new_role'){v.headline='Your new job starts.';v.body='Take-home pay is '+money(s.activePay)+' a month. Your old equity stays tracked.';}
     else if(s.stage==='company_result'){
       if(c.outcome==='ipo'||c.outcome==='unicorn'){v.headline='The company went public.';v.body='IPO price: '+money(c.ipoPrice)+' per share. You must wait 180 days to sell.';v.detail=(c.outcome==='unicorn'?'This authored company reached a $1.2B valuation. ':'')+'Earning options and being allowed to sell are different. The share price can change while you wait.';}
       else if(c.outcome==='private'){v.headline='The company stayed private.';v.body='No share sale. Any options or shares remain outside your cash.';}
-      else{v.headline='The company closed.';v.body='Its equity is now worth $0. Your other company is separate.';}
+      else{v.headline='The company closed.';v.body='Its options and shares are worth $0. There is nothing left to buy.';}
     } else if(s.stage==='public_sale'){v.headline='You can sell now.';v.body=money(c.ipoPrice)+' per share at the IPO. '+money(c.salePrice)+' now.';v.detail='The sale can cover the exercise cost of unbought options. Only the remaining cash enters your bank. Already purchased shares have no second exercise cost.';}
     else if(s.stage==='receipt'){v.receipt=clone(s.pendingReceipt);v.headline=v.receipt.headline;v.body=v.receipt.body;v.feedback='';}
     else if(s.stage==='result'){v.headline='Your two-company result.';v.body='Salary, costs and both equity outcomes.';v.feedback='';v.result={companies:clone(s.companies),bank:s.bank,debt:s.debt,salaryIncome:s.salaryIncome,livingCosts:s.livingCosts,legalCosts:s.legalCosts,accountingCosts:s.accountingCosts,purchaseCosts:s.purchaseCosts,equityProceeds:s.equityProceeds,ledger:clone(s.ledger)};}
@@ -1161,6 +1174,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
       if(['choose_company','result'].indexOf(s.stage)<0&&!company(s))return false;
       if(s.stage==='choose_company'&&(s.jobCount>=2||s.focusCompanyId!==null||s.activeJobId!==null))return false;
       if(s.stage==='result'&&(s.jobCount!==2||!s.companies.every(function(c){return c.resolved;})))return false;
+      if(s.stage==='first_job_complete'&&(s.jobCount!==1||s.focusCompanyId!==s.companies[0].id||!company(s).resolved||!company(s).employed||s.currentEvent!==null||s.pendingReceipt!==null||s.pendingDeparture!==null))return false;
       if(s.stage==='offer'&&(company(s).grant!==0||company(s).employed||company(s).startMonth!==s.month))return false;
       if(s.stage==='contract'&&(company(s).grant===0||company(s).employed||company(s).startMonth!==s.month))return false;
       function validEvent(e) {
@@ -1194,13 +1208,13 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
         if(!validEvent(s.currentEvent)||s.currentEvent.companyId!==s.focusCompanyId||s.currentEvent.month!==s.month||r.month!==s.month)return false;
         if(r.kind==='expense'?(s.currentEvent.kind!=='career'||s.currentEvent.data!=='accounting'):r.kind==='public'?s.currentEvent.kind!=='public_sale':r.kind==='acquisition'?s.currentEvent.kind!=='company_outcome':true)return false;
         if(r.kind==='expense'){
-          if(r.received!==0||r.bankAfter!==Math.max(0,r.bankBefore-2000)||company(s).eventHistory.filter(function(e){return e.month===s.month&&e.kind==='accounting';}).length!==1)return false;
+          if(r.received!==0||r.bankAfter!==cents(Math.max(0,r.bankBefore-2000))||company(s).eventHistory.filter(function(e){return e.month===s.month&&e.kind==='accounting';}).length!==1)return false;
         }else{
           var sale=company(s).lastSale;
           if(!company(s).resolved||!sale||sale.type!==(r.kind==='public'?'public':'acquisition')||r.received!==sale.received||Math.abs(r.bankBefore+r.received-r.bankAfter)>.011)return false;
         }
       }
-      return actions(s).length>0;
+      return actions(s).some(function(a){return !a.disabled;});
     } catch (_) {return false;}
   }
   function restore(saved) { return validate(saved)?clone(saved):null; }
@@ -1481,7 +1495,7 @@ function render(container,state,view){
  const stage=state.stage,doc=container.ownerDocument;let s;
  if(stage==='offer')s=offer(c,doc);
  else if(stage==='new_role')s=salariedJob(state,doc);
- else if(['job_offer','choose_company'].includes(stage))s=scene(c,doc);
+ else if(['job_offer','choose_company','first_job_complete'].includes(stage))s=scene(c,doc);
  else if(stage==='contract'||stage==='contract_check')s=contract(c,stage==='contract_check',state.bank,doc);
  else if(stage==='company_draw'){
   s=svg('Historical companies: about one in three exited; about one in one hundred reached a one-billion-dollar valuation. These are separate measures. This game uses three exit chips out of ten, not your personal payout probability.',190,doc);
@@ -1497,6 +1511,7 @@ function render(container,state,view){
   text(s,145,157,'Before',15,MUTED);text(s,335,157,'After',15,MUTED);
   text(s,240,183,basis,16);
  }else if(stage==='exercise'){
+  if(!c.options){container.replaceChildren();return false;}
   const n=c.options||0;s=svg(count(n)+' options can become '+count(n)+' shares for '+money(n*c.strike)+'.',210,doc);
   box(s,77,31,125,107,PAPER,8);box(s,280,31,125,107,INK,8);tokens(s,101,49,5,5);tokens(s,304,49,5,5,PAPER);arrow(s,240,87);
   text(s,139,116,count(n),26);text(s,342,116,count(n),26,PAPER);text(s,139,164,'Options',17);text(s,342,164,'Shares',17);text(s,240,199,money(c.strike)+' / share',15,MUTED);
@@ -1549,7 +1564,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     { key: 'risk', title: 'How much risk?', choices: [['steady', 'Less risk', 'More salary'], ['balanced', 'Some risk', 'A mix'], ['bold', 'More risk', 'More equity']] }
   ];
   const freshSetup = () => ({ step: 0, profile: { industry: 'software', size: 'growing', risk: 'balanced' }, round: null });
-  let state = model.create(), setup = freshSetup(), interacted = false, lastMove = null;
+  let state = model.create(), setup = freshSetup(), interacted = false, lastMove = null, equityReadyAt = 0;
   /* STANDALONE_STORAGE_START */
   const standaloneStorage = {
     load() { try { return JSON.parse(window.localStorage.getItem('near-bag-career-v10') || 'null'); } catch (_) { return null; } },
@@ -1565,13 +1580,16 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     if (!questions.every(q => q.choices.some(c => c[0] === saved.setup.profile?.[q.key]))) return false;
     if (saved.setup.round !== null && !['A', 'B', 'C', 'D'].includes(saved.setup.round)) return false;
     const restored = model.restore(saved.state); if (!restored) return false;
-    state = restored; setup = JSON.parse(JSON.stringify(saved.setup)); lastMove = null; render(); return true;
+    state = restored; setup = JSON.parse(JSON.stringify(saved.setup)); lastMove = null; equityReadyAt = state.stage === 'exercise' ? Date.now() + 600 : 0; render(); return true;
   }
   function act(id, payload) {
+    // A second tap on the previous screen must not buy or discard equity.
+    if (state.stage === 'exercise' && Date.now() < equityReadyAt) return;
     interacted = true;
     const previous = state;
     try { state = model.act(state, id, payload); } catch (error) { put('announcement', error.message || 'Please choose again.'); return; }
     if (state === previous) return;
+    equityReadyAt = state.stage === 'exercise' ? Date.now() + 600 : 0;
     lastMove = { months: state.month - previous.month, before: previous.bank, after: state.bank, ledger: state.ledger.slice(previous.ledger.length) };
     if (state.stage === 'choose_company') { setup = freshSetup(); if (state.companies.length) setup.profile = { ...state.companies[state.companies.length - 1].profile }; }
     if (fields['all-details']) fields['all-details'].open = false;
@@ -1640,7 +1658,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
       if (fields['company-preview'] && window.NearBagVisuals) window.NearBagVisuals.renderCompany(fields['company-preview'], { ...rec.company, profile: rec.profile, round: rec.round });
       rounds.forEach(button => button.setAttribute('aria-pressed', button.dataset.round === rec.round ? 'true' : 'false'));
     } else {
-      const q = questions[setup.step]; put('setup-title', q.title); put('setup-copy', state.companies.length ? 'Your first company stays in play.' : '');
+      const q = questions[setup.step]; put('setup-title', q.title); put('setup-copy', state.companies.some(c => c.options || c.shares) ? 'You keep your first company’s shares.' : '');
       routeSlots.forEach((button, index) => {
         const c = q.choices[index]; button.dataset.routeValue = c[0];
         button.querySelector('.nb-route-name').textContent = c[1]; button.querySelector('.nb-route-detail').textContent = c[2];
@@ -1658,17 +1676,17 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
         if (state.stage === 'offer') detail = detail.replace(' · ', '\n');
         if (action.id === 'roll_event') label = 'Reveal event';
         if (action.id === 'roll_company') label = 'Reveal outcome';
-        if (action.id === 'buy_options') { label = 'Buy shares'; detail = ''; }
-        if (action.id === 'expire_options' && !/must leave|You need/.test(detail)) { value = ''; detail = ''; }
+        if (action.id === 'buy_options') { label = 'Buy shares'; if (!action.disabled) detail = ''; }
+        if (action.id === 'expire_options') { value = ''; detail = ''; }
         if (state.stage === 'job_offer') {
-          if (action.id === 'leave_job') { label = state.jobCount === 1 ? 'Find a new company' : 'Take the new job'; value = state.jobCount === 1 ? '' : value; detail = state.jobCount === 1 ? '' : 'No new options'; }
+          if (action.id === 'leave_job') { label = 'Leave and review shares'; value = state.jobCount === 1 ? '' : value; detail = state.jobCount === 1 ? '' : 'New job. No new options.'; }
           else detail = '';
         }
       }
       button.append(el('span', 'nb-action-label', label), el('span', 'nb-action-value', value), el('span', 'nb-action-detail', detail));
       const timing = timeHint(action); if (timing) button.append(el('span', 'nb-action-time', timing));
       button.disabled = Boolean(action.disabled);
-      button.addEventListener('click', () => { if (state !== renderedState || button.disabled) return; button.disabled = true; act(action.id); });
+      button.addEventListener('click', event => { if (state !== renderedState || button.disabled || event?.detail > 1) return; act(action.id); });
       fields.actions.appendChild(button);
     });
   }
@@ -1721,14 +1739,14 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     fields.visual.replaceChildren();
     if (window.NearBagVisuals) {
       window.NearBagVisuals.render(fields.visual, state, view);
-      if (['career_draw', 'public_sale', 'contract_check', 'company_draw', 'burnout', 'layoff', 'exercise'].includes(state.stage) || state.stage === 'contract' && state.bank >= 5000) put('story', '');
+      if (['career_draw', 'public_sale', 'contract_check', 'company_draw', 'burnout', 'layoff'].includes(state.stage) || state.stage === 'exercise' && focusedCompany.options > 0 || state.stage === 'contract' && state.bank >= 5000) put('story', '');
       if (state.stage === 'offer' && focusedCompany) { put('story', ''); put('choice-note', 'Pay is after tax. Living costs: $3,500 / month.'); }
       if (state.stage === 'dilution') put('story', '');
       if (state.stage === 'layoff') put('story', 'The company cut jobs to save money.');
       if (state.stage === 'new_role') { put('title', 'Your new job starts.'); put('story', ''); }
       if (state.stage === 'company_draw') put('title', 'What happens to the company?');
       if (state.stage === 'job_offer') put('story', '');
-      if (state.stage === 'company_result') put('story', ['ipo', 'unicorn'].includes(focusedCompany.outcome) ? 'IPO: ' + money(focusedCompany.ipoPrice) + ' / share' : focusedCompany.outcome === 'private' ? 'No sale. No cash yet.' : 'Equity value: $0');
+      if (state.stage === 'company_result') put('story', ['ipo', 'unicorn'].includes(focusedCompany.outcome) ? 'IPO: ' + money(focusedCompany.ipoPrice) + ' / share' : focusedCompany.outcome === 'private' ? 'No sale. No cash yet.' : 'Options and shares: $0. Nothing left to buy.');
     } else if (view.stats) { const dl = el('div', 'nb-chance-grid'); view.stats.forEach(stat => { const n = el('div', 'nb-chance-stat'); n.append(el('strong', '', stat.value), el('span', '', stat.label)); dl.append(n); }); fields.visual.append(dl); }
     actionButtons(view.actions); put('announcement', view.companyName + '. ' + view.headline + ' ' + (view.feedback || ''));
   }
