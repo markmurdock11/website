@@ -21,7 +21,6 @@
           <a href="#writing" data-site-page="writing">writing</a>
           <a href="#media" data-site-page="media">media recs</a>
           <a href="#about" data-site-page="about">about</a>
-          <a href="#inbox" data-site-page="inbox">inbox</a>
         </nav>
       </header>
 
@@ -113,7 +112,6 @@
           </div>
         </section>
 
-        <a class="kram-inbox-line" href="#inbox" data-site-page="inbox">+ recommend one</a>
       </main>
 
       <main class="kram-view" data-site-view="about" hidden>
@@ -151,25 +149,6 @@
         <p class="kram-personal-fragment">only my enemies call me mark.</p>
       </main>
 
-      <main class="kram-view" data-site-view="inbox" hidden>
-        <section class="kram-inbox-layout">
-          <div class="kram-inbox-visual">
-            <h1>recommend me something on the internet.</h1>
-            <div class="kram-radar" aria-hidden="true"><i></i><b></b></div>
-          </div>
-          <form class="kram-inbox-form" id="kram-minimal-inbox-form">
-            <label class="kram-name-field" for="kram-minimal-name"><span>your name</span><input id="kram-minimal-name" name="name" type="text" required autocomplete="name" placeholder="your name"></label>
-            <label class="kram-url-field" for="kram-minimal-url"><span>recommendation</span><input id="kram-minimal-url" name="url" type="text" inputmode="url" autocomplete="url" autocapitalize="none" spellcheck="false" required placeholder="example.com/article"></label>
-            <button class="kram-note-toggle" type="button" data-note-toggle aria-expanded="false">+ add a note</button>
-            <label class="kram-note-field" for="kram-minimal-why" hidden><span>note</span><textarea id="kram-minimal-why" name="why" rows="3" disabled></textarea></label>
-            <p class="kram-form-error" id="kram-form-error" role="alert" hidden></p>
-            <button class="kram-send" type="submit"><span>send via email</span><b aria-hidden="true">↗</b></button>
-          </form>
-        </section>
-        <section class="kram-submission-receipt" id="kram-submission-receipt" aria-live="polite" hidden>
-          <p><strong id="kram-receipt-name"></strong> recommended <a id="kram-receipt-link" target="_blank" rel="noopener"></a> <span class="kram-external-mark" aria-hidden="true">↗</span></p>
-        </section>
-      </main>
 
       <footer class="kram-footer">
         <nav>
@@ -503,9 +482,10 @@
     const siteLinks = root.querySelectorAll("[data-site-page]");
     const headerLinks = root.querySelectorAll(".kram-site-head nav [data-site-page]");
 
-    const pages = ["home", "writing", "media", "about", "inbox"];
+    const pages = ["home", "writing", "media", "about"];
 
     const showPage = (page) => {
+      if (page === "inbox") page = "about";
       if (!pages.includes(page)) page = "home";
       site.setAttribute("data-page", page);
       views.forEach((view) => { view.hidden = view.getAttribute("data-site-view") !== page; });
@@ -610,77 +590,10 @@
       libraryExpanded = !libraryExpanded;
       renderMedia(activeMediaCategory);
     });
-    const noteToggle = root.querySelector("[data-note-toggle]");
-    const noteField = root.querySelector(".kram-note-field");
-    noteToggle.addEventListener("click", () => {
-      const expanded = noteToggle.getAttribute("aria-expanded") === "true";
-      const noteInput = noteField.querySelector("textarea");
-      noteToggle.setAttribute("aria-expanded", String(!expanded));
-      noteToggle.textContent = expanded ? "+ add a note" : "− remove note";
-      noteField.hidden = expanded;
-      noteInput.disabled = expanded;
-      if (expanded) noteInput.value = "";
-      if (!expanded) noteInput.focus();
-    });
-    const inboxForm = root.querySelector("#kram-minimal-inbox-form");
-    const formError = root.querySelector("#kram-form-error");
-    const submissionReceipt = root.querySelector("#kram-submission-receipt");
-    const receiptName = root.querySelector("#kram-receipt-name");
-    const receiptLink = root.querySelector("#kram-receipt-link");
-
-    const normalizeRecommendation = (value) => {
-      const trimmed = value.trim();
-      if (!trimmed || /\s/.test(trimmed)) throw new Error('invalid spacing');
-      const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-      const parsed = new URL(withScheme);
-      if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('unsupported protocol');
-      if (!parsed.hostname.includes('.') || parsed.hostname.startsWith('.') || parsed.hostname.endsWith('.')) throw new Error('invalid hostname');
-      return parsed;
-    };
-
-    inboxForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const data = new FormData(event.currentTarget);
-      const name = String(data.get("name") || "").trim();
-      const rawRecommendation = String(data.get("url") || "").trim();
-      let recommendation;
-
-      try {
-        recommendation = normalizeRecommendation(rawRecommendation);
-      } catch (error) {
-        formError.textContent = "that link looks incomplete — try something like example.com/article";
-        formError.hidden = false;
-        return;
-      }
-
-      formError.hidden = true;
-      receiptName.textContent = name;
-      receiptLink.href = recommendation.href;
-      receiptLink.textContent = rawRecommendation.replace(/^https?:\/\//i, "").replace(/\/$/, "");
-      submissionReceipt.hidden = false;
-
-      const body = [
-        `NAME: ${name}`,
-        `RECOMMENDATION: ${recommendation.href}`,
-        `NOTE: ${data.get("why") || ""}`
-      ].join("\n\n");
-
-      event.currentTarget.reset();
-      noteField.hidden = true;
-      noteField.querySelector("textarea").disabled = true;
-      noteToggle.setAttribute("aria-expanded", "false");
-      noteToggle.textContent = "+ add a note";
-
-      if (!['127.0.0.1', 'localhost'].includes(window.location.hostname)) {
-        window.setTimeout(() => {
-          window.location.href = `mailto:markmurdock11@gmail.com?subject=${encodeURIComponent("a corner of the internet")}&body=${encodeURIComponent(body)}`;
-        }, 120);
-      }
-    });
-
     renderMedia("all");
     showPage(window.location.hash.slice(1) || "home");
   })();
 </script>
 </body>
 </html>
+

@@ -1,90 +1,93 @@
-/* Native archive and reader. Load after site.css and eras-content.css in every era. */
+/* Native archive and reader: one clear text column in every era. */
 html[data-era] #kram-minimal-preview .native-archive,
 html[data-era] #kram-minimal-preview .native-reader {
   --native-ink: #151419;
   --native-muted: #675b6f;
   --native-paper: #f7f1f8;
-  --native-rule: #b8a7c2;
+  --native-rule: #c6b8ce;
   --native-link: #151419;
   min-width: 0;
   color: var(--native-ink);
   font-family: 'Spectral', Georgia, serif;
 }
 html[data-era] #kram-minimal-preview .native-archive *,
-html[data-era] #kram-minimal-preview .native-reader * { box-sizing: border-box; }
+html[data-era] #kram-minimal-preview .native-reader * { box-sizing: border-box; min-width: 0; }
 html[data-era] #kram-minimal-preview .native-archive [hidden],
 html[data-era] #kram-minimal-preview .native-reader[hidden],
 html[data-era] #kram-minimal-preview .native-reader [hidden] { display: none !important; }
 html[data-era] #kram-minimal-preview .native-archive a,
 html[data-era] #kram-minimal-preview .native-reader a { color: var(--native-link); text-underline-offset: .18em; }
-html[data-era] #kram-minimal-preview .native-archive a:focus-visible,
-html[data-era] #kram-minimal-preview .native-archive button:focus-visible,
-html[data-era] #kram-minimal-preview .native-reader a:focus-visible { outline: 2px solid #ff681f; outline-offset: 5px; }
-html[data-era] #kram-minimal-preview .native-archive { padding: 50px 0 0; }
-html[data-era] #kram-minimal-preview .native-archive > header { max-width: 740px; margin-bottom: 26px; }
-html[data-era] #kram-minimal-preview .native-archive > header h2 {
-  max-width: 18ch; margin: 0 0 14px; font-size: clamp(32px,4vw,48px); font-weight: 500; line-height: 1.05; letter-spacing: -.045em;
-}
-html[data-era] #kram-minimal-preview .native-archive > header p { max-width: 54ch; margin: 0; font-size: 19px; line-height: 1.5; }
-html[data-era] #kram-minimal-preview .native-filter { display: flex; flex-wrap: wrap; gap: 10px 26px; margin: 28px 0 10px; }
+html[data-era] #kram-minimal-preview .native-archive :is(a, button, input):focus-visible,
+html[data-era] #kram-minimal-preview .native-reader :is(a, video):focus-visible { outline: 2px solid #ff681f; outline-offset: 5px; }
+
+/* Category selection replaces the long mixed feed and its duplicate headings. */
+html[data-era] #kram-minimal-preview .native-archive { padding: 28px 0 40px; }
+html[data-era] #kram-minimal-preview .native-archive-controls,
+html[data-era] #kram-minimal-preview .native-post-list { width: 100%; max-width: 1080px; margin-inline: auto; }
+html[data-era] #kram-minimal-preview .native-archive-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; margin-bottom: 24px; }
+html[data-era] #kram-minimal-preview .native-filter { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; }
 html[data-era] #kram-minimal-preview .native-filter button {
-  min-height: 40px; margin: 0; padding: 6px 0; border: 0; border-bottom: 2px solid transparent; border-radius: 0; color: var(--native-muted); background: transparent; font: 500 15px/1.4 'Spectral',Georgia,serif; cursor: pointer;
+  display: inline-flex; align-items: baseline; gap: 7px; min-height: 44px; margin: 0; padding: 10px 0;
+  border: 0; border-bottom: 2px solid transparent; border-radius: 0;
+  color: var(--native-muted); background: transparent; font: 500 15px/1.4 'Spectral', Georgia, serif; cursor: pointer;
 }
-html[data-era] #kram-minimal-preview .native-filter button[aria-pressed='true'],
-html[data-era] #kram-minimal-preview .native-filter button[data-active='true'] { color: var(--native-ink); border-bottom-color: #ff681f; }
-html[data-era] #kram-minimal-preview .native-post-list { width: 100%; }
-html[data-era] #kram-minimal-preview .native-post-row { min-width: 0; border-top: 1px solid var(--native-rule); }
+html[data-era] #kram-minimal-preview .native-filter button[aria-pressed='true'] { color: var(--native-ink); border-bottom-color: #ff681f; }
+html[data-era] #kram-minimal-preview .native-filter-count { color: var(--native-muted); font: 11px/1.4 Arial, sans-serif; }
+html[data-era] #kram-minimal-preview .native-search { display: block; }
+html[data-era] #kram-minimal-preview .native-search input {
+  display: block; width: 210px; max-width: 100%; min-height: 44px; margin: 0; padding: 10px 0;
+  border: 0; border-bottom: 1px solid var(--native-rule); border-radius: 0; color: inherit; background: transparent; font-family: inherit; font-size: 15px; line-height: 1.4;
+}
+html[data-era] #kram-minimal-preview .native-category + .native-category { margin-top: 36px; }
+html[data-era] #kram-minimal-preview .native-category > h2:not(.kram-sr-only) { margin: 0 0 16px; font-family: inherit; font-weight: 500; font-size: 22px; line-height: 1.35; letter-spacing: 0; }
+html[data-era] #kram-minimal-preview .native-post-row { margin: 0; border-top: 1px solid var(--native-rule); }
 html[data-era] #kram-minimal-preview .native-post-row:last-child { border-bottom: 1px solid var(--native-rule); }
 html[data-era] #kram-minimal-preview .native-post-row > a {
-  display: grid; grid-template-columns: minmax(0,1fr) 200px; align-items: center; gap: 30px; padding: 27px 0; text-decoration: none;
+  display: grid; grid-template-columns: minmax(0,1fr) 112px; align-items: center; gap: 28px;
+  padding: 22px 0; text-decoration: none;
+}
+html[data-era] #kram-minimal-preview .native-post-row > a:not(:has(.native-post-cover)) { grid-template-columns: minmax(0,1fr); }
+html[data-era] #kram-minimal-preview .native-post-info h3 {
+  max-width: 38ch; margin: 0; font-size: clamp(22px, 2.3vw, 28px); font-weight: 500;
+  line-height: 1.3; letter-spacing: -.02em; overflow-wrap: anywhere; text-wrap: pretty;
 }
 html[data-era] #kram-minimal-preview .native-post-row > a:hover h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .15em; }
-html[data-era] #kram-minimal-preview .native-post-info { min-width: 0; }
-html[data-era] #kram-minimal-preview .native-post-kind {
-  display: inline-block; color: var(--native-muted); font-size: 10px; font-weight: 500; line-height: 1.3; letter-spacing: .11em; text-transform: uppercase;
-}
-html[data-era] #kram-minimal-preview .native-post-info h3 { margin: 10px 0 8px; font-size: clamp(24px,2.9vw,34px); font-weight: 500; line-height: 1.15; letter-spacing: -.03em; }
-html[data-era] #kram-minimal-preview .native-post-info p { max-width: 64ch; margin: 0 0 10px; color: var(--native-muted); font-size: 16px; line-height: 1.5; }
-html[data-era] #kram-minimal-preview .native-post-info time { color: var(--native-muted); font-size: 12px; }
-html[data-era] #kram-minimal-preview .native-post-cover { width: 100%; margin: 0; }
+html[data-era] #kram-minimal-preview .native-post-info .native-post-meta { margin: 8px 0 0; color: var(--native-muted); font: 12px/1.5 Arial, sans-serif; letter-spacing: 0; }
+html[data-era] #kram-minimal-preview .native-post-cover { position: relative; width: 100%; margin: 0; }
 html[data-era] #kram-minimal-preview .native-post-cover img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
-html[data-era] #kram-minimal-preview .native-post-row > a:not(:has(.native-post-cover)) { grid-template-columns: minmax(0,1fr); }
+html[data-era] #kram-minimal-preview .native-play-mark { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%,-50%); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: #151419; background: #f7f1f8; font: 12px/1 Arial,sans-serif; }
+html[data-era] #kram-minimal-preview .native-empty { margin: 24px 0; font-size: 17px; line-height: 1.5; }
 
-/* The outer reader fills the site; the text column remains comfortable at every width. */
+/* The reader has its own stable type scale, independent of decorative site type. */
 html[data-era] #kram-minimal-preview .native-reader:not([hidden]) { display: block; flex: initial; }
 html[data-era] #kram-minimal-preview .native-reader { padding: 54px 30px 80px; background: var(--native-paper); }
 html[data-era] #kram-minimal-preview .native-reader > a[data-site-page],
 html[data-era] #kram-minimal-preview .native-reader-head,
 html[data-era] #kram-minimal-preview .native-reader-body,
-html[data-era] #kram-minimal-preview .native-video { width: 100%; max-width: 740px; margin-left: auto; margin-right: auto; }
-html[data-era] #kram-minimal-preview .native-reader > a[data-site-page] { display: block; margin-bottom: 42px; font-size: 13px; text-decoration: none; }
+html[data-era] #kram-minimal-preview .native-video { width: 100%; max-width: 740px; margin-inline: auto; }
+html[data-era] #kram-minimal-preview .native-reader > a[data-site-page] { display: block; margin-bottom: 32px; font-size: 14px; line-height: 1.5; text-decoration: none; }
 html[data-era] #kram-minimal-preview .native-reader > a[data-site-page]:hover { text-decoration: underline; }
-html[data-era] #kram-minimal-preview .native-reader-head { margin-top: 0; margin-bottom: 42px; }
+html[data-era] #kram-minimal-preview .native-reader-head { margin-top: 0; margin-bottom: 36px; }
+html[data-era] #kram-minimal-preview .native-post-kind { display: inline-block; color: var(--native-muted); font-size: 11px; font-weight: 500; line-height: 1.5; letter-spacing: .08em; text-transform: uppercase; }
 html[data-era] #kram-minimal-preview .native-reader-head .native-post-kind { margin-right: 16px; }
-html[data-era] #kram-minimal-preview .native-reader-head time { color: var(--native-muted); font-size: 12px; }
+html[data-era] #kram-minimal-preview .native-reader-head time { color: var(--native-muted); font: 12px/1.5 Arial, sans-serif; }
 html[data-era] #kram-minimal-preview .native-reader-head h1 {
-  max-width: 18ch; margin: 22px 0 20px; font: 500 clamp(38px,5.3vw,64px)/1.04 'Spectral',Georgia,serif; letter-spacing: -.05em;
+  max-width: 24ch; margin: 20px 0 18px; font: 500 clamp(34px,4.8vw,58px)/1.13 'Spectral',Georgia,serif;
+  letter-spacing: -.03em; overflow-wrap: anywhere; text-wrap: pretty;
 }
-html[data-era] #kram-minimal-preview .native-reader-head > p { margin: 0; color: var(--native-muted); font-size: clamp(21px,2.4vw,26px); line-height: 1.45; }
-html[data-era] #kram-minimal-preview .native-reader-body { font-size: 20px; line-height: 1.6; overflow-wrap: anywhere; }
+html[data-era] #kram-minimal-preview .native-reader-head > p { margin: 0; color: var(--native-muted); font-size: clamp(20px,2.2vw,25px); line-height: 1.5; }
+html[data-era] #kram-minimal-preview .native-reader-body { font-size: 20px; line-height: 1.65; overflow-wrap: anywhere; }
 html[data-era] #kram-minimal-preview .native-reader-body > :first-child { margin-top: 0; }
 html[data-era] #kram-minimal-preview .native-reader-body p { margin: 0 0 1.25em; font: inherit; }
-html[data-era] #kram-minimal-preview .native-reader-body h2,
-html[data-era] #kram-minimal-preview .native-reader-body h3,
-html[data-era] #kram-minimal-preview .native-reader-body h4 {
-  margin: 1.7em 0 .7em; font-family: inherit; font-weight: 500; line-height: 1.2; letter-spacing: -.025em;
-}
-html[data-era] #kram-minimal-preview .native-reader-body h2 { font-size: 34px; }
-html[data-era] #kram-minimal-preview .native-reader-body h3 { font-size: 28px; }
+html[data-era] #kram-minimal-preview .native-reader-body :is(h2,h3,h4) { margin: 1.7em 0 .7em; font-family: inherit; font-weight: 500; line-height: 1.25; letter-spacing: -.02em; }
+html[data-era] #kram-minimal-preview .native-reader-body h2 { font-size: 32px; }
+html[data-era] #kram-minimal-preview .native-reader-body h3 { font-size: 27px; }
 html[data-era] #kram-minimal-preview .native-reader-body h4 { font-size: 23px; }
 html[data-era] #kram-minimal-preview .native-reader-body strong { font-weight: 600; }
-html[data-era] #kram-minimal-preview .native-reader-body ul,
-html[data-era] #kram-minimal-preview .native-reader-body ol { padding-left: 1.4em; margin: 0 0 1.4em; }
+html[data-era] #kram-minimal-preview .native-reader-body :is(ul,ol) { padding-left: 1.4em; margin: 0 0 1.4em; }
 html[data-era] #kram-minimal-preview .native-reader-body li { margin: .4em 0; padding-left: .2em; }
 html[data-era] #kram-minimal-preview .native-reader-body li > p { margin-bottom: .7em; }
-html[data-era] #kram-minimal-preview .native-reader-body blockquote {
-  margin: 1.5em 0; padding: .1em 0 .1em 1.2em; border-left: 2px solid #ff681f; color: var(--native-muted); font-style: italic;
-}
+html[data-era] #kram-minimal-preview .native-reader-body blockquote { margin: 1.5em 0; padding: .1em 0 .1em 1.2em; border-left: 2px solid #ff681f; color: var(--native-muted); font-style: italic; }
 html[data-era] #kram-minimal-preview .native-reader-body blockquote p:last-child { margin-bottom: 0; }
 html[data-era] #kram-minimal-preview .native-reader-body hr { border: 0; border-top: 1px solid var(--native-rule); width: 30%; margin: 2.6em auto; }
 html[data-era] #kram-minimal-preview .native-reader-body figure,
@@ -94,120 +97,82 @@ html[data-era] #kram-minimal-preview .native-reader-body .captioned-image-contai
 html[data-era] #kram-minimal-preview .native-reader-body img { display: block; width: auto; max-width: 100%; height: auto; margin: 0 auto; object-fit: contain; }
 html[data-era] #kram-minimal-preview .native-reader-body picture { display: block; max-width: 100%; }
 html[data-era] #kram-minimal-preview .native-reader-body figcaption,
-html[data-era] #kram-minimal-preview .native-reader-body .image-caption {
-  max-width: 66ch; margin: 12px auto 0; color: var(--native-muted); font-size: 14px; line-height: 1.5; text-align: center;
-}
+html[data-era] #kram-minimal-preview .native-reader-body .image-caption { max-width: 66ch; margin: 12px auto 0; color: var(--native-muted); font-size: 14px; line-height: 1.5; text-align: center; }
 html[data-era] #kram-minimal-preview .native-reader-body figcaption p { margin-bottom: 0; }
-html[data-era] #kram-minimal-preview .native-reader-body .image-link,
-html[data-era] #kram-minimal-preview .native-reader-body .image2 { display: block; max-width: 100%; }
+html[data-era] #kram-minimal-preview .native-reader-body :is(.image-link,.image2) { display: block; max-width: 100%; }
 html[data-era] #kram-minimal-preview .native-reader-body pre { overflow-x: auto; padding: 20px; background: #e9e0ef; font: 14px/1.6 ui-monospace,monospace; }
 html[data-era] #kram-minimal-preview .native-reader-body code { font-size: .8em; }
 html[data-era] #kram-minimal-preview .native-reader-body table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-size: 16px; }
-html[data-era] #kram-minimal-preview .native-reader-body th,
-html[data-era] #kram-minimal-preview .native-reader-body td { padding: 10px 12px; border: 1px solid var(--native-rule); text-align: left; vertical-align: top; }
+html[data-era] #kram-minimal-preview .native-reader-body :is(th,td) { padding: 10px 12px; border: 1px solid var(--native-rule); text-align: left; vertical-align: top; }
 html[data-era] #kram-minimal-preview .native-reader-body sup { font-size: .65em; line-height: 0; }
 html[data-era] #kram-minimal-preview .native-reader-body .footnote { font-size: 15px; }
-html[data-era] #kram-minimal-preview .native-video { margin-top: 0; margin-bottom: 42px; }
-html[data-era] #kram-minimal-preview .native-video video,
-html[data-era] #kram-minimal-preview .native-video iframe,
-html[data-era] #kram-minimal-preview .native-reader-body iframe,
-html[data-era] #kram-minimal-preview .native-reader-body video {
-  display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; height: auto; border: 0; background: #151419;
-}
-html[data-era] #kram-minimal-preview .native-video video { width: auto; height: auto; max-width: 100%; max-height: 76svh; margin-inline: auto; object-fit: contain; aspect-ratio: var(--native-video-ratio, 16 / 9); }
+html[data-era] #kram-minimal-preview .native-video { margin-top: 0; margin-bottom: 36px; }
+html[data-era] #kram-minimal-preview .native-video :is(video,iframe),
+html[data-era] #kram-minimal-preview .native-reader-body :is(iframe,video) { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; height: auto; border: 0; background: #151419; }
+html[data-era] #kram-minimal-preview .native-video video { width: auto; height: auto; max-width: 100%; max-height: 76svh; margin-inline: auto; object-fit: contain; aspect-ratio: var(--native-video-ratio,16 / 9); }
 html[data-era] #kram-minimal-preview .native-video figcaption,
 html[data-era] #kram-minimal-preview .native-video > p { color: var(--native-muted); margin-top: 12px; font-size: 14px; line-height: 1.5; }
+html[data-era] #kram-minimal-preview .native-reader-source { max-width: 740px; margin: 40px auto 0; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 24px; padding-top: 24px; border-top: 1px solid var(--native-rule); font-size: 13px; line-height: 1.5; }
+html[data-era] #kram-minimal-preview .native-watch-link { display: inline-block; margin-top: 20px; font-size: 15px; line-height: 1.5; }
 
-/* Signal keeps the existing gallery and gains a calm editorial archive. */
-html[data-era] #kram-minimal-preview .native-archive-controls { max-width: 1080px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; }
-html[data-era] #kram-minimal-preview .native-search input { width: 220px; max-width: 100%; min-height: 42px; padding: 8px 0; border: 0; border-bottom: 1px solid var(--native-rule); border-radius: 0; color: inherit; background: transparent; font: inherit; }
-html[data-era] #kram-minimal-preview .native-result-count { max-width: 1080px; margin: 12px auto; color: var(--native-muted); font-size: 12px; }
-html[data-era] #kram-minimal-preview .native-post-cover { position: relative; }
-html[data-era] #kram-minimal-preview .native-play-mark { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%,-50%); display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: #151419; background: #d7ff2f; font: 16px/1 Arial,sans-serif; }
-html[data-era] #kram-minimal-preview .native-reader-source { max-width: 740px; margin: 48px auto 0; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; padding-top: 24px; border-top: 1px solid var(--native-rule); font-size: 13px; }
-html[data-era] #kram-minimal-preview .native-watch-link { display: inline-block; margin-top: 20px; font-size: 15px; }
-html[data-era='signal'] #kram-minimal-preview .native-archive { padding: clamp(44px,6vw,84px) clamp(24px,7vw,104px); background: #f7f1f8; }
-html[data-era='signal'] #kram-minimal-preview .native-archive > header,
-html[data-era='signal'] #kram-minimal-preview .native-filter,
-html[data-era='signal'] #kram-minimal-preview .native-post-list { max-width: 1080px; margin-left: auto; margin-right: auto; }
-html[data-era='signal'] #kram-minimal-preview .native-archive > header { max-width: 1080px; }
-html[data-era='signal'] #kram-minimal-preview .native-reader { margin: 0; padding: clamp(38px,6vw,80px) 30px 100px; }
-
-/* HTML stays a native-looking document, including its controls and link color. */
-html[data-era='html'] #kram-minimal-preview .native-archive,
-html[data-era='html'] #kram-minimal-preview .native-reader {
-  --native-ink: #000; --native-muted: #444; --native-paper: #fff; --native-rule: #aaa; --native-link: #0000ee; font-family: 'Times New Roman',Times,serif;
-}
-html[data-era='html'] #kram-minimal-preview .native-archive { padding-top: 20px; }
-html[data-era='html'] #kram-minimal-preview .native-archive > header h2 { font: 700 26px/1.2 'Times New Roman',Times,serif; letter-spacing: 0; }
-html[data-era='html'] #kram-minimal-preview .native-archive > header p { font-size: 16px; }
-html[data-era='html'] #kram-minimal-preview .native-filter { gap: 8px; margin-top: 20px; }
-html[data-era='html'] #kram-minimal-preview .native-filter button { min-height: 30px; padding: 3px 10px; border: 2px outset #ddd; color: #000; background: #eee; font: 14px/1.3 Arial,sans-serif; }
+html[data-era='signal'] #kram-minimal-preview .native-archive { padding: 32px clamp(24px,7vw,104px) 64px; background: var(--native-paper); }
+html[data-era='signal'] #kram-minimal-preview .native-reader { margin: 0; padding: clamp(38px,6vw,80px) 30px 80px; }
+html[data-era='html'] #kram-minimal-preview :is(.native-archive,.native-reader) { --native-ink:#000; --native-muted:#444; --native-paper:#fff; --native-rule:#aaa; --native-link:#0000ee; font-family:'Times New Roman',Times,serif; }
+html[data-era='html'] #kram-minimal-preview .native-filter { gap: 8px; }
+html[data-era='html'] #kram-minimal-preview .native-filter button { padding: 6px 10px; border: 2px outset #ddd; color: #000; background: #eee; font: 14px/1.4 Arial,sans-serif; }
 html[data-era='html'] #kram-minimal-preview .native-filter button[aria-pressed='true'] { border-style: inset; background: #ddd; font-weight: 700; }
-html[data-era='html'] #kram-minimal-preview .native-post-row > a { grid-template-columns: minmax(0,1fr) 140px; gap: 24px; padding: 20px 0; }
-html[data-era='html'] #kram-minimal-preview .native-post-info h3 { font: 700 24px/1.2 'Times New Roman',Times,serif; letter-spacing: 0; text-decoration: underline; }
-html[data-era='html'] #kram-minimal-preview .native-post-info p { color: #000; }
-html[data-era='html'] #kram-minimal-preview .native-post-kind { font-size: 11px; letter-spacing: 0; }
+html[data-era='html'] #kram-minimal-preview .native-post-info h3 { font-family: 'Times New Roman',Times,serif; font-weight: 700; letter-spacing: 0; text-decoration: underline; }
 html[data-era='html'] #kram-minimal-preview .native-reader { padding: 28px 0 50px; }
-html[data-era='html'] #kram-minimal-preview .native-reader > a[data-site-page] { margin-bottom: 30px; font-size: 16px; text-decoration: underline; }
-html[data-era='html'] #kram-minimal-preview .native-reader-head h1 { font-family: 'Times New Roman',Times,serif; font-weight: 700; font-size: 40px; line-height: 1.1; letter-spacing: 0; }
-html[data-era='html'] #kram-minimal-preview .native-reader-head > p { font-size: 23px; color: #333; }
-html[data-era='html'] #kram-minimal-preview .native-reader-body { font-size: 20px; }
-html[data-era='html'] #kram-minimal-preview .native-reader-body h2,
-html[data-era='html'] #kram-minimal-preview .native-reader-body h3,
-html[data-era='html'] #kram-minimal-preview .native-reader-body h4 { font-weight: 700; letter-spacing: 0; }
+html[data-era='html'] #kram-minimal-preview .native-reader-head h1 { font-family: 'Times New Roman',Times,serif; font-weight: 700; font-size: 40px; line-height: 1.15; letter-spacing: 0; }
+html[data-era='html'] #kram-minimal-preview .native-reader-body :is(h2,h3,h4) { font-weight: 700; letter-spacing: 0; }
 html[data-era='html'] #kram-minimal-preview .native-reader-body blockquote { border-left-color: #777; }
-
-/* Desktop uses the window's original paper surface and physical controls. */
-html[data-era='desktop'] #kram-minimal-preview .native-archive,
-html[data-era='desktop'] #kram-minimal-preview .native-reader {
-  --native-ink: #241d2c; --native-muted: #75667e; --native-paper: #fffdfb; --native-rule: #d4c7db; --native-link: #512f8d; font-family: Georgia,'Times New Roman',serif;
-}
-html[data-era='desktop'] #kram-minimal-preview .native-archive { padding-top: 18px; }
-html[data-era='desktop'] #kram-minimal-preview .native-archive > header h2 { font-family: Georgia,serif; font-weight: 700; font-size: 34px; letter-spacing: -.035em; }
-html[data-era='desktop'] #kram-minimal-preview .native-archive > header p { font-size: 16px; }
-html[data-era='desktop'] #kram-minimal-preview .native-filter { gap: 8px; margin-top: 20px; }
-html[data-era='desktop'] #kram-minimal-preview .native-filter button { min-height: 32px; padding: 5px 14px; border: 2px outset #eee4f4; color: #241d2c; background: #e0d6e6; font: 12px/1.4 Arial,Helvetica,sans-serif; }
-html[data-era='desktop'] #kram-minimal-preview .native-filter button[aria-pressed='true'] { border-style: inset; background: #cfc0da; }
-html[data-era='desktop'] #kram-minimal-preview .native-post-row > a { grid-template-columns: minmax(0,1fr) 160px; padding: 22px 0; gap: 26px; }
-html[data-era='desktop'] #kram-minimal-preview .native-post-info h3 { font-family: Georgia,serif; font-weight: 700; font-size: 27px; letter-spacing: -.025em; }
-html[data-era='desktop'] #kram-minimal-preview .native-post-kind,
-html[data-era='desktop'] #kram-minimal-preview .native-post-info time,
-html[data-era='desktop'] #kram-minimal-preview .native-reader-head time { font-family: Arial,Helvetica,sans-serif; }
-html[data-era='desktop'] #kram-minimal-preview .native-reader { padding: 34px 32px 60px; }
-html[data-era='desktop'] #kram-minimal-preview .native-reader > a[data-site-page] { font: 12px/1.5 Arial,Helvetica,sans-serif; }
-html[data-era='desktop'] #kram-minimal-preview .native-reader-head h1 { font: 700 clamp(34px,4.8vw,50px)/1.1 Georgia,serif; letter-spacing: -.04em; }
-html[data-era='desktop'] #kram-minimal-preview .native-reader-head > p { font-size: 22px; }
-html[data-era='desktop'] #kram-minimal-preview .native-reader-body { font-size: 19px; }
+html[data-era='desktop'] #kram-minimal-preview :is(.native-archive,.native-reader) { --native-ink:#241d2c; --native-muted:#75667e; --native-paper:#fffdfb; --native-rule:#d4c7db; --native-link:#512f8d; font-family:Georgia,'Times New Roman',serif; }
+html[data-era='desktop'] #kram-minimal-preview .native-filter { gap: 8px; }
+html[data-era='desktop'] #kram-minimal-preview .native-filter button { padding: 6px 12px; border: 2px outset #eee4f4; color:#241d2c; background:#e0d6e6; font: 12px/1.4 Arial,Helvetica,sans-serif; }
+html[data-era='desktop'] #kram-minimal-preview .native-filter button[aria-pressed='true'] { border-style: inset; background:#cfc0da; }
+html[data-era='desktop'] #kram-minimal-preview .native-post-info h3 { font-family:Georgia,serif; font-weight:700; font-size:25px; letter-spacing:-.015em; }
+html[data-era='desktop'] #kram-minimal-preview .native-reader { padding:34px 32px 60px; }
+html[data-era='desktop'] #kram-minimal-preview .native-reader-head h1 { font:700 clamp(34px,4.5vw,48px)/1.15 Georgia,serif; letter-spacing:-.02em; }
+html[data-era='desktop'] #kram-minimal-preview .native-reader-body { font-size:19px; }
 
 @media (max-width: 760px) {
-  html[data-era] #kram-minimal-preview .native-archive > header { margin-bottom: 20px; }
-  html[data-era] #kram-minimal-preview .native-filter { gap: 10px 22px; }
-  html[data-era] #kram-minimal-preview .native-post-row > a { grid-template-columns: minmax(0,1fr) 110px; gap: 20px; padding: 22px 0; }
-  html[data-era] #kram-minimal-preview .native-post-info h3 { font-size: 25px; }
-  html[data-era] #kram-minimal-preview .native-post-info p { font-size: 15px; }
-  html[data-era] #kram-minimal-preview .native-reader { padding: 34px 22px 60px; }
-  html[data-era] #kram-minimal-preview .native-reader > a[data-site-page] { margin-bottom: 30px; }
-  html[data-era] #kram-minimal-preview .native-reader-head { margin-bottom: 30px; }
-  html[data-era] #kram-minimal-preview .native-reader-head h1 { max-width: 19ch; font-size: 42px; }
-  html[data-era] #kram-minimal-preview .native-reader-head > p { font-size: 22px; }
-  html[data-era] #kram-minimal-preview .native-reader-body { font-size: 19px; line-height: 1.6; }
-  html[data-era] #kram-minimal-preview .native-reader-body h2 { font-size: 30px; }
-  html[data-era] #kram-minimal-preview .native-reader-body h3 { font-size: 25px; }
-  html[data-era] #kram-minimal-preview .native-video { margin-bottom: 30px; }
-  html[data-era='signal'] #kram-minimal-preview .native-archive { padding: 38px 22px; }
-  html[data-era='html'] #kram-minimal-preview .native-reader { padding: 28px 0 45px; }
-  html[data-era='desktop'] #kram-minimal-preview .native-reader { padding: 26px 20px 45px; }
-  html[data-era='desktop'] #kram-minimal-preview .native-reader-head h1 { font-size: 37px; }
+  html[data-era] #kram-minimal-preview .native-archive-controls { align-items:flex-start; gap:16px; margin-bottom:20px; }
+  html[data-era] #kram-minimal-preview .native-filter { display:grid; grid-template-columns:1fr 1fr .65fr; width:100%; gap:6px; }
+  html[data-era] #kram-minimal-preview .native-filter button { display:block; width:100%; text-align:left; white-space:normal; }
+  html[data-era] #kram-minimal-preview .native-filter-count { display:none; }
+  html[data-era] #kram-minimal-preview .native-filter button { font-size:14px; gap:5px; }
+  html[data-era] #kram-minimal-preview .native-search { width:100%; }
+  html[data-era] #kram-minimal-preview .native-search input { width:100%; }
+  html[data-era] #kram-minimal-preview .native-post-row > a { grid-template-columns:minmax(0,1fr); gap:16px; padding:20px 0; }
+  html[data-era] #kram-minimal-preview .native-post-row:not(.native-post-row-video) .native-post-cover { display:none; }
+  html[data-era] #kram-minimal-preview .native-post-row-video > a { grid-template-columns:minmax(0,1fr) 76px; }
+  html[data-era] #kram-minimal-preview .native-post-info h3 { max-width:none; font-size:22px; line-height:1.33; }
+  html[data-era] #kram-minimal-preview .native-post-cover img { aspect-ratio:1; }
+  html[data-era] #kram-minimal-preview .native-reader { padding:32px 22px 60px; }
+  html[data-era] #kram-minimal-preview .native-reader-head { margin-bottom:28px; }
+  html[data-era] #kram-minimal-preview .native-reader-head h1 { max-width:none; font-size:36px; line-height:1.17; }
+  html[data-era] #kram-minimal-preview .native-reader-head > p { font-size:21px; }
+  html[data-era] #kram-minimal-preview .native-reader-body { font-size:19px; }
+  html[data-era] #kram-minimal-preview .native-reader-body h2 { font-size:29px; }
+  html[data-era] #kram-minimal-preview .native-reader-body h3 { font-size:25px; }
+  html[data-era] #kram-minimal-preview .native-video { margin-bottom:28px; }
+  html[data-era='signal'] #kram-minimal-preview .native-archive { padding:24px 22px 40px; }
+  html[data-era='html'] #kram-minimal-preview .native-reader { padding:28px 0 45px; }
+  html[data-era='desktop'] #kram-minimal-preview .native-reader { padding:28px 20px 45px; }
+  html[data-era='desktop'] #kram-minimal-preview .native-post-info h3 { font-size:21px; }
+  html[data-era='desktop'] #kram-minimal-preview .native-reader-head h1 { font-size:34px; }
 }
 @media (max-width: 440px) {
-  html[data-era] #kram-minimal-preview .native-post-row > a { grid-template-columns: minmax(0,1fr) 80px; gap: 14px; }
-  html[data-era] #kram-minimal-preview .native-post-cover img { aspect-ratio: 1; }
-  html[data-era] #kram-minimal-preview .native-post-info h3 { font-size: 23px; }
-  html[data-era] #kram-minimal-preview .native-post-info p { font-size: 14px; }
-  html[data-era] #kram-minimal-preview .native-reader-head h1 { font-size: 36px; }
-  html[data-era] #kram-minimal-preview .native-reader-head > p { font-size: 20px; }
-  html[data-era] #kram-minimal-preview .native-reader-body { font-size: 18px; }
-  html[data-era='desktop'] #kram-minimal-preview .native-reader { padding: 22px 16px 40px; }
-  html[data-era='desktop'] #kram-minimal-preview .native-reader-head h1 { font-size: 32px; }
+  html[data-era] #kram-minimal-preview .native-filter { gap:6px; }
+  html[data-era] #kram-minimal-preview .native-filter button { gap:4px; font-size:13px; }
+  html[data-era] #kram-minimal-preview .native-filter-count { font-size:10px; }
+  html[data-era='html'] #kram-minimal-preview .native-filter button,
+  html[data-era='desktop'] #kram-minimal-preview .native-filter button { padding:6px; font-size:11px; }
+  html[data-era] #kram-minimal-preview .native-post-info h3 { font-size:21px; }
+  html[data-era] #kram-minimal-preview .native-reader-head h1 { font-size:33px; }
+  html[data-era] #kram-minimal-preview .native-reader-head > p { font-size:20px; }
+  html[data-era] #kram-minimal-preview .native-reader-body { font-size:18px; }
+  html[data-era='desktop'] #kram-minimal-preview .native-reader { padding:24px 16px 40px; }
+  html[data-era='desktop'] #kram-minimal-preview .native-reader-head h1 { font-size:31px; }
 }
+html[data-era='signal'] #kram-minimal-preview :is(.native-post-meta,.native-reader-head time,.native-filter-count) { font-family:'Spectral',Georgia,serif; }

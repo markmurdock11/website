@@ -1,0 +1,135 @@
+/* Shared layout rhythm; stays enabled in all three versions. */
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field {
+  position: static; min-height: 0; margin: 0; padding: 0;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-label {
+  position: static; display: block; margin: 0 0 20px; padding: 0;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field ol {
+  position: static; display: grid; grid-template-columns: 1fr 1fr;
+  gap: 22px 32px; margin: 0; padding: 0; list-style: none;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field li {
+  position: static; inset: auto; max-width: none; margin: 0; padding: 0;
+  font-size: 18px; line-height: 1.45;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field li::before,
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field ol::before,
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-relay::before,
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-node::before { display: none; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-experience-intro {
+  max-width: 40ch; margin: 0 0 30px; font-size: 28px; line-height: 1.25; letter-spacing: -.025em;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-relay {
+  display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 32px; margin: 0; padding: 0;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-node {
+  display: block; min-height: 0; margin: 0; padding: 0; border: 0;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-name {
+  display: inline-block; width: auto; margin: 0 0 10px; font-size: 17px;
+  font-weight: 500; letter-spacing: .015em; line-height: 1.3;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-node > p {
+  max-width: 34ch; margin: 0; font-size: 18px; line-height: 1.45; color: inherit;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-launches { margin-top: 12px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-launches summary {
+  width: fit-content; min-height: 44px; padding: 10px 0; cursor: pointer;
+  font-size: 14px; line-height: 1.5; text-decoration: underline; text-underline-offset: .25em;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-launches:not([open]) > div { display: none; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-satellites {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 8px 0 0; padding: 0;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-satellites a {
+  display: block; min-height: 0; margin: 0; padding: 0; line-height: 1.45;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-satellites span {
+  display: block; margin-bottom: 4px; font-size: 11px; line-height: 1.4;
+}
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-satellites strong { font-size: 14px; line-height: 1.45; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-work-with-us {
+  min-height: 44px; margin: 16px 0 0; padding: 8px 0; border: 0; border-radius: 0;
+  background: transparent; color: inherit; box-shadow: none; font-size: 15px;
+  letter-spacing: 0; text-decoration: underline; text-decoration-color: #ff681f;
+}
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-about-intro {
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items: start;
+  gap: 64px; padding: 56px max(24px,7vw);
+}
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-about-current-copy { display: block; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-about-intro .kram-about-path {
+  max-width: 34ch; font-size: 28px; line-height: 1.35; letter-spacing: -.025em;
+}
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-about-hero-statement {
+  position: static; max-width: none; margin: 0; padding: 44px max(24px,7vw);
+  background: #f7f1f8; font-size: clamp(32px,3.6vw,48px); line-height: 1.16; letter-spacing: -.035em;
+}
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-about {
+  min-height: clamp(280px,35vw,460px);
+}
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-receipts { padding: 48px max(24px,7vw) 52px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-about-now {
+  gap: 16px 64px; padding: 48px max(24px,7vw);
+}
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-about-now > p:first-child { font-size: 32px; line-height: 1.2; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-about-interests { font-size: 20px; line-height: 1.55; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing { min-height: 280px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing h1 { font-size: clamp(48px,7vw,82px); line-height: 1.1; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-archive-recommendations-art { min-height: 240px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-recommendations-copy > span { font-size: 40px; line-height: 1.12; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-recommendations-copy p { font-size: 17px; line-height: 1.5; }
+@media (max-width: 980px) {
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-about-intro { grid-template-columns: 1fr; gap: 36px; }
+}
+@media (max-width: 760px) {
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .ui-arrow,
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-external-mark,
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-mobile-external-mark,
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-home-identity a span { display: none; }
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-media-list-wrap a::after { display: none; content: none; }
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-doors b { display: none; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs {
+    display: flex; flex-wrap: wrap; gap: 6px 20px; padding: 0 0 20px; overflow: visible;
+  }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs button {
+    flex: 0 0 auto; width: auto; min-height: 44px; padding: 0; font-size: 13px; line-height: 1.4; letter-spacing: 0;
+  }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs button::before { display: none; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs button[aria-pressed='true'] { text-decoration: underline; text-underline-offset: .3em; }
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field ol { grid-template-columns: 1fr; gap: 16px; }
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field li { font-size: 17px; line-height: 1.45; }
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-label { margin-bottom: 18px; }
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-relay { grid-template-columns: 1fr; gap: 24px; }
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-experience-intro { margin-bottom: 26px; font-size: 24px; line-height: 1.3; }
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-name { margin-bottom: 6px; font-size: 17px; }
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-node > p { max-width: none; font-size: 16px; line-height: 1.45; }
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-satellites { gap: 20px 16px; }
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-doors { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-site-head { position: relative; height: 56px; min-height: 56px; padding: 0 20px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-site-head nav { gap: 20px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-about { min-height: 230px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-about-avatar { width: 88px; height: 88px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-about-hero-statement { padding: 32px 20px; font-size: clamp(29px,8vw,35px); line-height: 1.16; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-about-intro { gap: 32px; padding: 36px 20px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-about-intro .kram-about-path { max-width: none; font-size: 23px; line-height: 1.35; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-receipts { padding: 36px 20px 40px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-receipt-heading { margin-bottom: 14px; padding: 0; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-about-now { display: block; padding: 36px 20px 40px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-about-now > p:first-child { max-width: none; margin: 0 0 26px; font-size: 28px; line-height: 1.25; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-about-interests { margin-bottom: 18px; font-size: 18px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing { min-height: 170px; padding: 28px 20px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing h1 { font-size: 50px; line-height: 1.1; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-archive-recommendations-art { min-height: 200px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-recommendations-copy { inset: auto 20px 24px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-recommendations-copy > span { font-size: 30px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-recommendations-copy p { margin-top: 12px; font-size: 16px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-home-copy { top: 40px; left: 20px; width: calc(100% - 40px); }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-home-intro { gap: 24px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-home-copy .kram-home-identity { max-width: 32ch; font-size: 13px; line-height: 1.5; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-home-copy h1 { font-size: clamp(80px,26vw,112px); line-height: .95; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-home-copy > p:last-child { max-width: 25ch; margin-top: 20px; font-size: 17px; line-height: 1.4; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-doors { left: 20px; right: auto; bottom: 24px; flex-direction: row; gap: 26px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-newsletter-line { display: none; }
+}

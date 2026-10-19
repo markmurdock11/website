@@ -1,4 +1,4 @@
-/* One body of work, three ways to visit it. The original frame owns content and forms. */
+/* One body of work, three ways to visit it. */
 (() => {
   'use strict';
   const frame = document.getElementById('knm-preview');
@@ -9,8 +9,8 @@
     { id: 'signal', name: 'Signal', year: 'NOW', description: 'The present-day Kram.bio.' },
   ];
   const validModes = new Set(modes.map(mode => mode.id));
-  const pages = new Set(['home', 'about', 'writing', 'inbox', 'post']);
-  const pageNames = { home: 'home', about: 'about', writing: 'archive', inbox: 'inbox', post: 'archive' };
+  const pages = new Set(['home', 'about', 'writing', 'post']);
+  const pageNames = { home: 'home', about: 'about', writing: 'archive', post: 'archive' };
   const aliases = { modern: 'signal', skeumorphism: 'desktop' };
   const readStoredMode = () => {
     try { return localStorage.getItem('kram-era'); } catch { return null; }
@@ -35,7 +35,7 @@
   function currentPage() {
     if (window.KramPublication?.currentSlug()) return 'post';
     const page = location.hash.slice(1);
-    return page === 'media' ? 'writing' : (pages.has(page) ? page : 'home');
+    return page === 'inbox' ? 'about' : page === 'media' ? 'writing' : (pages.has(page) ? page : 'home');
   }
 
   function updateURL(page, push) {
@@ -131,11 +131,16 @@
     doc.head.appendChild(chromeDefaults);
     const alternateStyles = doc.createElement('link');
     alternateStyles.rel = 'stylesheet';
-    alternateStyles.href = 'eras-content.css?v=20261019b';
+    alternateStyles.href = 'eras-content.css?v=20261019c';
     alternateStyles.media = 'not all';
     doc.head.appendChild(alternateStyles);
     const nativeStyles = doc.querySelector('link[data-native-styles]');
     if (nativeStyles) doc.head.appendChild(nativeStyles);
+    const polishStyles = doc.createElement('link');
+    polishStyles.rel = 'stylesheet';
+    polishStyles.href = 'polish.css?v=20261019c';
+    polishStyles.dataset.keepEnabled = 'true';
+    doc.head.appendChild(polishStyles);
     const site = doc.querySelector('.kram-site');
     site.insertAdjacentHTML('afterbegin', `
       <div class="era-window-bar era-injected"><span class="era-window-title">kram.bio — home</span><span class="era-window-controls" aria-hidden="true"><span>▱</span></span></div>
@@ -144,7 +149,7 @@
     shortcuts.className = 'era-desktop-shortcuts era-injected';
     shortcuts.setAttribute('aria-label', 'Desktop shortcuts');
     shortcuts.innerHTML = [
-      ['home', '▣', 'My home'], ['about', '☺', 'About me'], ['writing', '▤', 'Archive'], ['inbox', '✉', 'Inbox']
+      ['home', '▣', 'My home'], ['about', '☺', 'About me'], ['writing', '▤', 'Archive']
     ].map(([page, icon, label]) => `<button type="button" data-era-page="${page}"><span class="era-shortcut-icon" aria-hidden="true">${icon}</span><span>${label}</span></button>`).join('');
     doc.body.prepend(shortcuts);
     doc.querySelector('.kram-home-hero').insertAdjacentHTML('beforeend', `
