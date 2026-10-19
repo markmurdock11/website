@@ -81,6 +81,18 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
 .nb-essential{font-size:13px;font-weight:400;line-height:1.4;color:var(--nb-muted);max-width:650px;margin-top:16px}
 .nb-essential:empty{display:none}
 .nb-comparison{max-width:650px;margin-top:15px;font-size:16px;font-weight:600;line-height:1.4;color:var(--nb-ink);font-variant-numeric:tabular-nums;text-wrap:balance}
+.nb-run-summary{width:100%;max-width:560px;margin:22px auto 0;text-align:left}
+.nb-summary-company{font-size:14px;font-weight:600;line-height:1.4;color:var(--nb-ink);margin-bottom:10px;text-wrap:balance}
+.nb-summary-rows{margin:0;padding:0}
+.nb-summary-row{display:grid;grid-template-columns:minmax(95px,.42fr) minmax(0,1fr);align-items:baseline;gap:16px;padding:10px 0;border-top:1px solid rgba(21,20,25,.12)}
+.nb-summary-row dt{font-size:13px;line-height:1.4;color:var(--nb-muted)}
+.nb-summary-row dd{min-width:0;margin:0;text-align:right;font-variant-numeric:tabular-nums}
+.nb-summary-row strong{display:block;font-size:19px;font-weight:400;line-height:1.25;letter-spacing:-.02em;color:var(--nb-ink);overflow-wrap:anywhere}
+.nb-summary-row small{display:block;font-size:12px;line-height:1.4;color:var(--nb-muted);margin-top:3px}
+.nb-summary-note{font-size:12px;line-height:1.45;color:var(--nb-muted);margin-top:12px}
+.nb-app[data-stage="result"] .nb-story{min-height:0;padding-top:24px;padding-bottom:28px}
+.nb-app[data-stage="result"] .nb-story h2{margin-bottom:13px}
+.nb-app[data-stage="result"] .nb-profile-line,.nb-app[data-stage="result"] .nb-time-row,.nb-app[data-stage="result"] .nb-feedback{display:none}
 .nb-visual{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;min-height:24px;margin-top:20px;font-size:18px;line-height:1.3;color:var(--nb-ink)}
 .nb-visual:empty{display:none}
 .nb-visual-flow,.nb-visual-equity,.nb-priority-flow{color:var(--nb-ink)}
@@ -101,8 +113,9 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
 .nb-chance-legend>span{display:inline-flex;align-items:center;gap:7px}
 .nb-chance-legend>span::before{content:'';width:7px;height:7px;background:var(--nb-paper)}
 .nb-chance-legend>span:first-child::before{background:var(--nb-ink)}
-.nb-app[data-stage="luck"] .nb-story-text,.nb-app[data-stage="luck_result"] .nb-story-text,.nb-app[data-stage="luck"] .nb-visual,.nb-app[data-stage="luck_result"] .nb-visual{display:none}
-.nb-story:has(.nb-chance:not([hidden])) .nb-story-text,.nb-story:has(.nb-chance:not([hidden])) .nb-visual{display:none}
+.nb-app[data-stage="luck"] .nb-visual,.nb-app[data-stage="luck_result"] .nb-visual{display:none}
+.nb-story:has(.nb-chance:not([hidden])) .nb-visual{display:none}
+.nb-story:has(.nb-chance:not([hidden])) .nb-story-text{max-width:600px;font-size:17px;line-height:1.4}
 @keyframes nb-ticket-ripple{0%,100%{transform:translateY(0)}45%{transform:translateY(-6px)}}
 /* Choices always occupy the same band. Nothing is fixed over the page. */
 .nb-actions{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:100%;max-width:820px;min-height:132px;margin:0 auto}
@@ -244,6 +257,15 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
  .nb-story-text{font-size:17px;line-height:1.4}
  .nb-essential{font-size:12px;line-height:1.4;max-width:350px;margin-top:14px}
  .nb-comparison{font-size:14px;line-height:1.4;margin-top:12px}
+ .nb-run-summary{margin-top:19px}
+ .nb-summary-company{font-size:13px;margin-bottom:10px}
+ .nb-summary-row{grid-template-columns:minmax(85px,.4fr) minmax(0,1fr);gap:12px;padding:9px 0}
+ .nb-summary-row dt{font-size:12px}
+ .nb-summary-row strong{font-size:17px}
+ .nb-summary-row small,.nb-summary-note{font-size:11px;line-height:1.4}
+ .nb-app[data-stage="result"] .nb-story{padding-top:18px;padding-bottom:24px}
+ .nb-app[data-stage="result"] .nb-scene-label{margin-bottom:13px}
+ .nb-story:has(.nb-chance:not([hidden])) .nb-story-text{font-size:15px;line-height:1.4}
  .nb-visual{font-size:16px;line-height:1.3;gap:9px;margin-top:19px}
  .nb-chance{margin-top:20px}
  .nb-chance-grid{gap:4px}
@@ -336,6 +358,10 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
  .nb-story-text{font-size:18px}
  .nb-essential{margin-top:10px}
  .nb-chance{margin-top:10px}
+ .nb-story:has(.nb-chance:not([hidden])) .nb-story-text{font-size:16px}
+ .nb-app[data-stage="result"] .nb-story{padding-top:15px;padding-bottom:23px}
+ .nb-run-summary{margin-top:17px}
+ .nb-summary-row{padding:8px 0}
  .nb-actions{min-height:112px}
  .nb-action{min-height:112px;padding:16px 24px}
  .nb-action-value{font-size:26px;margin-top:6px}
@@ -350,12 +376,23 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
  .nb-route-choices{gap:10px}
  .nb-setup-foot{margin-top:18px}
 }
+/* The finished run pairs the outcome with its receipt on wider screens. */
+@media(min-width:900px){
+ .nb-app[data-stage="result"] .nb-story{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:max-content max-content max-content 1fr;align-items:start;align-content:center;column-gap:58px;row-gap:0;min-height:0;padding:22px 0;text-align:left}
+ .nb-app[data-stage="result"] .nb-story>.nb-scene-label{grid-column:1;grid-row:1;margin:0 0 14px}
+ .nb-app[data-stage="result"] .nb-story>h2{grid-column:1;grid-row:2;max-width:490px;font-size:40px;line-height:1.08;margin:0 0 16px}
+ .nb-app[data-stage="result"] .nb-story>.nb-story-text{grid-column:1;grid-row:3;max-width:440px;font-size:18px;line-height:1.45}
+ .nb-app[data-stage="result"] .nb-story>.nb-comparison{grid-column:1;grid-row:4;align-self:start;max-width:440px;margin-top:20px;font-size:15px}
+ .nb-app[data-stage="result"] .nb-run-summary{grid-column:2;grid-row:1 / span 4;align-self:start;max-width:none;margin:0}
+ .nb-app[data-stage="result"] .nb-summary-company{margin-bottom:10px}
+ .nb-app[data-stage="result"] .nb-summary-row{padding:8px 0}
+}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-7">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-8">
   <header class="nb-header">
     <div><p class="nb-eyebrow">Kram + Emma</p><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">new game</button>
@@ -410,10 +447,11 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
       <p class="nb-story-text" data-field="story"></p>
       <div id="chance-visual" class="nb-chance" data-field="chance" hidden>
         <div class="nb-chance-grid" data-field="chance-grid" role="img" aria-label="Ten possible rolls. One, two and three lead to an exit. Four through ten do not."></div>
-        <div class="nb-chance-legend"><span>01 to 03: 30% exit</span><span>04 to 10: 70% no exit</span></div>
+        <div class="nb-chance-legend"><span>3 in 10 exit</span><span>7 in 10 no exit</span></div>
       </div>
       <div class="nb-visual" data-field="visual" aria-hidden="true"></div>
       <p class="nb-essential" data-field="essential"></p>
+      <div class="nb-run-summary" data-field="run-summary" hidden></div>
       <p class="nb-comparison" data-field="comparison" hidden></p>
   <div class="nb-funnel" data-field="funnel" aria-label="Two hurdles to equity cash" hidden>
     <span class="nb-funnel-step" data-field="company-step"><small>Company exit</small><strong data-field="company-exit">?</strong></span>
@@ -811,12 +849,28 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
       if(p) target.append(cashItem(p.months===1?'pay / month':p.months+' months of pay',money(p.pay)),cashItem('living costs','-'+money(p.costs)),cashItem('saved','+'+money(p.saved),'nb-flow-net'));
     }
   }
+  function sceneTitle(s,v) {
+    if(s.stage==='result') return endingTitle(s);
+    if(s.stage==='lockup') return 'Public. Still locked.';
+    if(s.stage==='luck') return 'Will it sell or go public?';
+    if(s.stage==='luck_result') return s.scenario==='ipo'?'The company will go public.':s.scenario==='private'?'The company stays private.':s.scenario==='shutdown'?'The company will close.':'The company will be sold.';
+    if(s.stage==='company36'&&s.scenario==='shutdown') return 'The shutdown is coming.';
+    return v.title;
+  }
   function sceneStory(s,v) {
     if(s.stage==='offer') return 'Take-home pay. $3,500 a month to live.';
     if(s.stage==='career18') return 'A new job pays more. Staying earns more options.';
     if(s.stage==='purchase18'||s.stage==='purchase36') return 'Turn earned options into shares. The shares may never sell.';
     if(s.stage==='lockup') return s.unexercised+s.owned?'The company is public. You still cannot sell.':'You let the options go. Salary keeps coming.';
     if(s.stage==='sale') return 'The lockup is over. Sell, or keep holding.';
+    if(s.stage==='company36'&&s.scenario==='shutdown') return 'Your new salary keeps coming. The old company has no buyer.';
+    if(s.stage==='luck') return 'Chance picks the company outcome. Your payout comes later.';
+    if(s.stage==='luck_result') {
+      if(s.scenario==='ipo') return s.owned+s.unexercised?'First, an offer to sell half your equity. The IPO comes later.':'Your options expired. The company can still go public without you.';
+      if(s.scenario==='acquisition_low'||s.scenario==='acquisition_high') return 'Investors get paid first. A sale can still leave employees with $0.';
+      if(s.scenario==='private') return 'Still operating. No share sale in this run.';
+      return 'No buyer. Equity will pay $0. Your salary savings still count.';
+    }
     if(s.stage==='result') {
       if(s.scenario==='acquisition_low') return 'Investors were paid first. Nothing reached employee shares.';
       if(s.scenario==='acquisition_high') return s.equityProceeds?'The sale paid investors. Your shares got a piece too.':'Your options expired before the company sold.';
@@ -830,7 +884,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
   function essential(s,v) {
     if(s.stage==='offer') return 'Options let you buy shares at '+money(s.strike)+' each. Earn them over 4 years. First 25% after year one.';
     if(s.stage==='purchase18'||s.stage==='purchase36') return '90 days to buy. Then these options expire.';
-    if(s.stage==='luck'||s.stage==='luck_result') return "One old seed cohort. Not your offer's odds.";
+    if(s.stage==='luck'||s.stage==='luck_result') return 'Exit = sale or IPO. 30% in one study, not your odds.';
     if(s.stage==='lockup') return v.detail;
     if(s.stage==='result') return s.owned+s.unexercised?'Unsold equity stays outside your cash balance.':'Equity cash flow = sale cash minus what you paid.';
     return '';
@@ -848,16 +902,40 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
       const pay=leaving?s.newJobPay:s.pay;
       shown.value=money(pay)+' / mo';
       shown.detail=money(pay-3500)+' saved / mo\n'+(leaving?'Keep '+number(s.earned)+' options. '+number(s.grant-s.earned)+' unearned lost.':number(s.grant-s.earned)+' more options to earn.');
+    } else if(s.stage==='luck') {
+      const same=s.luck.mode==='fixed'||s.luck.roll!==null;
+      shown.label=same?'Reveal the same outcome':'Reveal company outcome';
+      shown.value=same?'Same company future':'3 in 10 reach an exit';
+      shown.detail='This decides the company outcome, not your payout.';
+    } else if(s.stage==='luck_result') {
+      if(s.scenario==='ipo') {
+        shown.label=s.owned+s.unexercised?'See the sale offer':'See what happens next';
+        shown.value=s.owned+s.unexercised?'Sell half, or hold':'No equity left';
+        shown.detail=s.owned+s.unexercised?'The IPO comes later.':'Your salary keeps coming.';
+      } else if(s.scenario==='acquisition_low'||s.scenario==='acquisition_high') {
+        shown.label='See the sale terms';
+        shown.value='Investors get paid first';
+        shown.detail=s.employed?'Then choose whether to stay.':'See what reaches employee shares.';
+      } else {
+        shown.label=s.employed?'Compare the jobs':'Check on the company';
+        shown.value=s.employed?'Higher pay, or stay':s.scenario==='private'?'Still private':'Cash is running out';
+        shown.detail=s.employed?'No share sale is available.':'Your new salary keeps coming.';
+      }
+    } else if(s.stage==='company36') {
+      const months=s.scenario==='ipo'?12:18;
+      shown.label=s.scenario==='ipo'?'See IPO day':'See your final balance';
+      shown.value=months+' months later';
+      shown.detail='Your salary keeps coming.';
     } else if(s.stage==='result') {
       shown.label=action.id==='replay'?'Replay this company':'Try new luck';
-      shown.value=action.id==='replay'?'Same luck':'Fresh roll';
+      shown.value=action.id==='replay'?'Same outcome':'New draw';
       shown.detail=action.id==='replay'?'Try different choices.':'Same profile. Same offer.';
     }
     return shown;
   }
   function choiceFeedback(s) {
     if(s.stage==='offer') return 'Start with $12,000. Pick your pay. Work 18 months.';
-    if(rolling) return 'Drawing the company path. Your choices come next.';
+    if(rolling) return 'Picking the company outcome. Your payout comes later.';
     const last=s.choices[s.choices.length-1];
     if(!last) return '';
     const advanced=s.month>last.month;
@@ -876,7 +954,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
     if(last.id==='tender_sell') return 'Sale paid '+money(s.lastSale.received)+'. '+salary;
     if(last.id==='tender_hold') return 'Equity kept. '+salary;
     if(last.id==='wait_lockup') return salary+' '+(s.unexercised+s.owned?'You can sell now.':'No equity left.');
-    if(last.id==='sell') return 'Sale added '+money(s.lastSale.received)+' before tax.';
+    if(last.id==='sell') return '+'+money(s.lastSale.received)+' to your bank. Equity tax excluded.';
     if(last.id==='hold') return 'Equity kept. No cash added.';
     if(last.id==='stay'||last.id==='continue') {
       if(s.stage==='result'&&s.lastSale&&s.lastSale.received) return salary+' Sale paid '+money(s.lastSale.received)+'.';
@@ -919,7 +997,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
         const ticket=element('span','nb-chance-ticket'+(i<=3?' is-exit':'')+(selected?' is-picked':''),String(i).padStart(2,'0'));
         ticket.setAttribute('aria-hidden','true');grid.appendChild(ticket);
       }
-      grid.setAttribute('aria-label',s.luck.revealed?'Roll '+s.luck.roll+'. '+(s.luck.roll<=3?'An exit ahead. Your payout is still uncertain.':'No exit in this run.'):'Ten possible rolls. One, two and three lead to an exit. Four through ten do not.');
+      grid.setAttribute('aria-label',s.luck.revealed?'Company outcome '+s.luck.roll+' of 10. '+sceneTitle(s,model.view(s)):'Ten company outcomes. Three lead to a sale or IPO. Seven do not. This draw does not decide your personal payout.');
     }
     const revealed=s.luck&&s.luck.revealed;
     const exits=revealed&&s.luck.roll<=3;
@@ -945,30 +1023,66 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
     if(s.lastSale && s.lastSale.type==='acquisition') rows.appendChild(element('p','','Shareholder cash '+money(s.lastSale.available)+'. Investors '+money(s.lastSale.investorPayout)+'. Your gross payout '+money(s.lastSale.gross)+'. Purchase cost withheld '+money(s.lastSale.withheldStrike)+'.'));
     if(s.owned+s.unexercised) rows.appendChild(element('p','','Outside your cash: '+number(s.unexercised)+' options and '+number(s.owned)+' shares.'));
   }
+  function drawRunSummary(s) {
+    const target=fields['run-summary'];
+    if(!target) return;
+    target.hidden=s.stage!=='result';
+    target.replaceChildren();
+    if(s.stage!=='result') return;
+    const upfrontShares=s.purchaseCosts/s.strike;
+    const upfrontSold=Math.max(0,upfrontShares-s.owned-s.lostShares);
+    const exercisedAtSale=Math.max(0,s.sold-upfrontSold);
+    const withheld=exercisedAtSale*s.strike;
+    const equityNet=s.equityProceeds-s.purchaseCosts;
+    const saved=s.salaryIncome-s.livingCosts;
+    const dl=element('dl','nb-summary-rows');
+    const row=(label,value,detail)=>{
+      const item=element('div','nb-summary-row');
+      const amount=element('dd');amount.append(element('strong','',value));
+      if(detail) amount.append(element('small','',detail));
+      item.append(element('dt','',label),amount);dl.appendChild(item);
+    };
+    target.append(element('p','nb-summary-company',companyName(s.company)+' / Series '+s.round));
+    row('Options earned',number(s.earned),s.cancelled?number(s.cancelled)+' unearned options lost.':number(s.grant)+' in your original grant.');
+    row('Paid upfront',money(s.purchaseCosts),upfrontShares?number(upfrontShares)+' shares bought with savings.':'No purchase from your bank.');
+    const soldDetail=s.sold?number(s.sold)+' shares sold.':'No shares sold.';
+    row('Sale cash',money(s.equityProceeds),soldDetail+(withheld?' '+money(withheld)+' buying cost already deducted.':''));
+    const held=[];
+    if(s.owned) held.push(number(s.owned)+' shares');
+    if(s.unexercised) held.push(number(s.unexercised)+' options');
+    const closed=[];
+    if(s.lostShares) closed.push(number(s.lostShares)+' purchased shares lost');
+    if(s.expired) closed.push(number(s.expired)+' options expired');
+    row('Equity left',held.length?held.join(' + '):'0',held.length?'Unsold. Outside your cash.':closed.length?closed.join('. ')+'.':'Position closed.');
+    row('Equity cash flow',money(equityNet),money(s.equityProceeds)+' received - '+money(s.purchaseCosts)+' paid upfront.');
+    target.append(dl);
+    target.append(element('p','nb-summary-note',money(12000)+' start + '+money(saved)+' salary saved '+(equityNet<0?'- '+money(-equityNet):'+ '+money(equityNet))+' equity = '+money(s.bank)+' in your bank. Equity taxes excluded.'));
+  }
   function render(animate) {
     const s=rolling&&rollViewState?rollViewState:state;
     app.dataset.stage=s.stage;
     app.dataset.mode=playing?'play':'setup';
     fields.setup.hidden=playing;fields.board.hidden=!playing;fields.intro.hidden=playing;fields['profile-line'].hidden=!playing;
-    fields['scene-explainer'].hidden=!playing;fields.ledger.hidden=!playing;fields.funnel.hidden=!playing||!['luck','luck_result','result'].includes(s.stage);
+    fields['scene-explainer'].hidden=!playing;fields.ledger.hidden=!playing;fields.funnel.hidden=!playing||s.stage!=='luck_result';
     if(!playing) {fields['final-receipt'].hidden=true;renderSetup();put('announcement',setup.step===3?'Your recommended path. '+fields['setup-title'].textContent:'Step '+(setup.step+1)+' of 3. '+fields['setup-title'].textContent);return;}
     const v=model.view(s);
     put('profile-line',companyName(s.company)+' / Series '+s.round+' / '+names[s.profile.industry]);
     put('bank',money(Math.round(s.bank)));put('freedom',(s.bank/3500).toFixed(1)+' months of life');
     put('monthly-save',s.pay?'+'+money(s.pay-3500)+' saved / month':'Starting savings');put('bank-note','');
-    put('equity-label',s.owned?'Shares owned':s.grant?'Earned options':'Your equity');put('equity-main',number(s.unexercised+s.owned));
+    put('equity-label',s.stage==='result'?'Equity left':s.owned?'Shares owned':s.grant?'Earned options':'Your equity');put('equity-main',number(s.unexercised+s.owned));
     put('equity-description',!s.grant?'Rights to buy at '+money(s.strike)+'.':s.employed?number(Math.max(0,s.grant-s.earned))+' still unearned':number(s.cancelled)+' unearned lost');
-    put('equity-note',!s.grant?'Choose a grant below.':s.stage==='lockup'?(s.owned+s.unexercised?'Locked until month 54.':'No equity left.'):s.stage==='sale'?'Ready to sell.':s.stage==='result'?(s.owned+s.unexercised?'Still held. Outside your cash.':'Position closed.'):s.owned?'Private shares. Not cash.':'Earned, not bought.');
+    put('equity-note',!s.grant?'Choose a grant below.':s.stage==='lockup'?(s.owned+s.unexercised?'Locked until month 54.':'No equity left.'):s.stage==='sale'?'Ready to sell.':s.stage==='result'?(s.owned?'Shares held. Outside your cash.':s.unexercised?'Options held. Outside your cash.':'Position closed.'):s.owned?'Private shares. Not cash.':'Earned, not bought.');
     put('equity-tag',s.stage==='sale'?'can sell':'not cash');
     fields['earned-fill'].style.width=v.earnedPercent+'%';fields['owned-fill'].style.width=v.ownedPercent+'%';fields['time-fill'].style.width=v.progress+'%';
-    put('date',v.date);put('stage-label',v.stageLabel);put('title',s.stage==='result'?endingTitle(s):s.stage==='lockup'?'Public. Still locked.':v.title);put('story',sceneStory(s,v));put('detail',v.detail);put('receipt',eventReceipt(s,v));
+    put('date',v.date);put('stage-label',s.stage==='luck'||s.stage==='luck_result'?'Company outcome':v.stageLabel);put('title',sceneTitle(s,v));put('story',sceneStory(s,v));put('detail',v.detail);put('receipt',eventReceipt(s,v));
     put('choice-note',s.stage==='offer'?'All amounts USD. Fictional company.':'Equity cash before tax.');
-    drawVisual(s,v);drawCashflow(s);drawLuck(s);put('essential',essential(s,v));
+    drawVisual(s,v);drawCashflow(s);drawLuck(s);drawRunSummary(s);put('essential',essential(s,v));
+    fields.visual.hidden=s.stage==='result';fields.essential.hidden=s.stage==='result';
     const feedback=choiceFeedback(s);
     put('feedback',feedback);
     put('comparison',s.stage==='result'&&v.comparison?'Same company. '+v.comparison:'');
     if(fields.comparison) fields.comparison.hidden=!(s.stage==='result'&&v.comparison);
-    put('announcement',rolling?'Drawing company luck.':v.date+'. '+(s.stage==='result'?endingTitle(s):s.stage==='lockup'?'Public. Still locked.':v.title)+' '+feedback);
+    put('announcement',rolling?'Picking the company outcome.':v.date+'. '+sceneTitle(s,v)+' '+feedback);
     fields.actions.dataset.single=v.actions.length===1?'true':'false';
     slots.forEach((button,index)=>{
       const action=actionPresentation(s,v.actions[index]);button.disabled=!action||rolling;button.style.visibility=action?'visible':'hidden';button.setAttribute('aria-hidden',action?'false':'true');
