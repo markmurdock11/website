@@ -6,7 +6,7 @@
   const modes = [
     { id: 'html', name: 'HTML', year: '1991', description: 'Just the words. The beginning of the web.' },
     { id: 'desktop', name: 'Desktop', year: '2003', description: 'Open a window. Make yourself at home.' },
-    { id: 'signal', name: 'Signal', year: 'NOW', description: 'The present-day Kram.bio.' },
+    { id: 'signal', name: 'Singularity', year: 'NOW', description: 'The present-day Kram.bio.' },
   ];
   const validModes = new Set(modes.map(mode => mode.id));
   const pages = new Set(['home', 'about', 'writing', 'post']);
@@ -178,7 +178,7 @@
     });
     alternateStyles.addEventListener('error', () => {
       applyMode('signal');
-      document.getElementById('era-announcement').textContent = 'This version could not load. The Signal version is available.';
+      document.getElementById('era-announcement').textContent = 'This version could not load. The Singularity version is available.';
     });
     applyMode(activeMode);
   }
