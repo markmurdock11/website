@@ -475,6 +475,12 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
 .nb-result-company-cash dt,.nb-result-bank-math dt{font-size:11px}
 .nb-result-bank-math dd{font-size:14px}
 .nb-result-reason{font-size:13px}
+.nb-route-detail:empty,.nb-setup-copy:empty,.nb-story-text:empty,.nb-action-detail:empty,.nb-action-value:empty{display:none}
+.nb-app[data-stage="offer"] .nb-action-detail{white-space:pre-line}
+.nb-result-bank-note{font-size:12px;color:var(--nb-muted);margin:-3px 0 4px}
+.nb-result-bank-breakdown{margin:0}
+.nb-result-bank-breakdown>summary{cursor:pointer;font-size:12px;color:var(--nb-muted);padding:10px 0;min-height:40px}
+.nb-result-bank-breakdown[open]>.nb-result-bank-math{padding:3px 0 10px}
 @media(max-width:600px){
  .nb-result-summary{grid-template-columns:1fr;gap:12px}
  .nb-result-elapsed,.nb-share-card .nb-share-payoff{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
@@ -490,7 +496,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-11.2">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-12">
   <header class="nb-header">
     <div><p class="nb-eyebrow">Kram + Emma</p><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">new game</button>
@@ -576,7 +582,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
       </section>
     </div>
   </details>
-  <footer class="nb-footer">A playable essay by Kram + Emma. <a href="https://kram.bio/">Back to kram.bio</a></footer>
+  <footer class="nb-footer"><a href="https://kram.bio/">kram.bio</a></footer>
 </main>
 <script>(function (root, factory) {
   'use strict';
@@ -1206,7 +1212,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     else if (c.outcome === 'shutdown') exit = 'Company closed';
     else exit = c.status === 'private' ? 'Still private' : 'Company outcome pending';
     let outcomeValue = '';
-    if (acquisition) outcomeValue = shortMoney(c.exitCash) + ' to split among shareholders';
+    if (acquisition) outcomeValue = 'Sale cash: ' + shortMoney(c.exitCash);
     else if (publicCompany) {
       outcomeValue = (c.valuation ? 'Company value ' + shortMoney(c.valuation) + ' · ' : '') + 'IPO ' + money(c.ipoPrice) + '/share';
       outcomeValue += ' → ' + (c.lastSale && c.lastSale.type === 'public' ? 'sale ' : 'after wait ') + money(c.salePrice) + '/share';
@@ -1219,20 +1225,20 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
 
     let outcomeReason;
     if (c.equityProceeds > 0) {
-      outcomeReason = 'Payout for ' + count(sold) + ' shares.';
-      if (c.lastSale && c.lastSale.withheldStrike) outcomeReason += ' ' + money(c.lastSale.withheldStrike) + ' buying cost taken out.';
+      outcomeReason = count(sold) + ' shares sold.';
+      if (c.lastSale && c.lastSale.withheldStrike) outcomeReason += ' ' + money(c.lastSale.withheldStrike) + ' buying cost deducted.';
     } else if (acquisition && c.lastSale && c.lastSale.shares > 0) {
-      outcomeReason = !c.lastSale.commonPayout ? 'Investors were paid first. Nothing was left for your shares.' : 'The cost to buy your shares used up the payout.';
+      outcomeReason = !c.lastSale.commonPayout ? 'Investors were paid first. Nothing left for you.' : 'Buying the shares would use up the payout.';
     } else if (c.outcome === 'shutdown' && c.lostShares > 0) {
-      outcomeReason = 'The company closed. Your ' + count(c.lostShares) + ' bought shares became worth $0.';
+      outcomeReason = count(c.lostShares) + ' bought shares became worth $0.';
     } else if (held) {
-      outcomeReason = c.outcome === 'private' ? 'Still private: no sale. You keep ' + held + ', but get no cash yet.' : 'You chose to keep ' + held + '. No sale means no cash yet.';
+      outcomeReason = c.outcome === 'private' ? 'No sale. You keep ' + held + '.' : 'You kept ' + held + '. No cash received.';
     } else if (declinedPurchase) {
-      outcomeReason = 'You let your options expire instead of buying shares. You had no shares to sell.';
+      outcomeReason = 'You let your options expire. No shares to sell.';
     } else if (c.outcome === 'shutdown') {
-      outcomeReason = 'The company closed. Your remaining options ended without a payout.';
+      outcomeReason = 'Your options ended without a payout.';
     } else {
-      outcomeReason = 'You had no shares or options left to sell.';
+      outcomeReason = 'No shares or options left to sell.';
     }
 
     const left = Number.isInteger(c.departedMonth) ? c.departedMonth : null;
@@ -1274,13 +1280,13 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     const nextJobStart = lastCompany && Number.isInteger(lastCompany.departedMonth) ? lastCompany.departedMonth + (lastCompany.departureReason === 'layoff' ? 3 : 0) : null;
     const nextJobMonths = s.activeJobId === null && s.activePay > 0 && nextJobStart !== null ? Math.max(0, s.month - nextJobStart) : 0;
     const gapMonths = s.companies.reduce((total, c) => total + (c.departureReason === 'layoff' ? Math.min(3, s.month - c.departedMonth) : 0), 0);
-    const careerNote = [nextJobMonths ? 'Next salaried job: ' + duration(nextJobMonths) : '', gapMonths ? 'Without pay after layoffs: ' + duration(gapMonths) : ''].filter(Boolean).join(' · ');
+    const careerNote = [nextJobMonths ? 'Next job: ' + duration(nextJobMonths) : '', gapMonths ? 'Without pay: ' + duration(gapMonths) : ''].filter(Boolean).join(' · ');
     return {
       companies, received, withheld, bank: s.bank, debt: s.debt || 0,
       headline: money(received), headlineLabel: 'Cash from share sales',
-      bankLabel: 'Cash in your bank', bankValue: money(s.bank), bankNote: 'Includes salary savings',
+      bankLabel: 'Cash in bank', bankValue: money(s.bank), bankNote: 'After salary and costs',
       debtLabel: 'Unpaid bills', debtValue: money(s.debt || 0),
-      note: withheld ? 'Share-buying costs at sale are already taken out. Taxes are not included.' : 'Taxes on shares are not included.',
+      note: 'Taxes on shares not included.',
       footer: 'A fictional run · Kram + Emma', url: 'kram.bio/near-bag-experience',
       elapsedMonths: s.month, elapsed: duration(s.month), nextJobMonths, gapMonths, careerNote, bankMath,
       bankMathTotal: cents(bankMath.reduce((total, term) => total + term.amount, 0))
@@ -1295,7 +1301,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     container.setAttribute('aria-label', 'Your two-company result');
     container.append(el('p', 'nb-share-brand', 'THE NEAR-BAG EXPERIENCE'));
     const summary = el('div', 'nb-result-summary');
-    const time = el('p', 'nb-result-elapsed'); time.append(el('small', '', 'Time since your first day'), el('strong', '', d.elapsed));
+    const time = el('p', 'nb-result-elapsed'); time.append(el('small', '', 'Total time'), el('strong', '', d.elapsed));
     const payoff = el('p', 'nb-share-payoff'); payoff.append(el('small', '', d.headlineLabel), el('strong', '', d.headline));
     summary.append(time, payoff); container.append(summary);
     if (d.careerNote) container.append(el('p', 'nb-result-career-note', d.careerNote));
@@ -1316,7 +1322,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
       row.append(timeline);
       if (c.outcomeValue) row.append(el('p', 'nb-result-outcome-value', c.outcomeValue));
       const cash = el('dl', 'nb-result-company-cash');
-      [['Spent buying shares', money(c.paid)], ['Cash received', money(c.received)]].forEach(([label, value]) => {
+      [['Paid for shares', money(c.paid)], ['Cash received', money(c.received)]].forEach(([label, value]) => {
         const pair = el('div', ''); pair.append(el('dt', '', label), el('dd', '', value)); cash.append(pair);
       });
       row.append(cash, el('p', 'nb-result-reason', c.outcomeReason));
@@ -1325,10 +1331,13 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     container.append(rows);
     const bank = el('div', 'nb-share-bank nb-result-bank');
     const bankHeading = el('p', 'nb-result-bank-total'); bankHeading.append(el('small', '', d.bankLabel), el('strong', '', d.bankValue)); bank.append(bankHeading);
+    bank.append(el('p', 'nb-result-bank-note', d.bankNote));
+    const breakdown = el('details', 'nb-result-bank-breakdown');
+    breakdown.append(el('summary', '', 'Cash breakdown'));
     const math = el('dl', 'nb-result-bank-math'); math.setAttribute('aria-label', 'How your bank balance adds up');
     d.bankMath.forEach(term => { const pair = el('div', ''); pair.append(el('dt', '', term.label), el('dd', '', term.value)); math.append(pair); });
-    bank.append(math);
-    if (d.debt) bank.append(el('p', 'nb-result-debt', 'You still owe ' + d.debtValue + ' in bills. That money has not left your bank.'));
+    breakdown.append(math); bank.append(breakdown);
+    if (d.debt) bank.append(el('p', 'nb-result-debt', 'Unpaid bills: ' + d.debtValue + '. Still owed from your bank.'));
     container.append(bank, el('p', 'nb-share-note', d.note));
     const footer = el('div', 'nb-share-footer'); footer.append(el('span', '', d.footer), el('span', '', d.url)); container.append(footer);
   }
@@ -1414,7 +1423,7 @@ function contract(c,checking,bank,doc){
  const single=c.clauseRemoved||bank<5000;
  const s=svg(single?'Earned options kept if you quit: '+(c.clauseRemoved?'all':'half'):'Contract choice: pay a lawyer to keep all earned options if you quit, or keep the rule and lose half.',210,doc);
  if(single){tokens(s,204,42,10,c.clauseRemoved?10:5);text(s,240,131,c.clauseRemoved?'100% kept':'50% kept',30);text(s,240,165,'Earned options if you quit',14,MUTED);}
- else{tokens(s,105,39,10,10);tokens(s,300,39,10,5);text(s,145,128,'Keep all',25);text(s,340,128,'Keep half',25);text(s,145,159,'Lawyer: $5,000',14,MUTED);text(s,340,159,checking?'Keep the rule':'Sign as written',14,MUTED);text(s,240,195,'Earned options if you quit',12,MUTED);}
+ else{tokens(s,105,39,10,10);tokens(s,300,39,10,5);text(s,145,128,'Keep all',25);text(s,340,128,'Keep half',25);text(s,240,175,'Earned options if you quit',16,MUTED);}
  return s;
 }
 function offer(c,doc){
@@ -1423,15 +1432,15 @@ function offer(c,doc){
  const s=svg('Options are the right to buy shares. A share is a small piece of a company. Pay '+money(c.strike)+' for each share. Cash is money you can spend, received only if a sale pays you. Your offer has '+grantText+' options, earned over four years while you stay. After one year, earn the first 25 percent: '+firstYear+' options. Then earn more each month.',210,doc);
  [8,176,344].forEach((x,i)=>box(s,x,8,128,77,i===2?LIME:PAPER,8));
  text(s,72,34,'Options',23);text(s,240,34,'Shares',23);text(s,408,34,'Cash',23);
- text(s,72,58,'A right',16);text(s,72,77,'to buy',16);
- text(s,240,58,'A small piece',16);text(s,240,77,'of a company',16);
- text(s,408,58,'Money you',16);text(s,408,77,'can spend',16);
+ text(s,72,58,'Right to',16);text(s,72,77,'buy shares',16);
+ text(s,240,58,'Part of',16);text(s,240,77,'a company',16);
+ text(s,408,58,'Money to',16);text(s,408,77,'spend',16);
  arrow(s,156,47);arrow(s,324,47);
- text(s,156,105,'Buy at '+money(c.strike)+' each',15,MUTED);text(s,348,105,'Sell, if a sale pays you',15,MUTED);
- text(s,87,132,'Year 1',15,MUTED);text(s,393,132,'Year 4',15,MUTED);
+ text(s,156,105,'Buy: '+money(c.strike)+'/share',15,MUTED);text(s,348,105,'Sell',15,MUTED);
+ text(s,87,132,'1 year',15,MUTED);text(s,393,132,'4 years',15,MUTED);
  for(let i=0;i<4;i++)box(s,40+i*102,142,94,18,i===0?INK:PAPER,3);
- text(s,118,189,'First options after 1 year',17);
- text(s,362,189,'All earned after 4 years',17);
+ text(s,118,189,'25% earned',17);
+ text(s,362,189,'100% earned',17);
  return s;
 }
 function salariedJob(state,doc){
@@ -1459,15 +1468,14 @@ function render(container,state,view){
   const options=c.options||0,shares=c.shares||0,total=1000000+(c.preferredShares||0),held=options+shares,after=held/total,before=c.financingRounds?held/(total/1.25):after;
   const basis=options?'If you buy all earned options':'Your owned shares';
   s=svg(count(options)+' options to buy and '+count(shares)+' shares owned. Both counts stay the same. '+basis+': your piece of the company was '+(before*100).toFixed(2)+' percent, now '+(after*100).toFixed(2)+' percent.',210,doc);
-  text(s,240,20,count(options)+' options to buy · '+count(shares)+' shares owned',17);
   ring(s,145,70,35,before);ring(s,335,70,35,after);arrow(s,240,70);
   text(s,145,136,(before*100).toFixed(2)+'%',29);text(s,335,136,(after*100).toFixed(2)+'%',29);
   text(s,145,157,'Before',15,MUTED);text(s,335,157,'After',15,MUTED);
-  text(s,240,183,basis,16);text(s,240,205,'Same counts. Each share is a smaller piece.',14,MUTED);
+  text(s,240,183,basis,16);
  }else if(stage==='exercise'){
   const n=c.options||0;s=svg(count(n)+' options can become '+count(n)+' shares for '+money(n*c.strike)+'.',210,doc);
   box(s,77,31,125,107,PAPER,8);box(s,280,31,125,107,INK,8);tokens(s,101,49,5,5);tokens(s,304,49,5,5,PAPER);arrow(s,240,87);
-  text(s,139,116,count(n),26);text(s,342,116,count(n),26,PAPER);text(s,139,164,'Options',17);text(s,342,164,'Shares',17);text(s,240,199,money(n*c.strike)+' to buy',15,MUTED);
+  text(s,139,116,count(n),26);text(s,342,116,count(n),26,PAPER);text(s,139,164,'Options',17);text(s,342,164,'Shares',17);text(s,240,199,money(c.strike)+' / share',15,MUTED);
  }else if(stage==='public_sale'||(stage==='company_result'&&['ipo','unicorn'].includes(c.outcome))){
   const original=c.ipoPrice||0,current=stage==='public_sale'?c.salePrice:original,max=Math.max(original,current,1);
   s=svg(stage==='public_sale'?'Share price at IPO '+money(original)+', now '+money(current)+'.':'IPO share price '+money(original)+'. Selling is locked for 6 months.',210,doc);
@@ -1479,7 +1487,7 @@ function render(container,state,view){
   }
  }else if(stage==='burnout'){
   s=svg('Burnout: energy is low. Decide whether to leave or continue working.',190,doc);
-  box(s,140,44,187,83,INK,10);box(s,327,69,12,33,INK,3);box(s,151,55,164,61,PAPER,3);box(s,157,61,29,49,ORANGE,2);text(s,240,163,'Burnout',20);
+  box(s,140,44,187,83,INK,10);box(s,327,69,12,33,INK,3);box(s,151,55,164,61,PAPER,3);box(s,157,61,29,49,ORANGE,2);
  }else if(stage==='layoff'){
   s=svg('Layoff: three months without pay. Earned options are retained.',210,doc);
   for(let i=0;i<3;i++){box(s,109+i*94,38,75,77,PAPER,4);box(s,109+i*94,38,75,17,INK,4);text(s,146+i*94,92,String(i+1),30);}
@@ -1512,9 +1520,9 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
   const duration = n => { const y = Math.floor(n / 12), m = n % 12; return [y ? y + (y === 1 ? ' year' : ' years') : '', m ? m + (m === 1 ? ' month' : ' months') : ''].filter(Boolean).join(', ') || '0 months'; };
   const signed = n => (n > 0 ? '+' : '') + money(n);
   const questions = [
-    { key: 'industry', title: 'Which industry?', choices: [['space', 'Space', 'Satellites and launches'], ['climate', 'Climate', 'Energy and manufacturing'], ['software', 'Software', 'Apps and software']] },
-    { key: 'size', title: 'What size company?', choices: [['small', 'Small', 'An early team'], ['growing', 'Growing', 'An expanding business'], ['large', 'Large', 'An established company']] },
-    { key: 'risk', title: 'How much risk?', choices: [['steady', 'Less risk', 'Salary matters most'], ['balanced', 'Some risk', 'Salary and equity'], ['bold', 'More risk', 'Equity matters most']] }
+    { key: 'industry', title: 'Which industry?', choices: [['space', 'Space', ''], ['climate', 'Climate', ''], ['software', 'Software', '']] },
+    { key: 'size', title: 'What size company?', choices: [['small', 'Small', ''], ['growing', 'Growing', ''], ['large', 'Large', '']] },
+    { key: 'risk', title: 'How much risk?', choices: [['steady', 'Less risk', 'More salary'], ['balanced', 'Some risk', 'A mix'], ['bold', 'More risk', 'More equity']] }
   ];
   const freshSetup = () => ({ step: 0, profile: { industry: 'software', size: 'growing', risk: 'balanced' }, round: null });
   let state = model.create(), setup = freshSetup(), interacted = false, lastMove = null;
@@ -1576,7 +1584,9 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     const holdings = fields['held-positions']; holdings.replaceChildren();
     state.companies.filter(c => c.options || c.shares).forEach(c => {
       const row = el('div', 'nb-position');
-      row.append(el('strong', '', c.name), el('span', '', c.options.toLocaleString('en-US') + ' earned options'), el('span', '', c.shares.toLocaleString('en-US') + ' shares owned'));
+      row.append(el('strong', '', c.name));
+      if (c.options) row.append(el('span', '', c.options.toLocaleString('en-US') + ' earned options'));
+      if (c.shares) row.append(el('span', '', c.shares.toLocaleString('en-US') + ' shares owned'));
       holdings.append(row);
     });
     holdings.hidden = !holdings.children.length || offering;
@@ -1594,7 +1604,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     put('route-progress', '');
     if (recommended) {
       put('setup-title', typeof rec.company === 'string' ? rec.company : rec.company.name);
-      put('setup-copy', state.companies.length ? 'Same size and risk. A new company.' : 'Based on your choices.');
+      put('setup-copy', '');
       put('match-series', 'Series ' + rec.round + ' / ' + ({ space: 'Space', climate: 'Climate', software: 'Software' }[setup.profile.industry]));
       put('match-story', ''); put('match-pay', money(rec.offers.equity.pay) + ' to ' + money(rec.offers.cash.pay) + ' / mo');
       put('match-strike', money(rec.strike) + ' each');
@@ -1613,9 +1623,20 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     const renderedState = state;
     actions.forEach(action => {
       const button = el('button', 'nb-action'); button.type = 'button'; button.dataset.kind = action.kind || 'normal'; button.dataset.actionId = action.id;
-      const concise = window.NearBagVisuals && ['contract', 'contract_check'].includes(state.stage);
-      button.append(el('span', 'nb-action-label', action.label), el('span', 'nb-action-value', action.value || ''), el('span', 'nb-action-detail', concise ? '' : action.detail || ''));
-      if (state.stage === 'offer') button.children[2].textContent += ' over 4 years';
+      let label = action.label, value = action.value || '', detail = action.detail || '';
+      if (window.NearBagVisuals) {
+        if (['contract', 'contract_check', 'layoff', 'burnout'].includes(state.stage) || state.stage === 'public_sale' && action.id !== 'close_position') detail = '';
+        if (state.stage === 'offer') detail = detail.replace(' · ', '\n');
+        if (action.id === 'roll_event') label = 'Reveal event';
+        if (action.id === 'roll_company') label = 'Reveal outcome';
+        if (action.id === 'buy_options') { label = 'Buy shares'; detail = ''; }
+        if (action.id === 'expire_options' && !/must leave|You need/.test(detail)) { value = ''; detail = ''; }
+        if (state.stage === 'job_offer') {
+          if (action.id === 'leave_job') { label = state.jobCount === 1 ? 'Find a new company' : 'Take the new job'; value = state.jobCount === 1 ? '' : value; detail = state.jobCount === 1 ? '' : 'No new options'; }
+          else detail = '';
+        }
+      }
+      button.append(el('span', 'nb-action-label', label), el('span', 'nb-action-value', value), el('span', 'nb-action-detail', detail));
       const timing = timeHint(action); if (timing) button.append(el('span', 'nb-action-time', timing));
       button.disabled = Boolean(action.disabled);
       button.addEventListener('click', () => { if (state !== renderedState || button.disabled) return; button.disabled = true; act(action.id); });
@@ -1652,7 +1673,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     const view = model.view(state), choosing = state.stage === 'choose_company', ending = Boolean(view.result), settling = Boolean(view.receipt);
     app.dataset.stage = ending ? 'result' : state.stage; app.dataset.mode = choosing ? 'setup' : settling ? 'settlement' : 'play';
     fields.setup.hidden = !choosing; fields.board.hidden = choosing || settling; fields.settlement.hidden = !settling; fields['result-card'].hidden = !ending;
-    fields.intro.hidden = !choosing; if (fields['all-details']) fields['all-details'].hidden = choosing;
+    fields.intro.hidden = !choosing || setup.step > 0 || state.companies.length > 0; if (fields['all-details']) fields['all-details'].hidden = choosing;
     renderStatus(view, ending);
     if (choosing) { renderSetup(); put('announcement', fields['setup-title'].textContent); return; }
     details(view);
@@ -1671,11 +1692,13 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     fields.visual.replaceChildren();
     if (window.NearBagVisuals) {
       window.NearBagVisuals.render(fields.visual, state, view);
-      if (['career_draw', 'public_sale', 'contract_check', 'company_draw'].includes(state.stage) || state.stage === 'contract' && state.bank >= 5000) put('story', '');
+      if (['career_draw', 'public_sale', 'contract_check', 'company_draw', 'burnout', 'layoff', 'exercise'].includes(state.stage) || state.stage === 'contract' && state.bank >= 5000) put('story', '');
       if (state.stage === 'offer' && focusedCompany) { put('story', ''); put('choice-note', 'Pay is after tax. Living costs: $3,500 / month.'); }
-      if (state.stage === 'dilution') put('story', 'The company added more shares. Each share is a smaller piece.');
-      if (state.stage === 'new_role') { put('title', 'You start a new salaried job.'); put('story', 'No new options. Your old shares stay in play.'); }
-      if (state.stage === 'company_result' && ['ipo', 'unicorn'].includes(focusedCompany.outcome)) put('story', 'Shares start trading at ' + money(focusedCompany.ipoPrice) + '. You must wait 6 months to sell.');
+      if (state.stage === 'dilution') put('story', '');
+      if (state.stage === 'new_role') { put('title', 'Your new job starts.'); put('story', ''); }
+      if (state.stage === 'company_draw') put('title', 'What happens to the company?');
+      if (state.stage === 'job_offer') put('story', '');
+      if (state.stage === 'company_result') put('story', ['ipo', 'unicorn'].includes(focusedCompany.outcome) ? 'IPO: ' + money(focusedCompany.ipoPrice) + ' / share' : focusedCompany.outcome === 'private' ? 'No sale. No cash yet.' : 'Equity value: $0');
     } else if (view.stats) { const dl = el('div', 'nb-chance-grid'); view.stats.forEach(stat => { const n = el('div', 'nb-chance-stat'); n.append(el('strong', '', stat.value), el('span', '', stat.label)); dl.append(n); }); fields.visual.append(dl); }
     actionButtons(view.actions); put('announcement', view.companyName + '. ' + view.headline + ' ' + (view.feedback || ''));
   }
