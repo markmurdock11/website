@@ -464,11 +464,33 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
  .nb-result-elapsed small,.nb-share-card .nb-share-payoff small{font-size:11px}
  .nb-result-round{display:none}
 }
+/* Make the screenshot card readable at its actual on-screen size. */
+.nb-share-card{max-width:760px}
+.nb-app[data-stage="result"] .nb-actions{max-width:760px}
+.nb-result-elapsed strong{font-size:32px}
+.nb-share-card .nb-share-payoff strong{font-size:44px}
+.nb-result-tenure{font-size:12px}
+.nb-result-marker small{font-size:11px}
+.nb-result-marker span{font-size:14px}
+.nb-result-company-cash dt,.nb-result-bank-math dt{font-size:11px}
+.nb-result-bank-math dd{font-size:14px}
+.nb-result-reason{font-size:13px}
+@media(max-width:600px){
+ .nb-result-summary{grid-template-columns:1fr;gap:12px}
+ .nb-result-elapsed,.nb-share-card .nb-share-payoff{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+ .nb-result-elapsed small,.nb-share-card .nb-share-payoff small{max-width:100px;font-size:11px;flex-shrink:0}
+ .nb-result-elapsed strong{font-size:24px;text-align:right}
+ .nb-share-card .nb-share-payoff strong{font-size:30px;text-align:right}
+ .nb-result-marker small{font-size:10px}
+ .nb-result-marker span{font-size:12px}
+ .nb-result-bank-math dd{font-size:13px}
+ .nb-result-reason{font-size:12px}
+}
 </style>
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-11">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-11.1">
   <header class="nb-header">
     <div><p class="nb-eyebrow">Kram + Emma</p><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">new game</button>
@@ -1464,7 +1486,7 @@ function render(container,state,view){
   text(s,240,150,'Months without pay',18);text(s,240,185,count(c.options)+' earned options kept',14,MUTED);
  }else if(stage==='career_draw'){
   s=svg('A new work event will be revealed.',190,doc);
-  [-1,0,1].forEach((i)=>{const g=add(s,'g',{transform:'translate('+(240+i*43)+' 88) rotate('+(i*13)+')'});box(g,-45,-60,90,120,i===0?INK:LILAC,7);if(i===0)text(g,0,15,'?',56,PAPER);});
+  [-1,1,0].forEach((i)=>{const g=add(s,'g',{transform:'translate('+(240+i*43)+' 88) rotate('+(i*13)+')'});box(g,-45,-60,90,120,i===0?INK:PAPER,7);if(i===0)text(g,0,15,'?',56,PAPER);});
  }else if(stage==='company_result'){
   s=scene(c,doc);const g=add(s,'g',{});box(g,157,66,166,75,INK,8);
   text(g,240,112,c.outcome==='shutdown'?'Closed':'Still private',25,PAPER);
