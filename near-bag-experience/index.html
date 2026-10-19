@@ -359,6 +359,22 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
 }
 
 /* Keep the same career clock across job changes, bills and sales. */
+.nb-career-hud{position:sticky;top:0;z-index:5;max-width:820px;margin:0 auto;background:var(--nb-lilac);box-shadow:0 6px 0 var(--nb-lilac)}
+.nb-career-hud .nb-career-bar{background:var(--nb-paper);padding-bottom:8px}
+.nb-time-ruler{background:var(--nb-paper);padding:21px 20px 9px}
+.nb-time-track{position:relative;height:3px;background:rgba(21,20,25,.14)}
+.nb-time-fill{display:block;height:100%;background:var(--nb-orange);width:0;transition:width .45s ease}
+.nb-time-now{position:absolute;top:-4px;width:11px;height:11px;border:2px solid var(--nb-ink);border-radius:50%;background:var(--nb-lime);transform:translateX(-50%);transition:left .45s ease}
+.nb-time-now>span{position:absolute;bottom:13px;left:50%;transform:translateX(-50%);font-size:11px;line-height:1;color:var(--nb-ink)}
+.nb-time-ticks{position:relative;height:23px;padding-top:6px;font-size:11px;line-height:1.3;color:var(--nb-muted);font-variant-numeric:tabular-nums}
+.nb-time-ticks>span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.nb-time-ticks>span:nth-child(1){left:0;transform:none}
+.nb-time-ticks>span:nth-child(2){left:20%}
+.nb-time-ticks>span:nth-child(3){left:40%}
+.nb-time-ticks>span:nth-child(4){left:60%}
+.nb-time-ticks>span:nth-child(5){left:80%}
+.nb-time-ticks>span:nth-child(6){left:100%;transform:translateX(-100%)}
+@media(prefers-reduced-motion:reduce){.nb-time-fill,.nb-time-now{transition:none}}
 .nb-career-status{max-width:820px;margin:0 auto 12px}
 .nb-career-clock{text-align:right;min-width:0}
 .nb-career-clock small{display:block;font-size:12px;color:var(--nb-muted);margin-bottom:4px}
@@ -481,6 +497,8 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
 .nb-result-bank-breakdown{margin:0}
 .nb-result-bank-breakdown>summary{cursor:pointer;font-size:12px;color:var(--nb-muted);padding:10px 0;min-height:40px}
 .nb-result-bank-breakdown[open]>.nb-result-bank-math{padding:3px 0 10px}
+.nb-share-card .nb-result-bank{background:rgba(229,213,241,.6);border:0;padding:15px 16px 4px;margin-top:14px}
+.nb-result-bank-total small{color:var(--nb-ink);font-size:14px}
 @media(max-width:600px){
  .nb-result-summary{grid-template-columns:1fr;gap:12px}
  .nb-result-elapsed,.nb-share-card .nb-share-payoff{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
@@ -496,18 +514,24 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-12">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-13">
   <header class="nb-header">
     <div><p class="nb-eyebrow">Kram + Emma</p><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">new game</button>
   </header>
   <p class="nb-intro" data-field="intro">Can you turn startup equity into cash?</p>
   <p class="nb-sr-only" data-field="announcement" role="status" aria-live="polite" aria-atomic="true"></p>
-  <section class="nb-career-status" data-field="career-status" aria-label="Your time, money and job" hidden>
+  <section class="nb-career-hud" data-field="career-hud" aria-label="Your time and money" hidden>
     <div class="nb-career-bar">
       <div class="nb-career-bank"><small>Cash in bank</small><strong data-field="bank">$12,000</strong></div>
       <div class="nb-career-clock"><small>Time passed</small><strong data-field="date">0 months</strong></div>
     </div>
+    <div class="nb-time-ruler" data-field="career-timeline" role="img" aria-label="Career time">
+      <div class="nb-time-track" aria-hidden="true"><span class="nb-time-fill" data-field="timeline-fill"></span><span class="nb-time-now" data-field="timeline-now"><span>Now</span></span></div>
+      <div class="nb-time-ticks" aria-hidden="true"><span>Start</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10 years</span></div>
+    </div>
+  </section>
+  <section class="nb-career-status" data-field="career-status" aria-label="Your job and equity" hidden>
     <div class="nb-current-job"><span class="nb-company-logo" data-field="company-logo"></span><div><strong data-field="company-name"></strong><small data-field="job-context"></small></div></div>
     <div class="nb-time-change" data-field="time-change" hidden></div>
     <div class="nb-held-positions" data-field="held-positions" hidden></div>
@@ -1284,7 +1308,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     return {
       companies, received, withheld, bank: s.bank, debt: s.debt || 0,
       headline: money(received), headlineLabel: 'Cash from share sales',
-      bankLabel: 'Cash in bank', bankValue: money(s.bank), bankNote: 'After salary and costs',
+      bankLabel: 'Your total bank', bankValue: money(s.bank), bankNote: 'All jobs + share sales, after costs',
       debtLabel: 'Unpaid bills', debtValue: money(s.debt || 0),
       note: 'Taxes on shares not included.',
       footer: 'A fictional run · Kram + Emma', url: 'kram.bio/near-bag-experience',
@@ -1316,13 +1340,13 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
       timeline.setAttribute('aria-label', c.name + ' career timeline');
       c.timeline.forEach(event => {
         const marker = el('li', 'nb-result-marker');
-        marker.append(el('small', '', event.label), el('span', '', event.time));
+        marker.append(el('small', '', event.label), el('span', '', event.month === 0 ? 'Start' : 'After ' + event.time));
         timeline.append(marker);
       });
       row.append(timeline);
       if (c.outcomeValue) row.append(el('p', 'nb-result-outcome-value', c.outcomeValue));
       const cash = el('dl', 'nb-result-company-cash');
-      [['Paid for shares', money(c.paid)], ['Cash received', money(c.received)]].forEach(([label, value]) => {
+      [['Paid for shares', money(c.paid)], ['From shares', money(c.received)]].forEach(([label, value]) => {
         const pair = el('div', ''); pair.append(el('dt', '', label), el('dd', '', value)); cash.append(pair);
       });
       row.append(cash, el('p', 'nb-result-reason', c.outcomeReason));
@@ -1557,9 +1581,14 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
   function renderStatus(view, ending) {
     const status = fields['career-status']; if (!status) return;
     status.hidden = ending || !state.companies.length;
+    fields['career-hud'].hidden = status.hidden;
     app.dataset.hasCareer = state.companies.length ? 'true' : 'false';
     if (status.hidden) return;
     put('bank', money(state.bank)); put('date', duration(state.month));
+    const timelinePercent = Math.min(100, state.month / 120 * 100) + '%';
+    fields['timeline-fill'].style.width = timelinePercent;
+    fields['timeline-now'].style.left = timelinePercent;
+    fields['career-timeline'].setAttribute('aria-label', duration(state.month) + ' since your first job. Timeline from 0 to 10 years.');
     const focus = state.companies.find(c => c.id === view.companyId);
     const employer = state.companies.find(c => c.id === state.activeJobId);
     const lastCompany = state.companies[state.companies.length - 1];
@@ -1646,7 +1675,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
   function receipt(view) {
     const r = view.receipt, target = fields.settlement; target.replaceChildren();
     target.setAttribute('aria-label', r.kind === 'expense' ? 'Your expense receipt' : 'Your sale receipt');
-    target.append(el('p', 'nb-settlement-company', r.companyName), el('h2', 'nb-settlement-title', r.headline), el('p', 'nb-settlement-story', r.kind === 'expense' || r.body === 'Your payout is below.' ? '' : r.body));
+    target.append(el('p', 'nb-settlement-company', r.companyName), el('h2', 'nb-settlement-title', r.kind === 'expense' ? 'Accountant bill.' : r.headline), el('p', 'nb-settlement-story', r.kind === 'expense' ? 'Equity paperwork.' : r.body === 'Your payout is below.' ? '' : r.body));
     const cash = el('p', 'nb-settlement-cash', money(r.kind === 'expense' ? Math.abs(r.cashChange) : r.received)); cash.append(el('small', '', r.kind === 'expense' ? 'Paid from your bank' : 'Cash received. Tax not included.')); target.append(cash);
     const bank = el('div', 'nb-settlement-bank'); bank.append(el('small', '', 'Cash in your bank'), el('strong', '', money(r.bankBefore) + ' → ' + money(r.bankAfter))); target.append(bank);
     if (r.rows && r.rows.length) {
@@ -1695,6 +1724,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
       if (['career_draw', 'public_sale', 'contract_check', 'company_draw', 'burnout', 'layoff', 'exercise'].includes(state.stage) || state.stage === 'contract' && state.bank >= 5000) put('story', '');
       if (state.stage === 'offer' && focusedCompany) { put('story', ''); put('choice-note', 'Pay is after tax. Living costs: $3,500 / month.'); }
       if (state.stage === 'dilution') put('story', '');
+      if (state.stage === 'layoff') put('story', 'The company cut jobs to save money.');
       if (state.stage === 'new_role') { put('title', 'Your new job starts.'); put('story', ''); }
       if (state.stage === 'company_draw') put('title', 'What happens to the company?');
       if (state.stage === 'job_offer') put('story', '');
