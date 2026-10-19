@@ -24,6 +24,7 @@ button{font:inherit;cursor:pointer}
 button:disabled{cursor:default}
 button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--nb-ink);outline-offset:5px}
 button:focus-visible{background:var(--nb-lime)!important;color:var(--nb-ink)!important}
+.nb-sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 [hidden]{display:none!important}
 p,h1,h2,h3{margin:0}
 a{color:inherit;text-underline-offset:3px}
@@ -67,9 +68,10 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
 .nb-time-row>span:last-child{min-width:50px;text-align:right}
 .nb-time-track{flex:1;height:1px;background:#cdbbd9;overflow:hidden}
 .nb-time-track span{display:block;width:0;height:100%;background:#766181;transition:width .6s ease}
+.nb-feedback{min-height:44px;padding:9px 2px 0;font-size:12px;line-height:1.4;color:var(--nb-muted);font-variant-numeric:tabular-nums;text-align:center;text-wrap:balance}
 /* Every turn occupies the same spacious decision stage. */
 .nb-decision-shell{width:100%}
-.nb-story{display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;width:100%;height:clamp(360px,38vh,400px);min-height:360px;padding:35px 20px;text-align:center}
+.nb-story{display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;width:100%;height:auto;min-height:clamp(316px,calc(38vh - 44px),356px);padding:35px 20px;text-align:center}
 .nb-story>.nb-funnel{position:absolute;left:50%;bottom:23px;transform:translateX(-50%);width:calc(100% - 40px);margin:0}
 .nb-story:has(>.nb-funnel:not([hidden])){padding-bottom:88px}
 .nb-scene-label{font-size:11px;font-weight:400;line-height:1.2;letter-spacing:.12em;text-transform:uppercase;color:var(--nb-muted);margin-bottom:17px}
@@ -78,6 +80,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
 .nb-story-detail{font-size:15px;line-height:1.45;color:var(--nb-muted);margin-top:12px}
 .nb-essential{font-size:13px;font-weight:400;line-height:1.4;color:var(--nb-muted);max-width:650px;margin-top:16px}
 .nb-essential:empty{display:none}
+.nb-comparison{max-width:650px;margin-top:15px;font-size:16px;font-weight:600;line-height:1.4;color:var(--nb-ink);font-variant-numeric:tabular-nums;text-wrap:balance}
 .nb-visual{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;min-height:24px;margin-top:20px;font-size:18px;line-height:1.3;color:var(--nb-ink)}
 .nb-visual:empty{display:none}
 .nb-visual-flow,.nb-visual-equity,.nb-priority-flow{color:var(--nb-ink)}
@@ -103,14 +106,15 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
 @keyframes nb-ticket-ripple{0%,100%{transform:translateY(0)}45%{transform:translateY(-6px)}}
 /* Choices always occupy the same band. Nothing is fixed over the page. */
 .nb-actions{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:100%;max-width:820px;min-height:132px;margin:0 auto}
-.nb-action{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:100%;min-width:0;height:132px;padding:22px 27px;border:0;border-radius:0;background:var(--nb-paper);color:var(--nb-ink);text-align:left;transition:background .16s ease,color .16s ease}
-.nb-action[data-kind="primary"]{background:var(--nb-ink);color:var(--nb-paper)}
-.nb-action:hover,.nb-action[data-kind="primary"]:hover,.nb-action:active{background:var(--nb-lime);color:var(--nb-ink)}
+.nb-action{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:100%;min-width:0;height:auto;min-height:132px;padding:22px 27px;border:0;border-radius:0;background:var(--nb-paper);color:var(--nb-ink);text-align:left;transition:background .16s ease,color .16s ease}
+.nb-actions[data-single="true"] .nb-action{background:var(--nb-ink);color:var(--nb-paper)}
+.nb-action:hover,.nb-actions[data-single="true"] .nb-action:hover,.nb-action:active{background:var(--nb-lime);color:var(--nb-ink)}
 .nb-action-label{font-size:18px;font-weight:600;line-height:1.15}
 .nb-action-value{font-size:29px;font-weight:400;line-height:1.12;letter-spacing:-.035em;font-variant-numeric:tabular-nums;margin-top:8px}
-.nb-action-detail{font-size:13px;font-weight:400;line-height:1.35;color:var(--nb-muted);margin-top:7px}
-.nb-action[data-kind="primary"] .nb-action-detail{color:#d8cce1}
+.nb-action-detail{font-size:13px;font-weight:400;line-height:1.35;color:var(--nb-muted);margin-top:7px;white-space:pre-line;text-wrap:pretty}
+.nb-actions[data-single="true"] .nb-action .nb-action-detail{color:#d8cce1}
 .nb-action:hover .nb-action-detail,.nb-action:focus-visible .nb-action-detail{color:var(--nb-ink)}
+.nb-actions[data-single="true"] .nb-action:hover .nb-action-detail,.nb-actions[data-single="true"] .nb-action:focus-visible .nb-action-detail{color:var(--nb-ink)}
 .nb-action:disabled{opacity:.45}
 .nb-actions[data-single="true"]{grid-template-columns:1fr;max-width:430px}
 .nb-actions[data-single="true"] .nb-action[aria-hidden="true"]{display:none}
@@ -181,7 +185,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
 .nb-pulse .nb-flow-net strong{animation:nb-flow-receipt .65s ease-out}
 @keyframes nb-cash-arrive{0%{color:var(--nb-orange)}100%{color:var(--nb-ink)}}
 @keyframes nb-flow-receipt{0%{transform:translateY(3px);opacity:.4}100%{transform:translateY(0);opacity:1}}
-@media(min-width:1500px){.nb-app{padding-top:42px}.nb-header{margin-bottom:34px}.nb-story{height:380px}.nb-setup{min-height:660px}.nb-world{min-height:660px}}
+@media(min-width:1500px){.nb-app{padding-top:42px}.nb-header{margin-bottom:34px}.nb-story{min-height:336px}.nb-setup{min-height:660px}.nb-world{min-height:660px}}
 @media(max-width:900px) and (min-width:761px){.nb-setup{grid-template-columns:40% 60%}.nb-setup-content{padding-left:34px}.nb-setup-title{font-size:43px}.nb-match-terms{grid-template-columns:1fr 70px}.nb-match-terms strong{font-size:21px}}
 @media(max-width:760px){
  .nb-app{padding:23px 22px 24px}
@@ -190,7 +194,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
  .nb-profile-line{margin-bottom:14px}
  .nb-funnel{margin-bottom:21px}
  .nb-wallet,.nb-equity{padding:16px 22px}
- .nb-story{height:360px;min-height:360px;padding:29px 12px}
+ .nb-story{min-height:316px;padding:29px 12px}
  .nb-story h2{font-size:43px}
  .nb-story-text{font-size:18px}
  .nb-actions{gap:14px}
@@ -231,13 +235,15 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
  .nb-time-row{font-size:10px;gap:11px;margin-top:16px}
  .nb-time-row>span{min-width:53px}
  .nb-time-row>span:last-child{min-width:43px}
- .nb-story{height:350px;min-height:350px;padding:27px 0}
+ .nb-feedback{font-size:11px;padding-top:8px}
+ .nb-story{min-height:306px;padding:27px 0}
  .nb-story>.nb-funnel{width:100%;bottom:21px;margin:0}
  .nb-story:has(>.nb-funnel:not([hidden])){padding-bottom:85px}
  .nb-scene-label{font-size:10px;margin-bottom:17px}
  .nb-story h2{font-size:36px;line-height:1.08;letter-spacing:-.045em;margin-bottom:17px}
  .nb-story-text{font-size:17px;line-height:1.4}
  .nb-essential{font-size:12px;line-height:1.4;max-width:350px;margin-top:14px}
+ .nb-comparison{font-size:14px;line-height:1.4;margin-top:12px}
  .nb-visual{font-size:16px;line-height:1.3;gap:9px;margin-top:19px}
  .nb-chance{margin-top:20px}
  .nb-chance-grid{gap:4px}
@@ -246,7 +252,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
  .nb-chance-legend>span{gap:5px}
  .nb-chance-legend>span::before{width:5px;height:5px;flex:0 0 5px}
  .nb-actions{gap:10px;min-height:143px}
- .nb-action{height:143px;padding:18px 15px}
+ .nb-action{min-height:143px;padding:18px 15px}
  .nb-action-label{font-size:15px;line-height:1.18}
  .nb-action-value{font-size:24px;line-height:1.1;margin-top:10px}
  .nb-action-detail{font-size:12px;line-height:1.3;margin-top:8px}
@@ -296,14 +302,14 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
  .nb-wallet,.nb-equity{padding:13px 11px;min-height:105px}
  .nb-money,.nb-equity-main{font-size:28px}
  .nb-runway,.nb-equity-description{font-size:10px}
- .nb-story{height:365px;min-height:365px}
+ .nb-story{min-height:321px}
  .nb-story h2{font-size:33px;line-height:1.08}
  .nb-story-text{font-size:16px}
  .nb-visual{font-size:15px}
  .nb-chance-grid{gap:3px}
  .nb-chance-ticket{height:31px;font-size:12px}
  .nb-chance-legend{font-size:10px;gap:7px}
- .nb-action{padding:17px 12px;height:151px}
+ .nb-action{padding:17px 12px;min-height:151px}
  .nb-actions{min-height:151px;gap:9px}
  .nb-action-label{font-size:14px}
  .nb-action-value{font-size:21px}
@@ -322,7 +328,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
  .nb-wallet,.nb-equity{min-height:88px;padding:12px 24px}
  .nb-money,.nb-equity-main{font-size:31px}
  .nb-time-row{margin-top:14px}
- .nb-story{height:300px;min-height:300px;padding:20px}
+ .nb-story{min-height:256px;padding:20px}
  .nb-story:has(>.nb-funnel:not([hidden])){padding-bottom:70px}
  .nb-story>.nb-funnel{bottom:15px}
  .nb-scene-label{margin-bottom:12px}
@@ -331,7 +337,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
  .nb-essential{margin-top:10px}
  .nb-chance{margin-top:10px}
  .nb-actions{min-height:112px}
- .nb-action{height:112px;padding:16px 24px}
+ .nb-action{min-height:112px;padding:16px 24px}
  .nb-action-value{font-size:26px;margin-top:6px}
  .nb-action-detail{margin-top:5px}
  .nb-intro{margin-bottom:20px}
@@ -349,12 +355,13 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-6">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-7">
   <header class="nb-header">
     <div><p class="nb-eyebrow">Kram + Emma</p><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">new game</button>
   </header>
-  <p class="nb-intro" data-field="intro">The company can win. Can you?</p>
+  <p class="nb-intro" data-field="intro">Can you turn startup equity into cash?</p>
+  <p class="nb-sr-only" data-field="announcement" role="status" aria-live="polite" aria-atomic="true"></p>
   <p class="nb-profile-line" data-field="profile-line" hidden></p>
   <section class="nb-setup" data-field="setup" aria-label="Choose your path">
     <div class="nb-world" aria-hidden="true"></div>
@@ -396,6 +403,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
       </section>
     </div>
     <div class="nb-time-row"><span data-field="date">The offer</span><div class="nb-time-track" aria-hidden="true"><span data-field="time-fill"></span></div><span>4.5 years</span></div>
+    <p class="nb-feedback" data-field="feedback"></p>
     <section class="nb-story" aria-labelledby="nb-story-title">
       <p class="nb-scene-label" data-field="stage-label">Your offer</p>
       <h2 id="nb-story-title" data-field="title">Cash or a bigger bet?</h2>
@@ -406,6 +414,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
       </div>
       <div class="nb-visual" data-field="visual" aria-hidden="true"></div>
       <p class="nb-essential" data-field="essential"></p>
+      <p class="nb-comparison" data-field="comparison" hidden></p>
   <div class="nb-funnel" data-field="funnel" aria-label="Two hurdles to equity cash" hidden>
     <span class="nb-funnel-step" data-field="company-step"><small>Company exit</small><strong data-field="company-exit">?</strong></span>
     <span class="nb-funnel-arrow" aria-hidden="true">→</span>
@@ -805,18 +814,76 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
   function sceneStory(s,v) {
     if(s.stage==='offer') return 'Take-home pay. $3,500 a month to live.';
     if(s.stage==='career18') return 'A new job pays more. Staying earns more options.';
-    if(s.stage==='purchase18'||s.stage==='purchase36') return 'Buy your earned options. The shares may never sell.';
-    if(s.stage==='lockup') return s.unexercised+s.owned?'You own the upside. You still cannot sell.':'You let the options go. Salary keeps coming.';
+    if(s.stage==='purchase18'||s.stage==='purchase36') return 'Turn earned options into shares. The shares may never sell.';
+    if(s.stage==='lockup') return s.unexercised+s.owned?'The company is public. You still cannot sell.':'You let the options go. Salary keeps coming.';
     if(s.stage==='sale') return 'The lockup is over. Sell, or keep holding.';
-    if(s.stage==='result') return s.equityProceeds||s.purchaseCosts?'Paid '+money(s.purchaseCosts)+'. Received '+money(s.equityProceeds)+'.':'Your salary built the bank balance.';
+    if(s.stage==='result') {
+      if(s.scenario==='acquisition_low') return 'Investors were paid first. Nothing reached employee shares.';
+      if(s.scenario==='acquisition_high') return s.equityProceeds?'The sale paid investors. Your shares got a piece too.':'Your options expired before the company sold.';
+      if(s.scenario==='private') return s.owned?'You still own the shares. There is still no sale.':s.unexercised?'Your options remain. There is still no sale.':'The company stayed private. You kept your cash.';
+      if(s.scenario==='shutdown') return s.purchaseCosts?'The company closed. Your '+money(s.purchaseCosts)+' share purchase went to zero.':'The company closed. Your salary savings survived.';
+      if(s.holding) return s.equityProceeds?'You took some cash. The rest stays outside your bank.':'You kept public equity. Unsold is still outside your bank.';
+      return s.equityProceeds?'You sold after the lockup. Paper became cash.':'Your options expired before the IPO. The paycheck did the work.';
+    }
     return v.story;
   }
   function essential(s,v) {
-    if(s.stage==='offer') return 'Work 18 months. 4-year grant. First 25% after year one. Buy at '+money(s.strike)+'/share.';
+    if(s.stage==='offer') return 'Options let you buy shares at '+money(s.strike)+' each. Earn them over 4 years. First 25% after year one.';
     if(s.stage==='purchase18'||s.stage==='purchase36') return '90 days to buy. Then these options expire.';
     if(s.stage==='luck'||s.stage==='luck_result') return "One old seed cohort. Not your offer's odds.";
     if(s.stage==='lockup') return v.detail;
     if(s.stage==='result') return s.owned+s.unexercised?'Unsold equity stays outside your cash balance.':'Equity cash flow = sale cash minus what you paid.';
+    return '';
+  }
+  function actionPresentation(s,action) {
+    if(!action) return action;
+    const shown={...action};
+    if(s.stage==='offer') {
+      const offer=model.recommend(s.profile,s.round).offers[action.id==='offer_cash'?'cash':'equity'];
+      shown.label=action.id==='offer_cash'?'More salary':'More equity';
+      shown.value=money(offer.pay)+' / mo';
+      shown.detail=money(offer.pay-3500)+' saved / mo\n'+number(offer.grant)+' options to earn';
+    } else if(s.stage==='career18'||s.stage==='career36') {
+      const leaving=action.id==='leave';
+      const pay=leaving?s.newJobPay:s.pay;
+      shown.value=money(pay)+' / mo';
+      shown.detail=money(pay-3500)+' saved / mo\n'+(leaving?'Keep '+number(s.earned)+' options. '+number(s.grant-s.earned)+' unearned lost.':number(s.grant-s.earned)+' more options to earn.');
+    } else if(s.stage==='result') {
+      shown.label=action.id==='replay'?'Replay this company':'Try new luck';
+      shown.value=action.id==='replay'?'Same luck':'Fresh roll';
+      shown.detail=action.id==='replay'?'Try different choices.':'Same profile. Same offer.';
+    }
+    return shown;
+  }
+  function choiceFeedback(s) {
+    if(s.stage==='offer') return 'Start with $12,000. Pick your pay. Work 18 months.';
+    if(rolling) return 'Drawing the company path. Your choices come next.';
+    const last=s.choices[s.choices.length-1];
+    if(!last) return '';
+    const advanced=s.month>last.month;
+    const saved=advanced&&s.period?s.period.saved:0;
+    const months=advanced&&s.period?s.period.months:0;
+    const salary=months?months+' months. +'+money(saved)+' saved.':'';
+    if(last.id==='offer_cash'||last.id==='offer_equity') return salary+' '+number(s.earned)+' options earned.';
+    if(last.id==='leave') return 'New job. '+number(s.earned)+' options kept. '+number(s.cancelled)+' unearned lost.';
+    if(last.id==='roll_company') return s.luck.roll<=3?(s.unexercised+s.owned?'Company hurdle cleared. Your cash is still uncertain.':'Company hurdle cleared. Your options expired.'):s.scenario==='private'?'No exit. The company stays private.':'No exit. The company will close.';
+    if(last.id==='continue_luck') return s.financed?'New investors. Your ownership percentage got smaller.':'Same bank balance. The company story continues.';
+    if(last.id==='buy'||last.id==='expire') {
+      const purchase=last.id==='buy'?'Shares cost '+money(s.purchaseCosts)+'.':'Options expired. Purchase cost $0.';
+      const sale=s.stage==='result'&&s.lastSale&&s.lastSale.received?' Sale paid '+money(s.lastSale.received)+'.':'';
+      return purchase+' '+salary+sale;
+    }
+    if(last.id==='tender_sell') return 'Sale paid '+money(s.lastSale.received)+'. '+salary;
+    if(last.id==='tender_hold') return 'Equity kept. '+salary;
+    if(last.id==='wait_lockup') return salary+' '+(s.unexercised+s.owned?'You can sell now.':'No equity left.');
+    if(last.id==='sell') return 'Sale added '+money(s.lastSale.received)+' before tax.';
+    if(last.id==='hold') return 'Equity kept. No cash added.';
+    if(last.id==='stay'||last.id==='continue') {
+      if(s.stage==='result'&&s.lastSale&&s.lastSale.received) return salary+' Sale paid '+money(s.lastSale.received)+'.';
+      if(s.stage==='result') return salary+' Equity paid $0.';
+      const earned=s.employed?s.earned-model.earnedAt(s.grant,last.month):0;
+      return salary+(earned?' '+number(earned)+' more options earned.':'');
+    }
     return '';
   }
   function eventReceipt(s,v) {
@@ -865,7 +932,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
   function endingTitle(s) {
     if(s.scenario==='acquisition_low') return 'They sold. You got $0.';
     if(s.scenario==='acquisition_high') return s.equityProceeds?'They sold. You got paid.':'They sold. You missed it.';
-    if(s.scenario==='private') return 'Still private. Still waiting.';
+    if(s.scenario==='private') return s.owned+s.unexercised?'Still private. Still waiting.':'Still private. Cash kept.';
     if(s.scenario==='shutdown') return 'No exit. Equity gone.';
     return s.holding?'Public. Still holding.':s.equityProceeds?'Public. Cash secured.':'Public. You missed it.';
   }
@@ -884,7 +951,7 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
     app.dataset.mode=playing?'play':'setup';
     fields.setup.hidden=playing;fields.board.hidden=!playing;fields.intro.hidden=playing;fields['profile-line'].hidden=!playing;
     fields['scene-explainer'].hidden=!playing;fields.ledger.hidden=!playing;fields.funnel.hidden=!playing||!['luck','luck_result','result'].includes(s.stage);
-    if(!playing) {fields['final-receipt'].hidden=true;renderSetup();return;}
+    if(!playing) {fields['final-receipt'].hidden=true;renderSetup();put('announcement',setup.step===3?'Your recommended path. '+fields['setup-title'].textContent:'Step '+(setup.step+1)+' of 3. '+fields['setup-title'].textContent);return;}
     const v=model.view(s);
     put('profile-line',companyName(s.company)+' / Series '+s.round+' / '+names[s.profile.industry]);
     put('bank',money(Math.round(s.bank)));put('freedom',(s.bank/3500).toFixed(1)+' months of life');
@@ -897,9 +964,14 @@ h1{font-family:var(--nb-font);font-size:27px;font-weight:400;line-height:1.06;le
     put('date',v.date);put('stage-label',v.stageLabel);put('title',s.stage==='result'?endingTitle(s):s.stage==='lockup'?'Public. Still locked.':v.title);put('story',sceneStory(s,v));put('detail',v.detail);put('receipt',eventReceipt(s,v));
     put('choice-note',s.stage==='offer'?'All amounts USD. Fictional company.':'Equity cash before tax.');
     drawVisual(s,v);drawCashflow(s);drawLuck(s);put('essential',essential(s,v));
+    const feedback=choiceFeedback(s);
+    put('feedback',feedback);
+    put('comparison',s.stage==='result'&&v.comparison?'Same company. '+v.comparison:'');
+    if(fields.comparison) fields.comparison.hidden=!(s.stage==='result'&&v.comparison);
+    put('announcement',rolling?'Drawing company luck.':v.date+'. '+(s.stage==='result'?endingTitle(s):s.stage==='lockup'?'Public. Still locked.':v.title)+' '+feedback);
     fields.actions.dataset.single=v.actions.length===1?'true':'false';
     slots.forEach((button,index)=>{
-      const action=v.actions[index];button.disabled=!action||rolling;button.style.visibility=action?'visible':'hidden';button.setAttribute('aria-hidden',action?'false':'true');
+      const action=actionPresentation(s,v.actions[index]);button.disabled=!action||rolling;button.style.visibility=action?'visible':'hidden';button.setAttribute('aria-hidden',action?'false':'true');
       button.dataset.actionId=action?action.id:'';button.dataset.kind=action?action.kind:'normal';
       button.querySelector('.nb-action-label').textContent=action?action.label:'';button.querySelector('.nb-action-value').textContent=action?action.value:'';button.querySelector('.nb-action-detail').textContent=action?action.detail:'';
     });
