@@ -12,6 +12,8 @@
   <meta property="og:url" content="https://kram.bio/">
   <meta property="og:type" content="website">
   <link rel="preload" href="home-arrival-v1.jpg" as="image">
+  <link rel="stylesheet" href="eras-shell.css?v=20261019a">
+  <script src="eras.js?v=20261019a" defer></script>
   <style>
     html, body { width: 100%; min-height: 100%; margin: 0; background: #e5d5f1; }
     #knm-preview { width: 100%; height: 100svh; display: block; border: 0; visibility: hidden; background: #e5d5f1; }
@@ -236,6 +238,7 @@
         `));
 
         doc.addEventListener("click", (event) => {
+          if (doc.documentElement.dataset.erasAttached) return;
           const link = event.target.closest?.("[data-site-page]");
           if (!link) return;
           const page = link.getAttribute("data-site-page") || "home";
@@ -245,6 +248,7 @@
         }, true);
 
         win.addEventListener("popstate", () => {
+          if (doc.documentElement.dataset.erasAttached) return;
           const page = win.location.hash.slice(1) || "home";
           history.replaceState(null, "", page === "home" ? location.pathname + location.search : `#${page}`);
         });
@@ -254,6 +258,7 @@
       });
 
       window.addEventListener("hashchange", () => {
+        if (frame.contentDocument?.documentElement.dataset.erasAttached) return;
         const requestedPage = location.hash.slice(1);
         const page = requestedPage === "media" ? "writing" : (pages.has(requestedPage) ? requestedPage : "home");
         if (!frame.contentWindow) return;
@@ -263,3 +268,4 @@
   </script>
 </body>
 </html>
+

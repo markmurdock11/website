@@ -1,0 +1,396 @@
+/* Alternate editions share the original content and behavior. Signal uses site.css. */
+html[data-era] {
+  --era-ink: #241a30;
+  --era-paper: #fffdfc;
+  --era-link: #573b9a;
+  --era-rule: #b9a6c8;
+  min-height: 100%;
+  color: var(--era-ink);
+  background: var(--era-paper);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+body { margin: 0; min-height: 100vh; }
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+img { display: block; max-width: 100%; height: auto; }
+a { color: var(--era-link); text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid currentColor; outline-offset: 4px;
+}
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: default; }
+button, input, textarea { color: inherit; }
+h1, h2, h3, p, figure { margin: 0; }
+h1 { font-size: 54px; line-height: 1.06; }
+p { margin-bottom: 1em; }
+q { quotes: '“' '”'; }
+.kram-site { width: 100%; }
+.kram-site-head { display: flex; justify-content: space-between; gap: 24px; align-items: center; }
+.kram-site-head nav, .kram-footer nav { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+.kram-wordmark { font-weight: 700; }
+.kram-site-head a { padding: 5px 0; }
+.kram-site-head a[data-current='true'] { font-weight: 700; }
+.kram-view { min-width: 0; }
+.kram-home-identity { margin-bottom: 20px; }
+.kram-home-copy > p { max-width: 38ch; }
+.kram-home-copy h1 { margin-bottom: 24px; }
+.kram-doors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.kram-doors a { display: flex; align-items: center; gap: 12px; padding: 16px; }
+.kram-doors b { margin-left: auto; font-weight: 400; }
+.kram-newsletter-line { display: inline-block; margin-top: 24px; }
+.kram-page-head { display: flex; justify-content: space-between; align-items: center; gap: 28px; margin-bottom: 32px; }
+.kram-section-label, .kram-receipt-heading, .knm-belief-label, .knm-interests-label {
+  display: block; font-size: 12px; font-weight: 700; letter-spacing: .07em; margin-bottom: 16px;
+}
+.kram-work-index, .kram-professional-list { display: grid; }
+.kram-work-index a, .kram-professional-list a { display: block; padding: 18px 0; }
+.kram-work-index b, .kram-professional-list b { margin-left: 10px; font-weight: 400; }
+.kram-work-index strong { font-size: 24px; }
+.knm-writing-quote { display: block; margin-top: 8px; color: var(--era-ink); font-size: 15px; font-weight: 400; }
+.kram-professional-writing, .knm-archive-recommendations { margin-top: 48px; }
+.knm-archive-recommendations-art { margin-bottom: 24px; }
+.knm-archive-recommendations-art > img { display: none; }
+.knm-recommendations-copy > span { display: block; font-size: 27px; font-weight: 700; margin-bottom: 10px; }
+.knm-recommendations-copy p { max-width: 52ch; }
+.kram-media-explorer { display: grid; grid-template-columns: 145px minmax(0,1fr); gap: 24px; }
+.kram-media-tabs { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+.kram-media-tabs button { text-align: left; min-height: 34px; }
+.kram-media-meta { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+#kram-media-list { margin: 0; padding-left: 24px; }
+#kram-media-list li { padding: 8px 0; overflow-wrap: anywhere; }
+.kram-inbox-line { display: inline-block; margin-top: 24px; }
+.kram-about-avatar { flex: 0 0 96px; width: 96px; }
+.kram-about-avatar img { width: 100%; }
+.knm-about-hero-statement { max-width: 30ch; font-size: 30px; line-height: 1.3; margin: 24px 0; }
+.kram-about-intro { margin: 28px 0 44px; }
+.knm-about-current-copy { max-width: 62ch; }
+.knm-work-with-us { display: inline-block; margin: 6px 0 24px; font-weight: 700; }
+.knm-belief-field { margin: 28px 0; }
+.knm-belief-field ol { margin: 0; padding-left: 24px; }
+.knm-belief-field li { padding: 7px 0; }
+.knm-career-relay { display: grid; gap: 28px; }
+.knm-career-name { font-size: 20px; font-weight: 700; }
+.knm-career-node > p { margin: 8px 0; max-width: 58ch; }
+.knm-career-satellites { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px 24px; margin-top: 18px; }
+.knm-career-satellites a { display: flex; flex-direction: column; gap: 5px; padding: 10px 0; }
+.knm-career-satellites span { font-size: 12px; }
+.knm-career-satellites strong { font-weight: 400; }
+.knm-about-now { margin-top: 40px; }
+.knm-about-interests { line-height: 1.8; }
+.knm-about-archive-link { display: inline-block; margin-top: 12px; }
+.kram-inbox-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; }
+.kram-inbox-visual h1 { font-size: 42px; }
+.kram-inbox-form label { display: block; margin-bottom: 20px; }
+.kram-inbox-form label > span { display: block; margin-bottom: 8px; }
+.kram-inbox-form input, .kram-inbox-form textarea {
+  display: block; width: 100%; min-width: 0; padding: 9px 10px; border: 1px solid var(--era-rule); border-radius: 0; background: var(--era-paper);
+}
+.kram-inbox-form textarea { resize: vertical; min-height: 100px; }
+.kram-note-toggle { margin-bottom: 22px; }
+.kram-send { display: flex; gap: 16px; justify-content: space-between; min-height: 38px; padding: 8px 14px; }
+.kram-send b { font-weight: 400; }
+.kram-form-error { font-size: 14px; }
+.kram-submission-receipt { margin: 24px 0 0; }
+.kram-footer { margin-top: 32px; padding-top: 20px; font-size: 13px; }
+.kram-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+/* Original scenery is editorial, while these editions use their own physical language. */
+.kram-signal-field, .kram-writing-orbit, .kram-radar, .knm-scene, .knm-brand-sun-link,
+.knm-writing-glyph, .knm-belief-path, .era-desktop-shortcuts, .era-window-bar,
+.era-address-bar, .era-home-extra, .era-machine-prompt, .era-web-footer { display: none; }
+
+/* 1991: a simple document with the browser's native vocabulary. */
+html[data-era='html'] { --era-ink: #000; --era-paper: #fff; --era-link: #0000ee; --era-rule: #999; font: 16px/1.45 'Times New Roman', Times, serif; }
+[data-era='html'] body { margin: 18px; }
+[data-era='html'] .kram-site { max-width: 900px; }
+[data-era='html'] .kram-site-head { display: block; padding-bottom: 18px; border-bottom: 1px solid #999; }
+[data-era='html'] .kram-wordmark { display: block; font-size: 20px; margin-bottom: 10px; }
+[data-era='html'] .kram-site-head nav { gap: 18px; }
+[data-era='html'] .kram-view { padding: 28px 0 18px; }
+[data-era='html'] .kram-home-identity { margin-top: 8px; }
+[data-era='html'] .kram-home-copy h1 { font-size: 64px; margin: 25px 0 12px; }
+[data-era='html'] .kram-home-copy > p { max-width: none; }
+[data-era='html'] .kram-doors { display: block; margin: 28px 0 16px 22px; }
+[data-era='html'] .kram-doors a { display: list-item; padding: 6px 0; }
+[data-era='html'] .kram-doors span, [data-era='html'] .kram-doors b { display: none; }
+[data-era='html'] .kram-newsletter-line { margin-top: 8px; }
+[data-era='html'] .kram-page-head { margin-bottom: 20px; justify-content: flex-start; }
+[data-era='html'] h1, [data-era='html'] .kram-inbox-visual h1 { font-size: 32px; }
+[data-era='html'] .kram-work-index strong { font-size: 20px; }
+[data-era='html'] .kram-work-index a, [data-era='html'] .kram-professional-list a { padding: 10px 0; }
+[data-era='html'] .kram-section-label, [data-era='html'] .kram-receipt-heading,
+[data-era='html'] .knm-belief-label, [data-era='html'] .knm-interests-label { font-size: 16px; letter-spacing: 0; }
+[data-era='html'] .knm-recommendations-copy > span { font-size: 24px; }
+[data-era='html'] .knm-writing-quote { font-size: 16px; }
+[data-era='html'] .knm-about-hero-statement { font-size: 24px; }
+[data-era='html'] .kram-about-avatar { width: 80px; flex-basis: 80px; }
+[data-era='html'] .knm-career-satellites { display: block; margin: 8px 0 0 22px; }
+[data-era='html'] .knm-career-satellites a { display: list-item; padding: 6px 0; }
+[data-era='html'] .knm-career-satellites span { margin-right: 8px; font-size: 14px; }
+[data-era='html'] .kram-inbox-layout { display: block; max-width: 600px; }
+[data-era='html'] .kram-inbox-form { max-width: 420px; margin-top: 28px; }
+[data-era='html'] .kram-footer { border-top: 1px solid #999; }
+
+/* 1999: a personal home page, lilac wallpaper and a directory in the margin. */
+html[data-era='web'] { --era-ink: #342340; --era-paper: #fff9ed; --era-link: #673294; --era-rule: #84659a; font: 16px/1.5 Georgia, 'Times New Roman', serif; background: #d8c0e9; }
+[data-era='web'] body {
+  padding: 38px 26px;
+  background-color: #d8c0e9;
+  background-image: linear-gradient(45deg,#cbb1de 25%,transparent 25%),linear-gradient(-45deg,#cbb1de 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#cbb1de 75%),linear-gradient(-45deg,transparent 75%,#cbb1de 75%);
+  background-size: 16px 16px; background-position: 0 0,0 8px,8px -8px,-8px 0;
+}
+[data-era='web'] .kram-site {
+  display: grid; grid-template-columns: 172px minmax(0,1fr); max-width: 1040px; margin: 0 auto; border: 4px double #4d285c; background: #fff9ed; box-shadow: 8px 8px 0 #8a699c;
+}
+[data-era='web'] .kram-site-head { grid-column: 1; grid-row: 1 / span 2; display: block; padding: 24px 16px; border-right: 3px double #84659a; background: #ebd9f4; }
+[data-era='web'] .kram-wordmark { display: block; font-size: 24px; letter-spacing: -.04em; margin-bottom: 30px; }
+[data-era='web'] .kram-site-head nav { display: flex; flex-direction: column; gap: 12px; }
+[data-era='web'] .kram-site-head nav a::before { content: '◆ '; color: #e56a28; font-size: 10px; vertical-align: 2px; }
+[data-era='web'] .kram-site-head a[data-current='true'] { color: #6b311b; }
+[data-era='web'] .kram-view { grid-column: 2; padding: 32px; }
+[data-era='web'] .kram-home-hero { display: grid; grid-template-columns: minmax(0,1fr) 158px; gap: 28px; align-items: start; }
+[data-era='web'] .kram-home-copy h1 { color: #633689; font-size: clamp(62px,8vw,100px); letter-spacing: -.07em; line-height: .95; margin: 10px 0 28px; text-shadow: 3px 3px 0 #e3c6ed; }
+[data-era='web'] .kram-home-identity { font-size: 14px; }
+[data-era='web'] .kram-home-copy > p { font-style: italic; font-size: 18px; max-width: 30ch; }
+[data-era='web'] .era-home-extra { display: block; margin-top: 2px; text-align: center; }
+[data-era='web'] .era-portrait { padding: 5px; border: 3px double #724b87; background: #ebd9f4; }
+[data-era='web'] .era-portrait img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+[data-era='web'] .era-home-label { display: block; font-size: 13px; margin-top: 10px; font-weight: 700; }
+[data-era='web'] .era-home-note { font-size: 12px; font-style: italic; margin-top: 8px; }
+[data-era='web'] .kram-doors { margin-top: 32px; gap: 0; border: 3px double #84659a; background: #f0e0f4; }
+[data-era='web'] .kram-doors a { display: block; text-align: center; padding: 18px 10px; border-right: 1px solid #84659a; }
+[data-era='web'] .kram-doors a:last-child { border-right: 0; }
+[data-era='web'] .kram-doors span { display: block; color: #a34a21; font: 12px/1.5 'Courier New',monospace; margin-bottom: 7px; }
+[data-era='web'] .kram-doors b { display: none; }
+[data-era='web'] .kram-newsletter-line { display: block; text-align: center; font-weight: 700; }
+[data-era='web'] .era-web-footer { display: block; margin-top: 30px; padding: 18px 0 0; border-top: 3px double #84659a; text-align: center; font: 11px/1.8 'Courier New',monospace; color: #724e7b; }
+[data-era='web'] .kram-footer { grid-column: 2; margin: 0 32px; padding: 18px 0; border-top: 3px double #84659a; }
+[data-era='web'] .kram-footer nav { justify-content: center; }
+[data-era='web'] .kram-page-head { padding-bottom: 22px; border-bottom: 3px double #84659a; }
+[data-era='web'] .kram-page-head h1 { color: #633689; font-size: 50px; text-shadow: 2px 2px 0 #e3c6ed; }
+[data-era='web'] .kram-section-label, [data-era='web'] .kram-receipt-heading, [data-era='web'] .knm-belief-label { color: #7a3e23; }
+[data-era='web'] .kram-work-index a, [data-era='web'] .kram-professional-list a { border-bottom: 1px dotted #b39abc; }
+[data-era='web'] .kram-work-index a::before { content: '✧ '; color: #b05429; }
+[data-era='web'] .knm-writing-quote { margin-left: 22px; }
+[data-era='web'] .knm-archive-recommendations { padding: 22px; background: #efe1f1; border: 3px double #84659a; }
+[data-era='web'] button { border: 2px outset #e4d0e9; background: #e8d5ed; padding: 4px 9px; }
+[data-era='web'] button[aria-pressed='true'] { background: #6c4586; color: #fff9ed; border-style: inset; }
+[data-era='web'] .kram-media-explorer { grid-template-columns: 120px minmax(0,1fr); gap: 18px; }
+[data-era='web'] .kram-about-avatar { border: 4px double #724b87; padding: 4px; background: #ead5f0; }
+[data-era='web'] .knm-belief-field { border: 3px double #84659a; padding: 22px; background: #efe1f1; }
+[data-era='web'] .knm-career-node { padding-bottom: 22px; border-bottom: 1px dotted #b39abc; }
+[data-era='web'] .kram-inbox-layout { grid-template-columns: 1fr; gap: 28px; }
+[data-era='web'] .kram-inbox-visual h1 { font-size: 38px; color: #633689; }
+[data-era='web'] .kram-inbox-form { max-width: 460px; padding: 24px; border: 3px double #84659a; background: #efe1f1; }
+
+/* 1997 desktop: a tangible lilac workspace and one working browser window. */
+html[data-era='desktop'] { --era-ink: #241d2c; --era-paper: #fffdfb; --era-link: #512f8d; --era-rule: #9c8ea7; font: 14px/1.55 Arial, Helvetica, sans-serif; background: #b9a5d0; }
+[data-era='desktop'] body { padding: 34px 30px 44px 126px; background-image: radial-gradient(#d5c5e4 .65px, transparent .65px); background-size: 4px 4px; }
+[data-era='desktop'] .era-desktop-shortcuts { display: flex; flex-direction: column; gap: 24px; position: absolute; left: 18px; top: 30px; width: 88px; }
+[data-era='desktop'] .era-desktop-shortcuts button { background: transparent; border: 1px solid transparent; padding: 5px 2px; font: 12px/1.2 Arial,sans-serif; text-align: center; }
+[data-era='desktop'] .era-desktop-shortcuts button:hover, [data-era='desktop'] .era-desktop-shortcuts button:focus-visible { background: #d6c6e477; border: 1px dotted #4c365f; }
+[data-era='desktop'] .era-shortcut-icon { display: block; width: 42px; height: 38px; margin: 0 auto 7px; font: 31px/38px Georgia,serif; color: #4c2f66; text-shadow: 1px 1px #f8f2ff; }
+[data-era='desktop'] .kram-site { max-width: 1080px; margin: 0 auto; border: 3px solid; border-color: #f9f1fc #61546b #61546b #f9f1fc; background: #d7cedd; box-shadow: 9px 10px 0 #4b365738; padding: 3px; }
+[data-era='desktop'] .era-window-bar { display: flex; min-height: 29px; justify-content: space-between; align-items: center; gap: 10px; padding: 2px 5px 2px 9px; background: linear-gradient(90deg,#4b2c6a,#9775b1); color: white; font-size: 12px; font-weight: 700; }
+[data-era='desktop'] .era-window-controls { display: flex; gap: 4px; color: #221b29; font-size: 11px; }
+[data-era='desktop'] .era-window-controls > * { display: block; width: 18px; height: 18px; text-align: center; line-height: 14px; border: 2px outset #e4dae9; background: #d7cedd; }
+[data-era='desktop'] .era-address-bar { display: flex; align-items: center; gap: 10px; padding: 7px 6px; font-size: 12px; }
+[data-era='desktop'] .era-location { flex: 1; min-width: 0; padding: 3px 8px; background: #fffdfb; border: 2px inset #e8e0ee; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+[data-era='desktop'] .kram-site-head { padding: 2px 10px 8px; font-size: 12px; gap: 16px; }
+[data-era='desktop'] .kram-site-head nav { gap: 18px; }
+[data-era='desktop'] .kram-site-head a { color: #241d2c; }
+[data-era='desktop'] .kram-wordmark { font-size: 13px; }
+[data-era='desktop'] .kram-view { margin: 0 4px; padding: 34px; background: #fffdfb; border: 2px inset #e8e0ee; }
+[data-era='desktop'] .kram-home-hero { display: grid; grid-template-columns: minmax(0,1fr) 155px; gap: 18px 30px; }
+[data-era='desktop'] .kram-home-identity { font-size: 12px; margin: 4px 0 20px; }
+[data-era='desktop'] .kram-home-copy h1 { font: 700 clamp(76px,9vw,118px)/.9 Georgia,serif; letter-spacing: -.07em; margin-bottom: 25px; }
+[data-era='desktop'] .kram-home-copy > p { font: 19px/1.4 Georgia,serif; }
+[data-era='desktop'] .era-home-extra { display: block; text-align: center; grid-column: 2; grid-row: 1; }
+[data-era='desktop'] .era-portrait { border: 2px inset #eee4f4; padding: 4px; background: #d7cedd; }
+[data-era='desktop'] .era-portrait img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+[data-era='desktop'] .era-home-label { display: block; margin-top: 7px; font-size: 11px; }
+[data-era='desktop'] .era-home-note { font: 12px/1.4 Georgia,serif; margin-top: 8px; }
+[data-era='desktop'] .knm-scene-home { display: block; grid-column: 1 / -1; grid-row: 2; height: 150px; margin-top: 8px; overflow: hidden; border: 2px inset #e8e0ee; }
+[data-era='desktop'] .knm-scene-home img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 65%; }
+[data-era='desktop'] .kram-doors { margin-top: 24px; gap: 12px; }
+[data-era='desktop'] .kram-doors a { border: 2px outset #e8e0ee; padding: 10px 12px; background: #e2d8e8; text-decoration: none; }
+[data-era='desktop'] .kram-doors a:hover { background: #d2c2df; }
+[data-era='desktop'] .kram-doors a:active { border-style: inset; }
+[data-era='desktop'] .kram-doors span { font-size: 10px; }
+[data-era='desktop'] .kram-doors strong { font-size: 13px; font-weight: 400; }
+[data-era='desktop'] .kram-newsletter-line { margin-top: 20px; font-size: 12px; }
+[data-era='desktop'] .kram-footer { margin: 4px 4px 0; padding: 6px 10px; border: 2px inset #eee4f4; font-size: 11px; }
+[data-era='desktop'] .kram-footer nav { gap: 22px; }
+[data-era='desktop'] .kram-page-head h1 { font: 700 50px/1.1 Georgia,serif; letter-spacing: -.035em; }
+[data-era='desktop'] .kram-page-head { padding-bottom: 20px; border-bottom: 1px solid #cbbdd4; }
+[data-era='desktop'] .kram-work-index { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+[data-era='desktop'] .kram-work-index a { border: 1px solid #d4c7db; padding: 18px; background: #f6f0f9; }
+[data-era='desktop'] .kram-work-index strong { font: 700 23px/1.2 Georgia,serif; }
+[data-era='desktop'] .knm-writing-quote { font: 14px/1.5 Georgia,serif; }
+[data-era='desktop'] .kram-professional-list a { border-bottom: 1px solid #d4c7db; padding: 12px 0; }
+[data-era='desktop'] .knm-archive-recommendations { border: 2px groove #e9e0ed; padding: 24px; background: #f6f0f9; }
+[data-era='desktop'] .knm-recommendations-copy > span { font: 700 30px/1.2 Georgia,serif; }
+[data-era='desktop'] button { background: #e0d6e6; border: 2px outset #eee4f4; padding: 5px 10px; }
+[data-era='desktop'] button:active, [data-era='desktop'] button[aria-pressed='true'] { border-style: inset; background: #cfc0da; }
+[data-era='desktop'] .kram-about-avatar { padding: 3px; border: 2px inset #eee4f4; }
+[data-era='desktop'] .knm-about-hero-statement { font: 26px/1.35 Georgia,serif; }
+[data-era='desktop'] .knm-belief-field { padding: 24px; border: 2px groove #eee4f4; background: #f6f0f9; }
+[data-era='desktop'] .knm-career-node { padding: 18px; border: 1px solid #d4c7db; }
+[data-era='desktop'] .knm-career-name { font: 700 20px/1.3 Georgia,serif; }
+[data-era='desktop'] .kram-inbox-layout { grid-template-columns: 1fr 1fr; gap: 28px; }
+[data-era='desktop'] .kram-inbox-visual h1 { font: 700 40px/1.15 Georgia,serif; letter-spacing: -.03em; }
+[data-era='desktop'] .kram-inbox-form { padding: 22px; border: 2px groove #eee4f4; background: #f6f0f9; }
+[data-era='desktop'] .kram-inbox-form input, [data-era='desktop'] .kram-inbox-form textarea { border: 2px inset #eee4f4; }
+
+/* 2026 machine: the same person, represented as readable text and linked records. */
+html[data-era='machine'] { --era-ink: #dfd2e9; --era-paper: #141217; --era-link: #d7ff2f; --era-rule: #463b50; font: 14px/1.7 'SFMono-Regular',Consolas,'Liberation Mono','Courier New',monospace; background: #141217; }
+[data-era='machine'] body { padding: 32px 42px 44px; }
+[data-era='machine'] .kram-site { max-width: 1100px; margin: 0 auto; }
+[data-era='machine'] a { text-decoration: none; }
+[data-era='machine'] a:hover { text-decoration: underline; }
+[data-era='machine'] .kram-site-head { border-bottom: 1px solid #463b50; padding: 0 0 22px; font-size: 12px; }
+[data-era='machine'] .kram-wordmark { color: #dfd2e9; }
+[data-era='machine'] .kram-wordmark::before { content: '~/'; color: #92829f; }
+[data-era='machine'] .kram-site-head nav { gap: 20px; }
+[data-era='machine'] .kram-site-head nav a::before { content: './'; color: #92829f; }
+[data-era='machine'] .kram-site-head nav a[data-current='true'] { background: #d7ff2f; color: #141217; padding-left: 5px; padding-right: 5px; }
+[data-era='machine'] .kram-site-head nav a[data-current='true']::before { color: #51495b; }
+[data-era='machine'] .kram-view { padding: 34px 0; }
+[data-era='machine'] .era-machine-prompt { display: block; color: #9f8dac; margin-bottom: 36px; font-size: 12px; overflow-wrap: anywhere; }
+[data-era='machine'] .era-machine-prompt::first-letter { color: #d7ff2f; }
+[data-era='machine'] .kram-home-copy { max-width: 780px; }
+[data-era='machine'] .kram-home-identity { font-size: 13px; margin-bottom: 25px; }
+[data-era='machine'] .kram-home-copy h1 { font: 700 clamp(64px,10vw,122px)/1 'SFMono-Regular',Consolas,monospace; letter-spacing: -.075em; margin-bottom: 30px; color: #e5d5f1; }
+[data-era='machine'] .kram-home-copy h1::before { content: 'name: '; display: block; font-size: 12px; font-weight: 400; color: #9f8dac; letter-spacing: 0; margin-bottom: 15px; }
+[data-era='machine'] .kram-home-copy > p { max-width: 60ch; font-size: 16px; color: #c3b5cf; }
+[data-era='machine'] .kram-home-copy > p::before { content: '→ '; color: #ff884d; }
+[data-era='machine'] .kram-doors { display: block; max-width: 780px; margin-top: 40px; border-top: 1px solid #463b50; }
+[data-era='machine'] .kram-doors a { display: grid; grid-template-columns: 46px 1fr auto; padding: 15px 0; border-bottom: 1px solid #463b50; }
+[data-era='machine'] .kram-doors span { color: #9f8dac; font-size: 12px; }
+[data-era='machine'] .kram-doors strong { font-weight: 400; }
+[data-era='machine'] .kram-doors strong::after { content: '/'; }
+[data-era='machine'] .kram-newsletter-line { font-size: 12px; }
+[data-era='machine'] .kram-newsletter-line::before { content: 'external: '; color: #9f8dac; }
+[data-era='machine'] .kram-page-head h1 { font-size: 36px; line-height: 1.3; font-weight: 400; letter-spacing: -.04em; }
+[data-era='machine'] .kram-page-head h1::before { content: '# '; color: #a48eb5; }
+[data-era='machine'] .kram-page-head { margin-bottom: 30px; }
+[data-era='machine'] .kram-section-label, [data-era='machine'] .kram-receipt-heading,
+[data-era='machine'] .knm-belief-label, [data-era='machine'] .knm-interests-label { font-size: 12px; color: #a48eb5; font-weight: 400; letter-spacing: 0; }
+[data-era='machine'] .kram-section-label::before, [data-era='machine'] .kram-receipt-heading::before,
+[data-era='machine'] .knm-belief-label::before, [data-era='machine'] .knm-interests-label::before { content: '// '; color: #6e607a; }
+[data-era='machine'] .kram-work-index a, [data-era='machine'] .kram-professional-list a { border-bottom: 1px solid #302a36; padding: 16px 0; }
+[data-era='machine'] .kram-work-index strong { font-size: 18px; font-weight: 400; }
+[data-era='machine'] .kram-work-index a::before, [data-era='machine'] .kram-professional-list a::before { content: '↳ '; color: #a48eb5; }
+[data-era='machine'] .knm-writing-quote { color: #b5a6c1; font-size: 13px; margin: 9px 0 0 24px; max-width: 74ch; }
+[data-era='machine'] .knm-archive-recommendations { border-top: 1px solid #463b50; padding-top: 28px; }
+[data-era='machine'] .knm-recommendations-copy > span { font-size: 22px; font-weight: 400; }
+[data-era='machine'] .knm-recommendations-copy p { color: #b5a6c1; font-size: 13px; }
+[data-era='machine'] .kram-media-explorer { grid-template-columns: 170px minmax(0,1fr); }
+[data-era='machine'] button { background: transparent; border: 1px solid #463b50; border-radius: 0; padding: 5px 10px; font-size: 12px; }
+[data-era='machine'] button:hover { border-color: #a48eb5; }
+[data-era='machine'] button[aria-pressed='true'] { color: #141217; background: #d7ff2f; border-color: #d7ff2f; }
+[data-era='machine'] #kram-media-list li { border-bottom: 1px solid #302a36; padding: 10px 0; font-size: 13px; }
+[data-era='machine'] #kram-media-list li::marker { color: #8c7b98; }
+[data-era='machine'] .kram-about-avatar { width: 80px; flex-basis: 80px; filter: grayscale(1); opacity: .9; }
+[data-era='machine'] .knm-about-hero-statement { font-size: 25px; max-width: 47ch; line-height: 1.5; }
+[data-era='machine'] .knm-about-current-copy { max-width: 80ch; }
+[data-era='machine'] .knm-work-with-us { font-size: 12px; font-weight: 400; }
+[data-era='machine'] .knm-belief-field { padding: 25px 0; border-top: 1px solid #463b50; border-bottom: 1px solid #463b50; }
+[data-era='machine'] .knm-belief-field li { padding: 9px 0; color: #c4b5d1; }
+[data-era='machine'] .knm-experience-intro { color: #b5a6c1; }
+[data-era='machine'] .knm-career-node { border-left: 1px solid #463b50; padding-left: 22px; }
+[data-era='machine'] .knm-career-name { font-size: 18px; font-weight: 400; }
+[data-era='machine'] .knm-career-node p { color: #b5a6c1; font-size: 13px; }
+[data-era='machine'] .knm-career-satellites { gap: 8px 24px; }
+[data-era='machine'] .knm-career-satellites a { font-size: 12px; }
+[data-era='machine'] .knm-career-satellites span { color: #9f8dac; }
+[data-era='machine'] .knm-about-now { border-top: 1px solid #463b50; padding-top: 28px; }
+[data-era='machine'] .kram-inbox-visual h1 { font: inherit; font-size: 30px; letter-spacing: -.04em; line-height: 1.4; }
+[data-era='machine'] .kram-inbox-form label > span { color: #b4a0c4; font-size: 12px; }
+[data-era='machine'] .kram-inbox-form label > span::after { content: ':'; }
+[data-era='machine'] .kram-inbox-form input, [data-era='machine'] .kram-inbox-form textarea { border: 1px solid #665570; background: #1b171f; padding: 11px; font-size: 13px; }
+[data-era='machine'] .kram-inbox-form ::placeholder { color: #8e7d99; opacity: 1; }
+[data-era='machine'] .kram-send { color: #d7ff2f; border-color: #d7ff2f; }
+[data-era='machine'] .kram-send::before { content: '>'; }
+[data-era='machine'] .kram-form-error { color: #ffb294; }
+[data-era='machine'] .kram-footer { border-top: 1px solid #463b50; margin-top: 10px; font-size: 12px; }
+[data-era='machine'] .kram-footer a::before { content: '↗ '; color: #9f8dac; }
+[data-era='machine'] .kram-footer .kram-external-mark { display: none; }
+
+@media (max-width: 760px) {
+  .kram-site-head { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .kram-site-head nav { gap: 10px 20px; }
+  .kram-doors { grid-template-columns: 1fr; }
+  .kram-media-explorer { grid-template-columns: 1fr; }
+  .kram-media-tabs { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .kram-media-tabs button { flex: 0 1 auto; }
+  .kram-inbox-layout { grid-template-columns: 1fr; gap: 28px; }
+  .knm-career-satellites { grid-template-columns: 1fr; gap: 8px; }
+  .kram-about-avatar { width: 76px; flex-basis: 76px; }
+  [data-era='html'] body { margin: 12px; }
+  [data-era='html'] .kram-home-copy h1 { font-size: 55px; }
+  [data-era='web'] body { padding: 18px 14px 28px; }
+  [data-era='web'] .kram-site { display: block; box-shadow: 5px 5px 0 #8a699c; }
+  [data-era='web'] .kram-site-head { padding: 16px 20px; border-right: 0; border-bottom: 3px double #84659a; }
+  [data-era='web'] .kram-wordmark { margin: 0 0 10px; font-size: 22px; }
+  [data-era='web'] .kram-site-head nav { flex-direction: row; gap: 8px 20px; }
+  [data-era='web'] .kram-view { padding: 25px 20px; }
+  [data-era='web'] .kram-home-hero { grid-template-columns: minmax(0,1fr) 110px; gap: 18px; }
+  [data-era='web'] .kram-home-copy h1 { font-size: clamp(54px,12vw,88px); margin-top: 20px; }
+  [data-era='web'] .kram-home-copy > p { font-size: 16px; }
+  [data-era='web'] .kram-home-identity { font-size: 12px; }
+  [data-era='web'] .era-home-note { font-size: 11px; }
+  [data-era='web'] .kram-doors { grid-template-columns: repeat(3,minmax(0,1fr)); margin-top: 26px; }
+  [data-era='web'] .kram-doors a { padding: 12px 5px; font-size: 14px; }
+  [data-era='web'] .kram-footer { margin: 0 20px; }
+  [data-era='web'] .kram-page-head h1 { font-size: 40px; }
+  [data-era='web'] .knm-archive-recommendations { padding: 16px; }
+  [data-era='web'] .kram-media-explorer { grid-template-columns: 1fr; }
+  [data-era='web'] .knm-belief-field { padding: 18px; }
+  [data-era='desktop'] body { padding: 18px 12px 28px; }
+  [data-era='desktop'] .era-desktop-shortcuts { position: static; flex-direction: row; justify-content: flex-start; gap: 10px; width: 100%; margin: 0 0 18px; }
+  [data-era='desktop'] .era-desktop-shortcuts button { width: 72px; font-size: 11px; }
+  [data-era='desktop'] .era-shortcut-icon { height: 30px; font-size: 27px; line-height: 30px; margin-bottom: 4px; }
+  [data-era='desktop'] .kram-site-head { flex-direction: row; flex-wrap: wrap; gap: 6px 20px; padding: 3px 8px 9px; }
+  [data-era='desktop'] .kram-site-head nav { gap: 14px; }
+  [data-era='desktop'] .kram-view { padding: 25px 20px; }
+  [data-era='desktop'] .kram-home-hero { grid-template-columns: minmax(0,1fr) 112px; gap: 18px; }
+  [data-era='desktop'] .kram-home-copy h1 { font-size: clamp(56px,12vw,90px); }
+  [data-era='desktop'] .kram-home-copy > p { font-size: 16px; }
+  [data-era='desktop'] .kram-home-identity { font-size: 11px; }
+  [data-era='desktop'] .knm-scene-home { height: 115px; }
+  [data-era='desktop'] .kram-doors { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
+  [data-era='desktop'] .kram-doors a { gap: 5px; padding: 9px 5px; justify-content: center; }
+  [data-era='desktop'] .kram-doors span, [data-era='desktop'] .kram-doors b { display: none; }
+  [data-era='desktop'] .kram-work-index { grid-template-columns: 1fr; }
+  [data-era='desktop'] .knm-archive-recommendations { padding: 18px; }
+  [data-era='desktop'] .kram-inbox-layout { grid-template-columns: 1fr; }
+  [data-era='desktop'] .kram-inbox-form { padding: 18px; }
+  [data-era='machine'] body { padding: 22px 20px 36px; }
+  [data-era='machine'] .kram-site-head { gap: 15px; }
+  [data-era='machine'] .kram-site-head nav { gap: 10px 17px; }
+  [data-era='machine'] .era-machine-prompt { font-size: 11px; margin-bottom: 28px; }
+  [data-era='machine'] .kram-home-copy h1 { font-size: clamp(64px,17vw,100px); }
+  [data-era='machine'] .kram-home-copy > p { font-size: 14px; }
+  [data-era='machine'] .kram-home-identity { font-size: 12px; }
+  [data-era='machine'] .kram-media-explorer { grid-template-columns: 1fr; }
+  [data-era='machine'] .knm-about-hero-statement { font-size: 21px; }
+  [data-era='machine'] .knm-career-satellites { grid-template-columns: 1fr; }
+}
+@media (max-width: 420px) {
+  [data-era='web'] .kram-home-hero, [data-era='desktop'] .kram-home-hero { grid-template-columns: minmax(0,1fr) 76px; gap: 12px; }
+  [data-era='web'] .kram-home-copy h1 { font-size: clamp(44px,13.5vw,53px); }
+  [data-era='desktop'] .kram-home-copy h1 { font-size: clamp(44px,13.5vw,54px); }
+  [data-era='web'] .era-home-note, [data-era='desktop'] .era-home-note { font-size: 10px; }
+  [data-era='web'] .era-home-label, [data-era='desktop'] .era-home-label { font-size: 10px; }
+  [data-era='web'] .kram-home-copy > p, [data-era='desktop'] .kram-home-copy > p { font-size: 15px; }
+  [data-era='desktop'] .kram-view { padding: 22px 16px; }
+  [data-era='desktop'] .kram-site-head nav { gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
