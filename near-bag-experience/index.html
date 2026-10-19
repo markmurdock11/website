@@ -522,7 +522,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-15">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-16">
   <header class="nb-header">
     <div><p class="nb-eyebrow">Kram + Emma</p><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">new game</button>
@@ -606,7 +606,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
         <h2 id="nb-sources-title">Sources and assumptions</h2>
         <p>A fictional game based on <strong>The Near-Bag Experience</strong>, an essay by Kram + Emma. Companies, job offers, work events, contracts, prices and timing are teaching examples.</p>
         <p><strong>About 1 in 3 exited. About 1 in 100 became unicorns.</strong> <a href="https://www.cbinsights.com/research/venture-capital-funnel-2/" target="_blank" rel="noopener noreferrer">CB Insights followed 1,119 US tech companies</a> first seed-funded in 2008, 2009 or 2010 through August 31, 2018. About 30% had an IPO or acquisition. Separately, 1.07% reached a valuation of $1 billion or more. A high valuation is not a sale or an employee payout. These are separate historical measures, not your personal odds.</p>
-        <p><strong>Each company gets its own outcome.</strong> This game's lottery uses 30 exit outcomes in 100, including one fictional unicorn IPO outcome. Combining those outcomes is an authored rule, not a joint probability measured by the study. Companies can also remain private or close. Each company's outcome arrives four years after you join; an IPO adds six months before you can sell. The historical companies were followed for roughly eight to ten years. The game is not a forecast for any funding round.</p>
+        <p><strong>Each company gets its own outcome.</strong> This game's lottery uses 30 exit outcomes in 100, including one fictional unicorn IPO outcome. Combining those outcomes is an authored rule, not a joint probability measured by the study. New runs use 3 IPOs, 27 acquisitions, 30 private companies and 40 closures per 100 outcomes. The IPO share roughly follows the <a href="https://nvca.org/wp-content/uploads/2019/08/NVCA-2019-Yearbook.pdf" target="_blank" rel="noopener noreferrer">2018 NVCA exit mix</a>. The 13 large and 14 small acquisitions are fictional assumptions. Existing saved runs keep their original lottery. Each company's outcome arrives four years after you join; an IPO adds six months before you can sell. The historical companies were followed for roughly eight to ten years. The game is not a forecast for any funding round.</p>
         <p><strong>One calendar. One paycheck.</strong> You can work at two startups while keeping equity from your first job. Salary is take-home pay. Living costs, share purchases, legal review and any accountant bill come out of the same bank balance. Company outcomes are independent in the game. Work setbacks are authored events, with at most two per job.</p>
         <p><strong>Your contract in this game.</strong> Options are earned over four years: 25% after the first year, then monthly. Only earned options can be bought. You have 90 days after leaving to buy them. The unreviewed contract cancels half of earned options if you quit voluntarily. A $5,000 legal review removes that fictional clause because the company agrees. This is a specific game contract, not a universal rule or a promised result from hiring a lawyer. Being fired does not automatically erase all earned options. <a href="https://carta.com/learn/equity/stock-options/" target="_blank" rel="noopener noreferrer">Options</a>, <a href="https://carta.com/learn/equity/stock-options/vesting/" target="_blank" rel="noopener noreferrer">vesting</a> and <a href="https://carta.com/learn/equity/leaving-company/" target="_blank" rel="noopener noreferrer">leaving a company</a>.</p>
         <p><strong>Cash arrives only when a sale pays you.</strong> Investors may be paid before employees in an acquisition. Public shares may be locked before you can sell. <a href="https://carta.com/learn/equity/liquidity-events/liquidation-preferences/" target="_blank" rel="noopener noreferrer">Liquidation preferences</a>, <a href="https://www.sec.gov/resources-small-businesses/capital-raising-building-blocks/private-secondary-markets" target="_blank" rel="noopener noreferrer">private share sales</a> and <a href="https://www.investor.gov/introduction-investing/investing-basics/glossary/initial-public-offerings-lockup-agreements" target="_blank" rel="noopener noreferrer">IPO lockups</a>.</p>
@@ -888,6 +888,9 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   'use strict';
   var VERSION = 10;
   var constants = Object.freeze({ START_CASH: 12000, LIVING_COST: 3500, LAWYER_COST: 5000, ACCOUNTANT_COST: 2000, PREFERENCE: 2000000, JOBS: 2 });
+  // New careers use rules 2. Saves without this field keep their original lottery.
+  var OUTCOME_RULES = 2;
+  var outcomeWeights = Object.freeze({ unicorn: 1, ipo: 2, acquisition_high: 13, acquisition_low: 14, private: 30, shutdown: 40 });
   var eventTypes = ['dilution', 'burnout', 'layoff', 'contract_clause', 'accounting'];
   var stages = ['choose_company','offer','contract','career_draw','company_draw','dilution','burnout','layoff','contract_check','new_role','company_result','public_sale','job_offer','first_job_complete','exercise','receipt','result'];
   var secondNames = { space: { A: 'Atlas Launch', B: 'Beacon Orbit', C: 'Relay Space', D: 'Meridian Aerospace' }, climate: { A: 'Ember Storage', B: 'Field Current', C: 'Greenline Energy', D: 'Grid North' }, software: { A: 'Threadbox', B: 'Deskline', C: 'Clearpath Software', D: 'Openfield Systems' } };
@@ -902,9 +905,12 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     return rec;
   }
   function random(s, max) { var x = s.rngState >>> 0; x ^= x << 13; x ^= x >>> 17; x ^= x << 5; s.rngState = x >>> 0; return Math.floor(s.rngState / 4294967296 * max) + 1; }
-  function outcomeFromDraw(draw) {
+  function outcomeFromDraw(draw, rules) {
     if (!Number.isInteger(draw) || draw < 1 || draw > 100) throw new RangeError('Company draw must be from 1 to 100.');
-    return draw === 1 ? 'unicorn' : draw <= 10 ? 'ipo' : draw <= 20 ? 'acquisition_high' : draw <= 30 ? 'acquisition_low' : draw <= 60 ? 'private' : 'shutdown';
+    if (rules === undefined) rules = OUTCOME_RULES;
+    if (rules !== 1 && rules !== 2) throw new RangeError('Unknown company outcome rules.');
+    var ipoEnd = rules === 1 ? 10 : 3, acquisitionEnd = rules === 1 ? 20 : 16;
+    return draw === 1 ? 'unicorn' : draw <= ipoEnd ? 'ipo' : draw <= acquisitionEnd ? 'acquisition_high' : draw <= 30 ? 'acquisition_low' : draw <= 60 ? 'private' : 'shutdown';
   }
   function company(s, id) { return s.companies.find(function (c) { return c.id === (id || s.focusCompanyId); }); }
   function entry(s, kind, amount, companyId, note) { s.ledger.push({ month: s.month, kind: kind, amount: cents(amount), companyId: companyId || null, note: note || '' }); }
@@ -931,7 +937,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   function create(opts) {
     opts = opts || {}; var seed = Number.isInteger(opts.seed) ? opts.seed >>> 0 : Math.floor(Math.random() * 4294967295) + 1;
     if (!seed) seed = 1;
-    return { version: VERSION, seed: seed, rngState: seed, month: 0, bank: 12000, debt: 0, stage: 'choose_company', activeJobId: null, activePay: 0, focusCompanyId: null, companies: [], events: [], eventId: 0, currentEvent: null, pendingReceipt: null, pendingDeparture: null, feedback: '', choices: [], ledger: [], salaryIncome: 0, livingCosts: 0, legalCosts: 0, accountingCosts: 0, purchaseCosts: 0, equityProceeds: 0, jobCount: 0, period: null, testPlan: opts.testing ? clone(opts.testing) : null };
+    return { version: VERSION, outcomeRules: OUTCOME_RULES, seed: seed, rngState: seed, month: 0, bank: 12000, debt: 0, stage: 'choose_company', activeJobId: null, activePay: 0, focusCompanyId: null, companies: [], events: [], eventId: 0, currentEvent: null, pendingReceipt: null, pendingDeparture: null, feedback: '', choices: [], ledger: [], salaryIncome: 0, livingCosts: 0, legalCosts: 0, accountingCosts: 0, purchaseCosts: 0, equityProceeds: 0, jobCount: 0, period: null, testPlan: opts.testing ? clone(opts.testing) : null };
   }
   function chooseCompany(s, payload) {
     var rec = recommend(payload && payload.profile, payload && payload.round, s.jobCount), t = base.rounds[rec.round], index = s.jobCount;
@@ -1005,7 +1011,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     s.stage = 'receipt'; s.focusCompanyId = c.id;
   }
   function revealCompany(s,c) {
-    c.outcome = outcomeFromDraw(c.outcomeDraw); c.exitRevealed = true;
+    c.outcome = outcomeFromDraw(c.outcomeDraw, s.outcomeRules || 1); c.exitRevealed = true;
     if (c.outcome === 'ipo' || c.outcome === 'unicorn') {
       var supply = 1000000 + c.preferredShares;
       if (c.outcome === 'unicorn') c.valuation = 1200000000;
@@ -1111,13 +1117,24 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     if(!validate(s))throw new Error('The career ledger did not reconcile.');
     return s;
   }
+  // Net cash across equity decisions, not salary, paper value or taxable capital gain.
+  // Exercise costs withheld at sale are already deducted from equityProceeds.
+  function equityResult(s, companyId) {
+    var c = companyId ? company(s, companyId) : null;
+    if (companyId && !c) throw new RangeError('Unknown company.');
+    var received = c ? c.equityProceeds : s.equityProceeds;
+    var purchases = c ? c.purchaseCosts : s.purchaseCosts;
+    var fees = c ? -s.ledger.filter(function(e) { return e.companyId === companyId && (e.kind === 'legal' || e.kind === 'accounting'); }).reduce(function(sum,e) { return sum + e.amount; },0) : s.legalCosts + s.accountingCosts;
+    var profit = cents(received - purchases - fees);
+    return { received: received, purchaseCosts: purchases, professionalFees: cents(fees), profit: profit, tier: profit >= 1000000 ? 'million' : profit >= 100000 ? 'six_figures' : profit > 0 ? 'profit' : 'none' };
+  }
   function view(s) {
     var c=company(s),v={stage:s.stage,headline:'',body:'',companyName:c?c.name:'Your career',companyId:c?c.id:null,month:s.month,bank:s.bank,actions:actions(s),feedback:s.feedback,detail:'Fictional companies and events. Living costs are $3,500 a month. Equity taxes are not calculated.',positions:clone(s.companies)};
     if(s.stage==='choose_company'){v.headline=s.jobCount?'Choose your second startup.':'Choose your first startup.';v.body=s.jobCount?'Your first company can still pay you later.':'Two startup jobs. One bank balance.';}
     else if(s.stage==='offer'){v.headline='Choose your pay.';v.body='Take-home pay. Living costs are $3,500 a month.';v.detail='Options are the right to buy shares at '+money(c.strike)+' each. Earn them over four years, with the first 25% after one year.';v.stats=[{label:'Each option lets you buy one share',value:money(c.strike)},{label:'Earn the full grant',value:'4 years'}];}
     else if(s.stage==='contract'){v.headline='Review the contract.';v.body=s.bank>=5000?'This contract says you lose half your earned options if you quit.':'A lawyer costs $5,000. You have '+money(s.bank)+'. Quitting will cancel half your earned options.';v.detail='For $5,000, the lawyer identifies this fictional rule and the company agrees to remove it. This does not protect you from layoffs, dilution or company failure.';}
     else if(s.stage==='career_draw'){v.headline=c.employed?'What happens at work?':c.name+' has an update.';v.body=c.employed?'A career event can change your job or equity.':'Your shares can change after you leave.';}
-    else if(s.stage==='company_draw'){v.headline='Will the company sell or go public?';v.body='3 in 10 do in this game. Your payout is a separate question.';v.stats=[{label:'Historically sold or went public',value:'About 1 in 3'},{label:'Historically became worth $1 billion',value:'About 1 in 100'}];v.detail='The game gives each company a separate 30% exit draw. Of 100 outcomes, 1 is an authored unicorn IPO, 9 are normal IPOs, 10 large sales, 10 small sales, 30 remain private and 40 close. These splits are invented. A unicorn is a private company worth $1 billion or more. The historical study tracked 30% exits and about 1.07% unicorns as separate measures, not employee payout odds. These are historical company rates, not the odds of your offer.';}
+    else if(s.stage==='company_draw'){v.headline='Will the company sell or go public?';v.body='3 in 10 do in this game. Your payout is a separate question.';v.stats=[{label:'Historically sold or went public',value:'About 1 in 3'},{label:'Historically became worth $1 billion',value:'About 1 in 100'}];v.detail='The game gives each company a separate 30% exit draw. Of 100 outcomes, '+((s.outcomeRules || 1) === 1 ? '1 is an authored unicorn IPO, 9 are normal IPOs, 10 large sales, 10 small sales' : '1 is an authored unicorn IPO, 2 are normal IPOs, 13 large sales, 14 small sales')+', 30 remain private and 40 close. These splits are model assumptions. A unicorn is a private company worth $1 billion or more. The historical study tracked 30% exits and about 1.07% unicorns as separate measures, not employee payout odds. These are historical company rates, not the odds of your offer.';}
     else if(s.stage==='dilution'){v.headline='Your ownership got smaller.';v.body='New investors received more shares. Your own count stayed the same.';v.detail='Total shares increased 25%. Your ownership percentage fell 20%. This changes the payout calculation and this game\'s IPO price.';}
     else if(s.stage==='contract_check'){v.headline='Change the quitting rule?';v.body=c.clauseRemoved?'You keep your earned options if you quit.':'You lose half your earned options if you quit.';v.detail='For $5,000, a lawyer negotiates to remove this fictional rule. The company agrees. A layoff keeps your earned options either way. Unearned options always stop when you leave.'+(!c.clauseRemoved&&s.bank<5000?' You have '+money(s.bank)+', so you cannot afford the lawyer.':'');}
     else if(s.stage==='burnout'){v.headline='You are burned out.';v.body='Leave now or keep working for more equity.';}
@@ -1136,12 +1153,13 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
       else{v.headline='The company closed.';v.body='Its options and shares are worth $0. There is nothing left to buy.';}
     } else if(s.stage==='public_sale'){v.headline='You can sell now.';v.body=money(c.ipoPrice)+' per share at the IPO. '+money(c.salePrice)+' now.';v.detail='The sale can cover the exercise cost of unbought options. Only the remaining cash enters your bank. Already purchased shares have no second exercise cost.';}
     else if(s.stage==='receipt'){v.receipt=clone(s.pendingReceipt);v.headline=v.receipt.headline;v.body=v.receipt.body;v.feedback='';}
-    else if(s.stage==='result'){v.headline='Your two-company result.';v.body='Salary, costs and both equity outcomes.';v.feedback='';v.result={companies:clone(s.companies),bank:s.bank,debt:s.debt,salaryIncome:s.salaryIncome,livingCosts:s.livingCosts,legalCosts:s.legalCosts,accountingCosts:s.accountingCosts,purchaseCosts:s.purchaseCosts,equityProceeds:s.equityProceeds,ledger:clone(s.ledger)};}
+    else if(s.stage==='result'){v.headline='Your two-company result.';v.body='Salary, costs and both equity outcomes.';v.feedback='';v.result={equityResult:equityResult(s),companies:clone(s.companies),bank:s.bank,debt:s.debt,salaryIncome:s.salaryIncome,livingCosts:s.livingCosts,legalCosts:s.legalCosts,accountingCosts:s.accountingCosts,purchaseCosts:s.purchaseCosts,equityProceeds:s.equityProceeds,ledger:clone(s.ledger)};}
     return v;
   }
   function validate(s) {
     try {
       if(!s||s.version!==VERSION||stages.indexOf(s.stage)<0||!Number.isInteger(s.month)||s.month<0||s.month>110||!Number.isInteger(s.rngState)||s.rngState<1||s.rngState>4294967295||!Array.isArray(s.companies)||s.jobCount!==s.companies.length||s.jobCount>2||!Array.isArray(s.ledger)||!Array.isArray(s.events)||!Array.isArray(s.choices)||s.ledger.length>300||s.choices.length>150||s.events.length>30)return false;
+      if(s.outcomeRules !== undefined && s.outcomeRules !== 1 && s.outcomeRules !== 2)return false;
       if(!Number.isInteger(s.seed)||s.seed<1||s.seed>4294967295||!Number.isInteger(s.eventId)||s.eventId<0)return false;
       if(s.testPlan!==null&&(!s.testPlan||typeof s.testPlan!=='object'||(s.testPlan.outcomes!==undefined&&(!Array.isArray(s.testPlan.outcomes)||s.testPlan.outcomes.length>2||!s.testPlan.outcomes.every(function(d){return Number.isInteger(d)&&d>=1&&d<=100;})))||(s.testPlan.offerMonths!==undefined&&(!Array.isArray(s.testPlan.offerMonths)||s.testPlan.offerMonths.length>2||!s.testPlan.offerMonths.every(function(m){return [18,24,36].indexOf(m)>=0;})))||(s.testPlan.events!==undefined&&(!Array.isArray(s.testPlan.events)||s.testPlan.events.length>2||!s.testPlan.events.every(function(deck){return Array.isArray(deck)&&deck.length<=2&&deck.every(function(e){return eventTypes.indexOf(e)>=0;});})))))return false;
       if(!['bank','debt','activePay','salaryIncome','livingCosts','legalCosts','accountingCosts','purchaseCosts','equityProceeds'].every(function(k){return typeof s[k]==='number'&&Number.isFinite(s[k])&&s[k]>=0;}))return false;
@@ -1158,7 +1176,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
         if(!c.profile||['space','climate','software'].indexOf(c.profile.industry)<0||['small','growing','large'].indexOf(c.profile.size)<0||['steady','balanced','bold'].indexOf(c.profile.risk)<0)return false;
         if(![c.earned,c.options,c.shares,c.sold,c.expired,c.lostOptions,c.lostShares,c.cancelled,c.purchaseCosts,c.equityProceeds].every(function(x){return typeof x==='number'&&Number.isFinite(x)&&x>=0;})||c.earned>c.grant||Math.abs(c.earned-c.options-c.shares-c.sold-c.expired-c.lostOptions-c.lostShares)>.001)return false;
         if(typeof c.employed!=='boolean'||typeof c.lawyer!=='boolean'||c.clauseRemoved!==c.lawyer||typeof c.resolved!=='boolean'||typeof c.exitRevealed!=='boolean'||!Number.isInteger(c.outcomeDraw)||c.outcomeDraw<1||c.outcomeDraw>100)return false;
-        if(c.exitRevealed?c.outcome!==outcomeFromDraw(c.outcomeDraw):c.outcome!==null)return false;
+        if(c.exitRevealed?c.outcome!==outcomeFromDraw(c.outcomeDraw, s.outcomeRules || 1):c.outcome!==null)return false;
         if(c.resolved&&!c.exitRevealed)return false;
         if(!Number.isInteger(c.financingRounds)||c.financingRounds<0||c.financingRounds>2||Math.abs(c.preferredShares-(1250000*Math.pow(1.25,c.financingRounds)-1000000))>.001)return false;
         if(c.grant!==0&&!((c.grant===terms.cash.grant&&c.pay===terms.cash.pay)||(c.grant===terms.equity.grant&&c.pay===terms.equity.pay)))return false;
@@ -1224,7 +1242,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     } catch (_) {return false;}
   }
   function restore(saved) { return validate(saved)?clone(saved):null; }
-  return Object.freeze({version:VERSION,constants:constants,recommend:recommend,earnedAt:earnedAt,create:create,actions:actions,act:act,view:view,validate:validate,restore:restore,outcomeFromDraw:outcomeFromDraw});
+  return Object.freeze({version:VERSION,outcomeRules:OUTCOME_RULES,outcomeWeights:outcomeWeights,equityResult:equityResult,constants:constants,recommend:recommend,earnedAt:earnedAt,create:create,actions:actions,act:act,view:view,validate:validate,restore:restore,outcomeFromDraw:outcomeFromDraw});
 });
 </script><script>(function (root) {
   'use strict';
