@@ -362,7 +362,7 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-10">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-10.1">
   <header class="nb-header">
     <div><p class="nb-eyebrow">Kram + Emma</p><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">new game</button>
@@ -1330,7 +1330,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     { key: 'risk', title: 'How much risk?', choices: [['steady', 'Less risk', 'Salary matters most'], ['balanced', 'Some risk', 'Salary and equity'], ['bold', 'More risk', 'Equity matters most']] }
   ];
   const freshSetup = () => ({ step: 0, profile: { industry: 'software', size: 'growing', risk: 'balanced' }, round: null });
-  let state = model.create(), setup = freshSetup(), saving = false, interacted = false;
+  let state = model.create(), setup = freshSetup(), interacted = false;
   /* STANDALONE_STORAGE_START */
   const standaloneStorage = {
     load() { try { return JSON.parse(window.localStorage.getItem('near-bag-career-v10') || 'null'); } catch (_) { return null; } },
@@ -1340,7 +1340,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
   const storage = app.nearBagHost || standaloneStorage;
   const snapshot = () => ({ uiVersion: 10, state: JSON.parse(JSON.stringify(state)), setup: JSON.parse(JSON.stringify(setup)) });
   function save() { try { const result = storage.save(snapshot(), { game: 'The Near-Bag Experience', stage: state.stage, month: state.month, bank: state.bank, companies: state.companies.map(c => ({ name: c.name, status: c.status })) }); if (result && result.catch) result.catch(() => {}); } catch (_) {} }
-  function reset() { interacted = true; state = model.create(); setup = freshSetup(); saving = false; render(); save(); }
+  function reset() { interacted = true; state = model.create(); setup = freshSetup(); render(); save(); }
   function restore(saved) {
     if (!saved || saved.uiVersion !== 10 || !saved.setup || !Number.isInteger(saved.setup.step) || saved.setup.step < 0 || saved.setup.step > 3) return false;
     if (!questions.every(q => q.choices.some(c => c[0] === saved.setup.profile?.[q.key]))) return false;
@@ -1429,17 +1429,10 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     if (settling) { receipt(view); put('announcement', view.receipt.companyName + '. ' + view.receipt.headline + ' Bank: ' + money(view.receipt.bankAfter) + '.'); return; }
     if (ending) {
       window.NearBagCareerResult.render(state, fields['result-card']);
-      const controls = fields.actions; controls.replaceChildren(); controls.dataset.single = 'false';
-      const fresh = el('button', 'nb-action', 'Pick a new company'); fresh.type = 'button'; fresh.dataset.kind = 'primary'; fresh.addEventListener('click', () => { if (state === atSave) reset(); });
-      const download = el('button', 'nb-action', saving ? 'Saving image...' : 'Save result'); download.type = 'button'; download.disabled = saving;
-      const atSave = state;
-      download.addEventListener('click', async () => {
-        if (saving || state !== atSave) return; saving = true; download.disabled = true; download.textContent = 'Saving image...';
-        try { await window.NearBagCareerResult.download(atSave); if (state === atSave) { download.textContent = 'Image saved'; put('announcement', 'Image saved.'); } }
-        catch (_) { if (state === atSave) { download.textContent = 'Save result'; put('announcement', 'Could not save. You can screenshot this card.'); } }
-        finally { saving = false; if (state === atSave) download.disabled = false; }
-      });
-      controls.append(fresh, download); put('choice-note', ''); put('announcement', 'Both companies finished. Cash from shares: ' + money(state.equityProceeds) + '.'); return;
+      const controls = fields.actions; controls.replaceChildren(); controls.dataset.single = 'true';
+      const atResult = state;
+      const fresh = el('button', 'nb-action', 'Pick a new company'); fresh.type = 'button'; fresh.dataset.kind = 'primary'; fresh.addEventListener('click', () => { if (state === atResult) reset(); });
+      controls.append(fresh); put('choice-note', ''); put('announcement', 'Both companies finished. Cash from shares: ' + money(state.equityProceeds) + '.'); return;
     }
     put('bank', money(state.bank)); put('date', 'Month ' + state.month); put('company-name', view.companyName || 'Your career');
     const focusedCompany = state.companies.find(c => c.id === view.companyId);
