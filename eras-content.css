@@ -101,7 +101,7 @@ q { quotes: '“' '”'; }
 /* Original scenery is editorial, while these editions use their own physical language. */
 .kram-signal-field, .kram-writing-orbit, .kram-radar, .knm-scene, .knm-brand-sun-link,
 .knm-writing-glyph, .knm-belief-path, .era-desktop-shortcuts, .era-window-bar,
-.era-address-bar, .era-home-extra, .era-machine-prompt, .era-web-footer { display: none; }
+.era-address-bar, .era-home-extra { display: none; }
 
 /* 1991: a simple document with the browser's native vocabulary. */
 html[data-era='html'] { --era-ink: #000; --era-paper: #fff; --era-link: #0000ee; --era-rule: #999; font: 16px/1.45 'Times New Roman', Times, serif; }
@@ -134,58 +134,6 @@ html[data-era='html'] { --era-ink: #000; --era-paper: #fff; --era-link: #0000ee;
 [data-era='html'] .kram-inbox-layout { display: block; max-width: 600px; }
 [data-era='html'] .kram-inbox-form { max-width: 420px; margin-top: 28px; }
 [data-era='html'] .kram-footer { border-top: 1px solid #999; }
-
-/* 1999: a personal home page, lilac wallpaper and a directory in the margin. */
-html[data-era='web'] { --era-ink: #342340; --era-paper: #fff9ed; --era-link: #673294; --era-rule: #84659a; font: 16px/1.5 Georgia, 'Times New Roman', serif; background: #d8c0e9; }
-[data-era='web'] body {
-  padding: 38px 26px;
-  background-color: #d8c0e9;
-  background-image: linear-gradient(45deg,#cbb1de 25%,transparent 25%),linear-gradient(-45deg,#cbb1de 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#cbb1de 75%),linear-gradient(-45deg,transparent 75%,#cbb1de 75%);
-  background-size: 16px 16px; background-position: 0 0,0 8px,8px -8px,-8px 0;
-}
-[data-era='web'] .kram-site {
-  display: grid; grid-template-columns: 172px minmax(0,1fr); max-width: 1040px; margin: 0 auto; border: 4px double #4d285c; background: #fff9ed; box-shadow: 8px 8px 0 #8a699c;
-}
-[data-era='web'] .kram-site-head { grid-column: 1; grid-row: 1 / span 2; display: block; padding: 24px 16px; border-right: 3px double #84659a; background: #ebd9f4; }
-[data-era='web'] .kram-wordmark { display: block; font-size: 24px; letter-spacing: -.04em; margin-bottom: 30px; }
-[data-era='web'] .kram-site-head nav { display: flex; flex-direction: column; gap: 12px; }
-[data-era='web'] .kram-site-head nav a::before { content: '◆ '; color: #e56a28; font-size: 10px; vertical-align: 2px; }
-[data-era='web'] .kram-site-head a[data-current='true'] { color: #6b311b; }
-[data-era='web'] .kram-view { grid-column: 2; padding: 32px; }
-[data-era='web'] .kram-home-hero { display: grid; grid-template-columns: minmax(0,1fr) 158px; gap: 28px; align-items: start; }
-[data-era='web'] .kram-home-copy h1 { color: #633689; font-size: clamp(62px,8vw,100px); letter-spacing: -.07em; line-height: .95; margin: 10px 0 28px; text-shadow: 3px 3px 0 #e3c6ed; }
-[data-era='web'] .kram-home-identity { font-size: 14px; }
-[data-era='web'] .kram-home-copy > p { font-style: italic; font-size: 18px; max-width: 30ch; }
-[data-era='web'] .era-home-extra { display: block; margin-top: 2px; text-align: center; }
-[data-era='web'] .era-portrait { padding: 5px; border: 3px double #724b87; background: #ebd9f4; }
-[data-era='web'] .era-portrait img { width: 100%; aspect-ratio: 1; object-fit: cover; }
-[data-era='web'] .era-home-label { display: block; font-size: 13px; margin-top: 10px; font-weight: 700; }
-[data-era='web'] .era-home-note { font-size: 12px; font-style: italic; margin-top: 8px; }
-[data-era='web'] .kram-doors { margin-top: 32px; gap: 0; border: 3px double #84659a; background: #f0e0f4; }
-[data-era='web'] .kram-doors a { display: block; text-align: center; padding: 18px 10px; border-right: 1px solid #84659a; }
-[data-era='web'] .kram-doors a:last-child { border-right: 0; }
-[data-era='web'] .kram-doors span { display: block; color: #a34a21; font: 12px/1.5 'Courier New',monospace; margin-bottom: 7px; }
-[data-era='web'] .kram-doors b { display: none; }
-[data-era='web'] .kram-newsletter-line { display: block; text-align: center; font-weight: 700; }
-[data-era='web'] .era-web-footer { display: block; margin-top: 30px; padding: 18px 0 0; border-top: 3px double #84659a; text-align: center; font: 11px/1.8 'Courier New',monospace; color: #724e7b; }
-[data-era='web'] .kram-footer { grid-column: 2; margin: 0 32px; padding: 18px 0; border-top: 3px double #84659a; }
-[data-era='web'] .kram-footer nav { justify-content: center; }
-[data-era='web'] .kram-page-head { padding-bottom: 22px; border-bottom: 3px double #84659a; }
-[data-era='web'] .kram-page-head h1 { color: #633689; font-size: 50px; text-shadow: 2px 2px 0 #e3c6ed; }
-[data-era='web'] .kram-section-label, [data-era='web'] .kram-receipt-heading, [data-era='web'] .knm-belief-label { color: #7a3e23; }
-[data-era='web'] .kram-work-index a, [data-era='web'] .kram-professional-list a { border-bottom: 1px dotted #b39abc; }
-[data-era='web'] .kram-work-index a::before { content: '✧ '; color: #b05429; }
-[data-era='web'] .knm-writing-quote { margin-left: 22px; }
-[data-era='web'] .knm-archive-recommendations { padding: 22px; background: #efe1f1; border: 3px double #84659a; }
-[data-era='web'] button { border: 2px outset #e4d0e9; background: #e8d5ed; padding: 4px 9px; }
-[data-era='web'] button[aria-pressed='true'] { background: #6c4586; color: #fff9ed; border-style: inset; }
-[data-era='web'] .kram-media-explorer { grid-template-columns: 120px minmax(0,1fr); gap: 18px; }
-[data-era='web'] .kram-about-avatar { border: 4px double #724b87; padding: 4px; background: #ead5f0; }
-[data-era='web'] .knm-belief-field { border: 3px double #84659a; padding: 22px; background: #efe1f1; }
-[data-era='web'] .knm-career-node { padding-bottom: 22px; border-bottom: 1px dotted #b39abc; }
-[data-era='web'] .kram-inbox-layout { grid-template-columns: 1fr; gap: 28px; }
-[data-era='web'] .kram-inbox-visual h1 { font-size: 38px; color: #633689; }
-[data-era='web'] .kram-inbox-form { max-width: 460px; padding: 24px; border: 3px double #84659a; background: #efe1f1; }
 
 /* 1997 desktop: a tangible lilac workspace and one working browser window. */
 html[data-era='desktop'] { --era-ink: #241d2c; --era-paper: #fffdfb; --era-link: #512f8d; --era-rule: #9c8ea7; font: 14px/1.55 Arial, Helvetica, sans-serif; background: #b9a5d0; }
@@ -246,81 +194,6 @@ html[data-era='desktop'] { --era-ink: #241d2c; --era-paper: #fffdfb; --era-link:
 [data-era='desktop'] .kram-inbox-form { padding: 22px; border: 2px groove #eee4f4; background: #f6f0f9; }
 [data-era='desktop'] .kram-inbox-form input, [data-era='desktop'] .kram-inbox-form textarea { border: 2px inset #eee4f4; }
 
-/* 2026 machine: the same person, represented as readable text and linked records. */
-html[data-era='machine'] { --era-ink: #dfd2e9; --era-paper: #141217; --era-link: #d7ff2f; --era-rule: #463b50; font: 14px/1.7 'SFMono-Regular',Consolas,'Liberation Mono','Courier New',monospace; background: #141217; }
-[data-era='machine'] body { padding: 32px 42px 44px; }
-[data-era='machine'] .kram-site { max-width: 1100px; margin: 0 auto; }
-[data-era='machine'] a { text-decoration: none; }
-[data-era='machine'] a:hover { text-decoration: underline; }
-[data-era='machine'] .kram-site-head { border-bottom: 1px solid #463b50; padding: 0 0 22px; font-size: 12px; }
-[data-era='machine'] .kram-wordmark { color: #dfd2e9; }
-[data-era='machine'] .kram-wordmark::before { content: '~/'; color: #92829f; }
-[data-era='machine'] .kram-site-head nav { gap: 20px; }
-[data-era='machine'] .kram-site-head nav a::before { content: './'; color: #92829f; }
-[data-era='machine'] .kram-site-head nav a[data-current='true'] { background: #d7ff2f; color: #141217; padding-left: 5px; padding-right: 5px; }
-[data-era='machine'] .kram-site-head nav a[data-current='true']::before { color: #51495b; }
-[data-era='machine'] .kram-view { padding: 34px 0; }
-[data-era='machine'] .era-machine-prompt { display: block; color: #9f8dac; margin-bottom: 36px; font-size: 12px; overflow-wrap: anywhere; }
-[data-era='machine'] .era-machine-prompt::first-letter { color: #d7ff2f; }
-[data-era='machine'] .kram-home-copy { max-width: 780px; }
-[data-era='machine'] .kram-home-identity { font-size: 13px; margin-bottom: 25px; }
-[data-era='machine'] .kram-home-copy h1 { font: 700 clamp(64px,10vw,122px)/1 'SFMono-Regular',Consolas,monospace; letter-spacing: -.075em; margin-bottom: 30px; color: #e5d5f1; }
-[data-era='machine'] .kram-home-copy h1::before { content: 'name: '; display: block; font-size: 12px; font-weight: 400; color: #9f8dac; letter-spacing: 0; margin-bottom: 15px; }
-[data-era='machine'] .kram-home-copy > p { max-width: 60ch; font-size: 16px; color: #c3b5cf; }
-[data-era='machine'] .kram-home-copy > p::before { content: '→ '; color: #ff884d; }
-[data-era='machine'] .kram-doors { display: block; max-width: 780px; margin-top: 40px; border-top: 1px solid #463b50; }
-[data-era='machine'] .kram-doors a { display: grid; grid-template-columns: 46px 1fr auto; padding: 15px 0; border-bottom: 1px solid #463b50; }
-[data-era='machine'] .kram-doors span { color: #9f8dac; font-size: 12px; }
-[data-era='machine'] .kram-doors strong { font-weight: 400; }
-[data-era='machine'] .kram-doors strong::after { content: '/'; }
-[data-era='machine'] .kram-newsletter-line { font-size: 12px; }
-[data-era='machine'] .kram-newsletter-line::before { content: 'external: '; color: #9f8dac; }
-[data-era='machine'] .kram-page-head h1 { font-size: 36px; line-height: 1.3; font-weight: 400; letter-spacing: -.04em; }
-[data-era='machine'] .kram-page-head h1::before { content: '# '; color: #a48eb5; }
-[data-era='machine'] .kram-page-head { margin-bottom: 30px; }
-[data-era='machine'] .kram-section-label, [data-era='machine'] .kram-receipt-heading,
-[data-era='machine'] .knm-belief-label, [data-era='machine'] .knm-interests-label { font-size: 12px; color: #a48eb5; font-weight: 400; letter-spacing: 0; }
-[data-era='machine'] .kram-section-label::before, [data-era='machine'] .kram-receipt-heading::before,
-[data-era='machine'] .knm-belief-label::before, [data-era='machine'] .knm-interests-label::before { content: '// '; color: #6e607a; }
-[data-era='machine'] .kram-work-index a, [data-era='machine'] .kram-professional-list a { border-bottom: 1px solid #302a36; padding: 16px 0; }
-[data-era='machine'] .kram-work-index strong { font-size: 18px; font-weight: 400; }
-[data-era='machine'] .kram-work-index a::before, [data-era='machine'] .kram-professional-list a::before { content: '↳ '; color: #a48eb5; }
-[data-era='machine'] .knm-writing-quote { color: #b5a6c1; font-size: 13px; margin: 9px 0 0 24px; max-width: 74ch; }
-[data-era='machine'] .knm-archive-recommendations { border-top: 1px solid #463b50; padding-top: 28px; }
-[data-era='machine'] .knm-recommendations-copy > span { font-size: 22px; font-weight: 400; }
-[data-era='machine'] .knm-recommendations-copy p { color: #b5a6c1; font-size: 13px; }
-[data-era='machine'] .kram-media-explorer { grid-template-columns: 170px minmax(0,1fr); }
-[data-era='machine'] button { background: transparent; border: 1px solid #463b50; border-radius: 0; padding: 5px 10px; font-size: 12px; }
-[data-era='machine'] button:hover { border-color: #a48eb5; }
-[data-era='machine'] button[aria-pressed='true'] { color: #141217; background: #d7ff2f; border-color: #d7ff2f; }
-[data-era='machine'] #kram-media-list li { border-bottom: 1px solid #302a36; padding: 10px 0; font-size: 13px; }
-[data-era='machine'] #kram-media-list li::marker { color: #8c7b98; }
-[data-era='machine'] .kram-about-avatar { width: 80px; flex-basis: 80px; filter: grayscale(1); opacity: .9; }
-[data-era='machine'] .knm-about-hero-statement { font-size: 25px; max-width: 47ch; line-height: 1.5; }
-[data-era='machine'] .knm-about-current-copy { max-width: 80ch; }
-[data-era='machine'] .knm-work-with-us { font-size: 12px; font-weight: 400; }
-[data-era='machine'] .knm-belief-field { padding: 25px 0; border-top: 1px solid #463b50; border-bottom: 1px solid #463b50; }
-[data-era='machine'] .knm-belief-field li { padding: 9px 0; color: #c4b5d1; }
-[data-era='machine'] .knm-experience-intro { color: #b5a6c1; }
-[data-era='machine'] .knm-career-node { border-left: 1px solid #463b50; padding-left: 22px; }
-[data-era='machine'] .knm-career-name { font-size: 18px; font-weight: 400; }
-[data-era='machine'] .knm-career-node p { color: #b5a6c1; font-size: 13px; }
-[data-era='machine'] .knm-career-satellites { gap: 8px 24px; }
-[data-era='machine'] .knm-career-satellites a { font-size: 12px; }
-[data-era='machine'] .knm-career-satellites span { color: #9f8dac; }
-[data-era='machine'] .knm-about-now { border-top: 1px solid #463b50; padding-top: 28px; }
-[data-era='machine'] .kram-inbox-visual h1 { font: inherit; font-size: 30px; letter-spacing: -.04em; line-height: 1.4; }
-[data-era='machine'] .kram-inbox-form label > span { color: #b4a0c4; font-size: 12px; }
-[data-era='machine'] .kram-inbox-form label > span::after { content: ':'; }
-[data-era='machine'] .kram-inbox-form input, [data-era='machine'] .kram-inbox-form textarea { border: 1px solid #665570; background: #1b171f; padding: 11px; font-size: 13px; }
-[data-era='machine'] .kram-inbox-form ::placeholder { color: #8e7d99; opacity: 1; }
-[data-era='machine'] .kram-send { color: #d7ff2f; border-color: #d7ff2f; }
-[data-era='machine'] .kram-send::before { content: '>'; }
-[data-era='machine'] .kram-form-error { color: #ffb294; }
-[data-era='machine'] .kram-footer { border-top: 1px solid #463b50; margin-top: 10px; font-size: 12px; }
-[data-era='machine'] .kram-footer a::before { content: '↗ '; color: #9f8dac; }
-[data-era='machine'] .kram-footer .kram-external-mark { display: none; }
-
 @media (max-width: 760px) {
   .kram-site-head { align-items: flex-start; flex-direction: column; gap: 10px; }
   .kram-site-head nav { gap: 10px 20px; }
@@ -334,24 +207,6 @@ html[data-era='machine'] { --era-ink: #dfd2e9; --era-paper: #141217; --era-link:
   .kram-page-head { gap: 16px; }
   [data-era='html'] body { margin: 12px; }
   [data-era='html'] .kram-home-copy h1 { font-size: 55px; }
-  [data-era='web'] body { padding: 18px 14px 28px; }
-  [data-era='web'] .kram-site { display: block; box-shadow: 5px 5px 0 #8a699c; }
-  [data-era='web'] .kram-site-head { padding: 16px 20px; border-right: 0; border-bottom: 3px double #84659a; }
-  [data-era='web'] .kram-wordmark { margin: 0 0 10px; font-size: 22px; }
-  [data-era='web'] .kram-site-head nav { flex-direction: row; gap: 8px 20px; }
-  [data-era='web'] .kram-view { padding: 25px 20px; }
-  [data-era='web'] .kram-home-hero { grid-template-columns: minmax(0,1fr) 110px; gap: 18px; }
-  [data-era='web'] .kram-home-copy h1 { font-size: clamp(54px,12vw,88px); margin-top: 20px; }
-  [data-era='web'] .kram-home-copy > p { font-size: 16px; }
-  [data-era='web'] .kram-home-identity { font-size: 12px; }
-  [data-era='web'] .era-home-note { font-size: 11px; }
-  [data-era='web'] .kram-doors { grid-template-columns: repeat(3,minmax(0,1fr)); margin-top: 26px; }
-  [data-era='web'] .kram-doors a { padding: 12px 5px; font-size: 14px; }
-  [data-era='web'] .kram-footer { margin: 0 20px; }
-  [data-era='web'] .kram-page-head h1 { font-size: 40px; }
-  [data-era='web'] .knm-archive-recommendations { padding: 16px; }
-  [data-era='web'] .kram-media-explorer { grid-template-columns: 1fr; }
-  [data-era='web'] .knm-belief-field { padding: 18px; }
   [data-era='desktop'] body { padding: 18px 12px 28px; }
   [data-era='desktop'] .era-desktop-shortcuts { position: static; flex-direction: row; justify-content: flex-start; gap: 10px; width: 100%; margin: 0 0 18px; }
   [data-era='desktop'] .era-desktop-shortcuts button { width: 72px; font-size: 11px; }
@@ -372,24 +227,12 @@ html[data-era='machine'] { --era-ink: #dfd2e9; --era-paper: #141217; --era-link:
   [data-era='desktop'] .knm-archive-recommendations { padding: 18px; }
   [data-era='desktop'] .kram-inbox-layout { grid-template-columns: 1fr; }
   [data-era='desktop'] .kram-inbox-form { padding: 18px; }
-  [data-era='machine'] body { padding: 22px 20px 36px; }
-  [data-era='machine'] .kram-site-head { gap: 15px; }
-  [data-era='machine'] .kram-site-head nav { gap: 10px 17px; }
-  [data-era='machine'] .era-machine-prompt { font-size: 11px; margin-bottom: 28px; }
-  [data-era='machine'] .kram-home-copy h1 { font-size: clamp(64px,17vw,100px); }
-  [data-era='machine'] .kram-home-copy > p { font-size: 14px; }
-  [data-era='machine'] .kram-home-identity { font-size: 12px; }
-  [data-era='machine'] .kram-media-explorer { grid-template-columns: 1fr; }
-  [data-era='machine'] .knm-about-hero-statement { font-size: 21px; }
-  [data-era='machine'] .knm-career-satellites { grid-template-columns: 1fr; }
 }
 @media (max-width: 420px) {
-  [data-era='web'] .kram-home-hero, [data-era='desktop'] .kram-home-hero { grid-template-columns: minmax(0,1fr) 76px; gap: 12px; }
-  [data-era='web'] .kram-home-copy h1 { font-size: clamp(44px,13.5vw,53px); }
+  [data-era='desktop'] .kram-home-hero { grid-template-columns: minmax(0,1fr) 76px; gap: 12px; }
   [data-era='desktop'] .kram-home-copy h1 { font-size: clamp(44px,13.5vw,54px); }
-  [data-era='web'] .era-home-note, [data-era='desktop'] .era-home-note { font-size: 10px; }
-  [data-era='web'] .era-home-label, [data-era='desktop'] .era-home-label { font-size: 10px; }
-  [data-era='web'] .kram-home-copy > p, [data-era='desktop'] .kram-home-copy > p { font-size: 15px; }
+  [data-era='desktop'] .era-home-note, [data-era='desktop'] .era-home-label { font-size: 10px; }
+  [data-era='desktop'] .kram-home-copy > p { font-size: 15px; }
   [data-era='desktop'] .kram-view { padding: 22px 16px; }
   [data-era='desktop'] .kram-site-head nav { gap: 12px; }
 }
