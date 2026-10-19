@@ -331,6 +331,7 @@ html[data-era='machine'] { --era-ink: #dfd2e9; --era-paper: #141217; --era-link:
   .kram-inbox-layout { grid-template-columns: 1fr; gap: 28px; }
   .knm-career-satellites { grid-template-columns: 1fr; gap: 8px; }
   .kram-about-avatar { width: 76px; flex-basis: 76px; }
+  .kram-page-head { gap: 16px; }
   [data-era='html'] body { margin: 12px; }
   [data-era='html'] .kram-home-copy h1 { font-size: 55px; }
   [data-era='web'] body { padding: 18px 14px 28px; }
@@ -367,6 +368,7 @@ html[data-era='machine'] { --era-ink: #dfd2e9; --era-paper: #141217; --era-link:
   [data-era='desktop'] .kram-doors a { gap: 5px; padding: 9px 5px; justify-content: center; }
   [data-era='desktop'] .kram-doors span, [data-era='desktop'] .kram-doors b { display: none; }
   [data-era='desktop'] .kram-work-index { grid-template-columns: 1fr; }
+  [data-era='desktop'] .kram-page-head h1 { font-size: 40px; }
   [data-era='desktop'] .knm-archive-recommendations { padding: 18px; }
   [data-era='desktop'] .kram-inbox-layout { grid-template-columns: 1fr; }
   [data-era='desktop'] .kram-inbox-form { padding: 18px; }
