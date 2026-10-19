@@ -358,17 +358,132 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
  .nb-visual.nb-illustrated{margin-top:7px}
 }
 
+/* Keep the same career clock across job changes, bills and sales. */
+.nb-career-status{max-width:820px;margin:0 auto 12px}
+.nb-career-clock{text-align:right;min-width:0}
+.nb-career-clock small{display:block;font-size:12px;color:var(--nb-muted);margin-bottom:4px}
+.nb-career-clock strong{font-size:28px;font-weight:400;line-height:1.15;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.nb-current-job{display:flex;align-items:center;gap:9px;padding:10px 2px}
+.nb-current-job>div{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.nb-current-job strong{font-size:15px;font-weight:400;line-height:1.3}
+.nb-current-job small{font-size:12px;line-height:1.35;color:var(--nb-muted)}
+.nb-current-job .nb-company-logo:empty{display:none}
+.nb-time-change{background:var(--nb-paper);padding:12px 15px;margin:2px 0 10px;border-left:3px solid var(--nb-orange)}
+.nb-change-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:15px;line-height:1.35}
+.nb-change-heading strong{font-weight:600}
+.nb-change-heading>span{font-variant-numeric:tabular-nums}
+.nb-change-amounts{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:5px;font-size:12px;line-height:1.4;color:var(--nb-muted)}
+.nb-held-positions{display:grid;gap:6px;padding:4px 2px}
+.nb-position{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;line-height:1.35;color:var(--nb-muted)}
+.nb-position strong{font-weight:600;color:var(--nb-ink)}
+.nb-position span{white-space:nowrap}
+.nb-action-time{display:block;font-size:13px;line-height:1.3;font-weight:400;color:var(--nb-orange);margin-top:9px}
+.nb-settlement-continue .nb-action-time,.nb-actions[data-single="true"] .nb-action-time{color:var(--nb-lilac)}
+.nb-settlement-continue:hover .nb-action-time,.nb-actions[data-single="true"] .nb-action:hover .nb-action-time{color:var(--nb-ink)}
+.nb-feedback:empty{display:none}
+.nb-stage-help{font-size:12px;line-height:1.4;margin:4px 0 10px}
+.nb-scene-label{font-size:13px;text-transform:none;letter-spacing:0}
+.nb-app[data-has-career="true"][data-mode="setup"] .nb-intro,.nb-app[data-has-career="true"][data-mode="setup"] .nb-world{display:none}
+.nb-app[data-has-career="true"][data-mode="setup"] .nb-setup{display:block;min-height:0;max-width:620px;margin:auto}
+.nb-app[data-has-career="true"][data-mode="setup"] .nb-setup-content{padding:18px 0}
+@media(max-width:480px){
+ .nb-career-status{margin-bottom:6px}
+ .nb-career-clock small{font-size:11px}
+ .nb-career-clock strong{font-size:22px;display:block;max-width:168px}
+ .nb-career-bank strong{font-size:26px}
+ .nb-career-bar{align-items:flex-start;gap:10px}
+ .nb-current-job{padding:9px 0}
+ .nb-current-job>div{gap:2px;display:flex;flex-direction:column;align-items:flex-start}
+ .nb-current-job strong{font-size:14px}
+ .nb-current-job small{font-size:12px}
+ .nb-change-heading{font-size:14px;flex-wrap:wrap;gap:3px 12px}
+ .nb-time-change{padding:10px 12px}
+ .nb-position{font-size:11px;gap:3px 10px}
+ .nb-position strong{flex-basis:100%}
+ .nb-story{min-height:0;padding:17px 0 22px}
+ .nb-story h2{font-size:32px;margin-bottom:12px}
+ .nb-visual{margin-top:15px}
+ .nb-actions .nb-action{min-height:120px}
+ .nb-actions[data-single="true"] .nb-action{min-height:79px}
+ .nb-action-time{font-size:12px}
+}
+
+/* Compact ending: a single career clock, two company histories, one bank. */
+.nb-share-card{padding:22px 28px 18px}
+.nb-share-card .nb-share-brand{margin:0 0 10px;font-size:10px;letter-spacing:.035em}
+.nb-result-summary{display:grid;grid-template-columns:1fr 1fr;align-items:end;gap:18px;margin-bottom:14px}
+.nb-result-elapsed,.nb-share-card .nb-share-payoff{margin:0}
+.nb-result-elapsed small,.nb-share-card .nb-share-payoff small{display:block;font-size:12px;line-height:1.3;color:var(--nb-muted);margin-bottom:5px}
+.nb-result-elapsed strong{display:block;font-size:29px;line-height:1.12;font-weight:400;letter-spacing:-.035em}
+.nb-share-card .nb-share-payoff strong{font-size:40px;line-height:1.06;letter-spacing:-.04em}
+.nb-result-career-note{font-size:11px;line-height:1.4;color:var(--nb-muted);margin:-4px 0 10px}
+.nb-share-card .nb-portfolio-company{padding:12px 0 10px}
+.nb-share-card .nb-company-heading{gap:8px;font-size:20px}
+.nb-result-round{flex-shrink:0;margin-left:auto;font-size:10px;color:var(--nb-muted);font-weight:400;letter-spacing:0}
+.nb-result-tenure{font-size:11px;line-height:1.4;color:var(--nb-muted);margin:5px 0 9px}
+.nb-result-timeline{display:flex;list-style:none;margin:0 0 10px;padding:0}
+.nb-result-marker{position:relative;flex:1;min-width:0;border-top:1px solid rgba(21,20,25,.24);padding:7px 7px 0 0;font-variant-numeric:tabular-nums}
+.nb-result-marker:before{content:"";position:absolute;top:-3px;left:0;width:5px;height:5px;border-radius:50%;background:var(--nb-ink)}
+.nb-result-marker:last-child{flex:.8}
+.nb-result-marker small{display:block;font-size:10px;line-height:1.3;color:var(--nb-muted)}
+.nb-result-marker span{display:block;font-size:12px;line-height:1.35;margin-top:2px}
+.nb-result-outcome-value{font-size:12px;line-height:1.35;margin:-2px 0 8px;color:var(--nb-ink);font-variant-numeric:tabular-nums}
+.nb-result-company-cash{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:0}
+.nb-result-company-cash dt{font-size:10px;line-height:1.3;color:var(--nb-muted)}
+.nb-result-company-cash dd{font-size:20px;line-height:1.15;margin:2px 0 0;font-variant-numeric:tabular-nums;letter-spacing:-.025em}
+.nb-result-reason{font-size:12px;line-height:1.4;margin-top:7px;color:var(--nb-ink)}
+.nb-result-bank{margin:0;padding-top:11px;border-top:1px solid rgba(21,20,25,.14)}
+.nb-result-bank-total{display:flex;justify-content:space-between;align-items:baseline;gap:15px;margin:0 0 8px}
+.nb-result-bank-total small{font-size:12px;color:var(--nb-muted)}
+.nb-result-bank-total strong{font-size:27px;font-weight:400;line-height:1.1;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.nb-result-bank-math{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:0}
+.nb-result-bank-math dt{font-size:10px;line-height:1.3;color:var(--nb-muted)}
+.nb-result-bank-math dd{font-size:13px;line-height:1.3;margin:3px 0 0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.nb-result-debt{font-size:11px;line-height:1.4;margin-top:8px}
+.nb-share-card .nb-share-note{font-size:10px;line-height:1.35;margin-top:10px}
+.nb-share-card .nb-share-footer{font-size:10px;margin-top:9px;gap:3px 12px}
+@media(max-width:600px){
+ .nb-share-card{padding:20px 18px 17px}
+ .nb-result-summary{gap:12px;margin-bottom:13px}
+ .nb-result-elapsed strong{font-size:25px}
+ .nb-share-card .nb-share-payoff strong{font-size:35px}
+ .nb-share-card .nb-company-heading{font-size:18px}
+ .nb-result-tenure{font-size:10px}
+ .nb-result-round{font-size:10px}
+ .nb-result-marker{padding-right:5px}
+ .nb-result-marker small{font-size:10px}
+ .nb-result-marker span{font-size:11px}
+ .nb-result-company-cash dd{font-size:19px}
+ .nb-result-bank-math{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px}
+ .nb-result-bank-math dd{font-size:12px}
+}
+@media(max-width:359px){
+ .nb-share-card{padding:18px 14px 15px}
+ .nb-result-elapsed strong{font-size:22px}
+ .nb-share-card .nb-share-payoff strong{font-size:31px}
+ .nb-result-elapsed small,.nb-share-card .nb-share-payoff small{font-size:11px}
+ .nb-result-round{display:none}
+}
 </style>
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-10.1">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-11">
   <header class="nb-header">
     <div><p class="nb-eyebrow">Kram + Emma</p><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">new game</button>
   </header>
   <p class="nb-intro" data-field="intro">Can you turn startup equity into cash?</p>
   <p class="nb-sr-only" data-field="announcement" role="status" aria-live="polite" aria-atomic="true"></p>
+  <section class="nb-career-status" data-field="career-status" aria-label="Your time, money and job" hidden>
+    <div class="nb-career-bar">
+      <div class="nb-career-bank"><small>Cash in bank</small><strong data-field="bank">$12,000</strong></div>
+      <div class="nb-career-clock"><small>Time passed</small><strong data-field="date">0 months</strong></div>
+    </div>
+    <div class="nb-current-job"><span class="nb-company-logo" data-field="company-logo"></span><div><strong data-field="company-name"></strong><small data-field="job-context"></small></div></div>
+    <div class="nb-time-change" data-field="time-change" hidden></div>
+    <div class="nb-held-positions" data-field="held-positions" hidden></div>
+  </section>
   <section class="nb-setup" data-field="setup" aria-label="Choose your path">
     <div class="nb-world" aria-hidden="true"></div>
     <div class="nb-setup-content">
@@ -388,7 +503,8 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
           <span><small>take-home pay</small><strong data-field="match-pay"></strong></span>
           <span hidden><small>option purchase price</small><strong data-field="match-strike"></strong></span>
         </div>
-        <details class="nb-round-details"><summary>Choose another round</summary>
+        <details class="nb-round-details"><summary>Change company stage</summary>
+          <p class="nb-stage-help">A is earlier. D is more established.</p>
           <div class="nb-round-picker" aria-label="Funding round">
             <button type="button" class="nb-round-option" data-round="A" aria-pressed="false">A</button>
             <button type="button" class="nb-round-option" data-round="B" aria-pressed="false">B</button>
@@ -406,13 +522,9 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   </section>
   <section class="nb-settlement" data-field="settlement" aria-label="Your sale receipt" hidden></section>
   <section class="nb-board" data-field="board" aria-label="Your startup career" hidden>
-    <div class="nb-career-bar">
-      <div class="nb-career-bank"><small>Cash in bank</small><strong data-field="bank">$12,000</strong></div>
-      <div class="nb-current-company"><span class="nb-company-logo" data-field="company-logo"></span><p data-field="company-name"></p><p data-field="date"></p></div>
-    </div>
     <p class="nb-progress" data-field="progress"></p>
     <p class="nb-feedback" data-field="feedback"></p>
-    <section class="nb-share-card" data-field="result-card" aria-label="Your results to save and share" hidden></section>
+    <section class="nb-share-card" data-field="result-card" aria-label="Your results" hidden></section>
     <section class="nb-story" aria-labelledby="nb-story-title">
       <p class="nb-scene-label" data-field="stage-label"></p>
       <h2 id="nb-story-title" data-field="title">Choose your pay.</h2>
@@ -1046,48 +1158,110 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
   'use strict';
   const money = value => (value < 0 ? '-$' : '$') + Math.abs(value).toLocaleString('en-US', { maximumFractionDigits: 2 });
   const count = value => value.toLocaleString('en-US');
+  const cents = value => Math.round(value * 100) / 100;
+  function duration(months) {
+    const years = Math.floor(months / 12), remainder = months % 12;
+    return [years ? years + (years === 1 ? ' year' : ' years') : '', remainder ? remainder + (remainder === 1 ? ' month' : ' months') : ''].filter(Boolean).join(', ') || '0 months';
+  }
   function shortMoney(value) {
     return value >= 1000000000 ? money(value / 1000000000) + 'B' : value >= 1000000 ? money(value / 1000000) + 'M' : money(value);
   }
-  function describeCompany(c) {
+  function describeCompany(c, s) {
     const owned = c.shares || 0, options = c.options || 0, sold = c.sold || 0;
     const bought = c.strike > 0 ? c.purchaseCosts / c.strike : 0;
     const held = [owned ? count(owned) + ' shares' : '', options ? count(options) + ' options' : ''].filter(Boolean).join(' + ');
+    const publicCompany = c.outcome === 'ipo' || c.outcome === 'unicorn';
+    const acquisition = c.outcome === 'acquisition_high' || c.outcome === 'acquisition_low';
+    const declinedPurchase = (s.choices || []).some(choice => choice.companyId === c.id && choice.id === 'expire_options') && c.expired > 0 && !bought;
     let exit, exitDetail = '';
-    if (c.outcome === 'ipo' || c.outcome === 'unicorn') {
+    if (publicCompany) {
       exit = 'IPO at ' + money(c.ipoPrice) + ' / share';
       if (c.lastSale && c.lastSale.type === 'public') exitDetail = 'Sold at ' + money(c.salePrice) + ' / share';
-    } else if (c.outcome === 'acquisition_high' || c.outcome === 'acquisition_low') {
+    } else if (acquisition) {
       exit = 'Company sold';
       exitDetail = shortMoney(c.exitCash) + ' available to shareholders';
     } else if (c.outcome === 'private') exit = 'Still private';
     else if (c.outcome === 'shutdown') exit = 'Company closed';
     else exit = c.status === 'private' ? 'Still private' : 'Company outcome pending';
+    let outcomeValue = '';
+    if (acquisition) outcomeValue = shortMoney(c.exitCash) + ' to split among shareholders';
+    else if (publicCompany) {
+      outcomeValue = (c.valuation ? 'Company value ' + shortMoney(c.valuation) + ' · ' : '') + 'IPO ' + money(c.ipoPrice) + '/share';
+      outcomeValue += ' → ' + (c.lastSale && c.lastSale.type === 'public' ? 'sale ' : 'after wait ') + money(c.salePrice) + '/share';
+    }
+
     let holdingNote = '';
     if (held) holdingNote = held + ' unsold. Not in your bank.';
     else if (c.lostShares) holdingNote = count(c.lostShares) + ' bought shares lost';
     else if ((c.expired || 0) + (c.lostOptions || 0)) holdingNote = count((c.expired || 0) + (c.lostOptions || 0)) + ' options lost or expired';
-    else holdingNote = '';
+
+    let outcomeReason;
+    if (c.equityProceeds > 0) {
+      outcomeReason = 'Payout for ' + count(sold) + ' shares.';
+      if (c.lastSale && c.lastSale.withheldStrike) outcomeReason += ' ' + money(c.lastSale.withheldStrike) + ' buying cost taken out.';
+    } else if (acquisition && c.lastSale && c.lastSale.shares > 0) {
+      outcomeReason = !c.lastSale.commonPayout ? 'Investors were paid first. Nothing was left for your shares.' : 'The cost to buy your shares used up the payout.';
+    } else if (c.outcome === 'shutdown' && c.lostShares > 0) {
+      outcomeReason = 'The company closed. Your ' + count(c.lostShares) + ' bought shares became worth $0.';
+    } else if (held) {
+      outcomeReason = c.outcome === 'private' ? 'Still private: no sale. You keep ' + held + ', but get no cash yet.' : 'You chose to keep ' + held + '. No sale means no cash yet.';
+    } else if (declinedPurchase) {
+      outcomeReason = 'You let your options expire instead of buying shares. You had no shares to sell.';
+    } else if (c.outcome === 'shutdown') {
+      outcomeReason = 'The company closed. Your remaining options ended without a payout.';
+    } else {
+      outcomeReason = 'You had no shares or options left to sell.';
+    }
+
+    const left = Number.isInteger(c.departedMonth) ? c.departedMonth : null;
+    const workedMonths = Math.max(0, (left === null ? s.month : left) - c.startMonth);
+    const outcomeMonth = c.startMonth + 48;
+    const timeline = [{ label: 'Joined', month: c.startMonth }];
+    if (left !== null || !c.outcome || s.month !== outcomeMonth) timeline.push({ label: left === null ? 'Still working' : c.departureReason === 'layoff' ? 'Laid off' : 'Left', month: left === null ? s.month : left });
+    if (c.outcome) timeline.push({ label: publicCompany ? 'Went public' : acquisition ? 'Company sold' : c.outcome === 'shutdown' ? 'Closed' : 'Still private', month: outcomeMonth });
+    const saleEntry = publicCompany && (s.ledger || []).find(entry => entry.kind === 'equity_sale' && entry.companyId === c.id);
+    if (saleEntry) timeline.push({ label: 'Shares sold', month: saleEntry.month });
+    timeline.sort((a, b) => a.month - b.month);
+    timeline.forEach(event => { event.time = event.month === 0 ? 'Start' : duration(event.month); });
+
     return {
       name: c.name, round: 'Series ' + c.round,
-      exit, exitDetail,
+      exit, exitDetail, outcomeValue,
       paid: c.purchaseCosts, received: c.equityProceeds, withheld: c.lastSale ? c.lastSale.withheldStrike || 0 : 0,
       cash: 'Paid upfront ' + money(c.purchaseCosts) + ' → Received ' + money(c.equityProceeds),
       owned, options, sold, bought, held, holdingNote,
-      shares: sold ? count(sold) + ' shares sold' : 'No shares sold'
+      shares: sold ? count(sold) + ' shares sold' : 'No shares sold',
+      outcomeReason, workedMonths, worked: duration(workedMonths), startMonth: c.startMonth,
+      departedMonth: left, outcomeMonth: c.outcome ? outcomeMonth : null, saleMonth: saleEntry ? saleEntry.month : null, timeline
     };
   }
   function describe(s) {
-    const companies = s.companies.map(describeCompany);
-    const received = Math.round(companies.reduce((sum, c) => sum + c.received, 0) * 100) / 100;
+    const companies = s.companies.map(c => describeCompany(c, s));
+    const received = cents(companies.reduce((sum, c) => sum + c.received, 0));
     const withheld = companies.reduce((sum, c) => sum + c.withheld, 0);
+    const bankMath = [
+      { label: 'Starting cash', amount: 12000 },
+      { label: 'Pay after living costs', amount: cents(s.salaryIncome - s.livingCosts) },
+      { label: 'Shares bought', amount: -s.purchaseCosts },
+      { label: 'Lawyer + accountant', amount: -(s.legalCosts + s.accountingCosts) },
+      { label: 'Cash from shares', amount: received }
+    ];
+    if (s.debt) bankMath.push({ label: 'Bills not yet paid', amount: s.debt });
+    bankMath.forEach((term, i) => { term.value = i === 2 || i === 3 ? '-' + money(Math.abs(term.amount)) : (i && term.amount >= 0 ? '+' : '') + money(term.amount); });
+    const lastCompany = s.companies[s.companies.length - 1];
+    const nextJobStart = lastCompany && Number.isInteger(lastCompany.departedMonth) ? lastCompany.departedMonth + (lastCompany.departureReason === 'layoff' ? 3 : 0) : null;
+    const nextJobMonths = s.activeJobId === null && s.activePay > 0 && nextJobStart !== null ? Math.max(0, s.month - nextJobStart) : 0;
+    const gapMonths = s.companies.reduce((total, c) => total + (c.departureReason === 'layoff' ? Math.min(3, s.month - c.departedMonth) : 0), 0);
+    const careerNote = [nextJobMonths ? 'Next salaried job: ' + duration(nextJobMonths) : '', gapMonths ? 'Without pay after layoffs: ' + duration(gapMonths) : ''].filter(Boolean).join(' · ');
     return {
       companies, received, withheld, bank: s.bank, debt: s.debt || 0,
       headline: money(received), headlineLabel: 'Cash from share sales',
       bankLabel: 'Cash in your bank', bankValue: money(s.bank), bankNote: 'Includes salary savings',
       debtLabel: 'Unpaid bills', debtValue: money(s.debt || 0),
-      note: withheld ? 'Buying costs at sale are already deducted. Before equity tax.' : 'Before equity tax.',
-      footer: 'A fictional run · Kram + Emma', url: 'kram.bio/near-bag-experience'
+      note: withheld ? 'Share-buying costs at sale are already taken out. Taxes are not included.' : 'Taxes on shares are not included.',
+      footer: 'A fictional run · Kram + Emma', url: 'kram.bio/near-bag-experience',
+      elapsedMonths: s.month, elapsed: duration(s.month), nextJobMonths, gapMonths, careerNote, bankMath,
+      bankMathTotal: cents(bankMath.reduce((total, term) => total + term.amount, 0))
     };
   }
   function render(s, container) {
@@ -1098,86 +1272,45 @@ h1{font-size:27px;font-weight:400;line-height:1.07;letter-spacing:-.045em}
     const el = (tag, cls, text) => { const n = doc.createElement(tag); n.className = cls || ''; if (text !== undefined) n.textContent = text; return n; };
     container.setAttribute('aria-label', 'Your two-company result');
     container.append(el('p', 'nb-share-brand', 'THE NEAR-BAG EXPERIENCE'));
-    const payoff = el('p', 'nb-share-payoff'); payoff.append(el('small', '', d.headlineLabel), el('strong', '', d.headline)); container.append(payoff);
+    const summary = el('div', 'nb-result-summary');
+    const time = el('p', 'nb-result-elapsed'); time.append(el('small', '', 'Time since your first day'), el('strong', '', d.elapsed));
+    const payoff = el('p', 'nb-share-payoff'); payoff.append(el('small', '', d.headlineLabel), el('strong', '', d.headline));
+    summary.append(time, payoff); container.append(summary);
+    if (d.careerNote) container.append(el('p', 'nb-result-career-note', d.careerNote));
     const rows = el('div', 'nb-portfolio-rows');
     d.companies.forEach((c, i) => {
       const row = el('article', 'nb-portfolio-company');
       const heading = el('h3', 'nb-company-heading');
-      if (root.NearBagVisuals && typeof root.NearBagVisuals.logo === 'function') heading.append(root.NearBagVisuals.logo(s.companies[i], 28));
-      heading.append(el('span', '', c.name));
-      row.append(heading, el('p', 'nb-portfolio-round', c.round));
-      const exit = el('p', 'nb-portfolio-exit', c.exit);
-      if (c.exitDetail) exit.append(el('small', '', c.exitDetail));
-      row.append(exit, el('p', 'nb-portfolio-cash', c.cash));
-      if (c.holdingNote) row.append(el('p', 'nb-portfolio-held', c.holdingNote));
-      row.append(el('p', 'nb-portfolio-shares', c.shares));
+      if (root.NearBagVisuals && typeof root.NearBagVisuals.logo === 'function') heading.append(root.NearBagVisuals.logo(s.companies[i], 24));
+      heading.append(el('span', '', c.name), el('small', 'nb-result-round', c.round));
+      row.append(heading, el('p', 'nb-result-tenure', 'Worked here: ' + c.worked));
+      const timeline = el('ol', 'nb-result-timeline');
+      timeline.setAttribute('aria-label', c.name + ' career timeline');
+      c.timeline.forEach(event => {
+        const marker = el('li', 'nb-result-marker');
+        marker.append(el('small', '', event.label), el('span', '', event.time));
+        timeline.append(marker);
+      });
+      row.append(timeline);
+      if (c.outcomeValue) row.append(el('p', 'nb-result-outcome-value', c.outcomeValue));
+      const cash = el('dl', 'nb-result-company-cash');
+      [['Spent buying shares', money(c.paid)], ['Cash received', money(c.received)]].forEach(([label, value]) => {
+        const pair = el('div', ''); pair.append(el('dt', '', label), el('dd', '', value)); cash.append(pair);
+      });
+      row.append(cash, el('p', 'nb-result-reason', c.outcomeReason));
       rows.append(row);
     });
     container.append(rows);
-    const bank = el('p', 'nb-share-bank'); bank.append(el('small', '', d.bankLabel), el('strong', '', d.bankValue), el('span', '', d.bankNote)); container.append(bank);
-    if (d.debt) { const debt = el('p', 'nb-share-debt'); debt.append(el('small', '', d.debtLabel), el('strong', '', d.debtValue)); container.append(debt); }
-    container.append(el('p', 'nb-share-note', d.note));
+    const bank = el('div', 'nb-share-bank nb-result-bank');
+    const bankHeading = el('p', 'nb-result-bank-total'); bankHeading.append(el('small', '', d.bankLabel), el('strong', '', d.bankValue)); bank.append(bankHeading);
+    const math = el('dl', 'nb-result-bank-math'); math.setAttribute('aria-label', 'How your bank balance adds up');
+    d.bankMath.forEach(term => { const pair = el('div', ''); pair.append(el('dt', '', term.label), el('dd', '', term.value)); math.append(pair); });
+    bank.append(math);
+    if (d.debt) bank.append(el('p', 'nb-result-debt', 'You still owe ' + d.debtValue + ' in bills. That money has not left your bank.'));
+    container.append(bank, el('p', 'nb-share-note', d.note));
     const footer = el('div', 'nb-share-footer'); footer.append(el('span', '', d.footer), el('span', '', d.url)); container.append(footer);
   }
-  async function createCanvas(s) {
-    if (s.stage !== 'result') throw new Error('Finish your run first.');
-    if (document.fonts && document.fonts.ready) await document.fonts.ready;
-    const d = describe(s);
-    if (d.companies.length > 2) throw new Error('This card supports two companies.');
-    const canvas = document.createElement('canvas'); canvas.width = 1080; canvas.height = 1350;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Image saving is unavailable. You can screenshot your card.');
-    const ink = '#151419', muted = '#625969', lilac = '#e5d5f1', paper = '#f7f1f8';
-    ctx.fillStyle = lilac; ctx.fillRect(0, 0, 1080, 1350);
-    ctx.fillStyle = paper; ctx.fillRect(36, 36, 1008, 1278);
-    const font = (size, weight = 400) => { ctx.font = weight + ' ' + size + 'px Spectral, Georgia, serif'; };
-    const text = (str, x, y, size, color = ink, weight = 400, width = 912) => {
-      font(size, weight); while (ctx.measureText(str).width > width && size > 18) font(--size, weight);
-      ctx.fillStyle = color; ctx.fillText(str, x, y);
-    };
-    const wrap = (str, x, y, width, size, lineHeight, color = muted) => {
-      font(size); ctx.fillStyle = color; let line = '', row = 0;
-      str.split(' ').forEach(word => { const next = line ? line + ' ' + word : word; if (line && ctx.measureText(next).width > width) { ctx.fillText(line, x, y + row++ * lineHeight); line = word; } else line = next; });
-      if (line) ctx.fillText(line, x, y + row++ * lineHeight);
-      return row;
-    };
-    text('THE NEAR-BAG EXPERIENCE', 84, 102, 24, muted);
-    text(d.headlineLabel, 84, 174, 29, muted);
-    text(d.headline, 78, 286, 112, ink, 400, 918);
-    ctx.fillStyle = '#d7ff2f'; ctx.fillRect(84, 325, 912, 7);
-    d.companies.forEach((c, i) => {
-      const y = 390 + i * 280;
-      const hasLogo = root.NearBagVisuals && typeof root.NearBagVisuals.drawLogo === 'function';
-      if (hasLogo) root.NearBagVisuals.drawLogo(ctx, s.companies[i], 84, y - 35, 40);
-      text(c.name, hasLogo ? 142 : 84, y, 39, ink, 600, hasLogo ? 854 : 912);
-      text(c.round, 84, y + 35, 23, muted);
-      text(c.exit + (c.exitDetail ? ' · ' + c.exitDetail : ''), 84, y + 80, 27, ink);
-      text(c.cash, 84, y + 126, 29, ink, 600);
-      if (c.holdingNote) text(c.holdingNote, 84, y + 168, 24, muted);
-      text(c.shares, 84, y + 202, 23, muted);
-      if (i === 0) { ctx.strokeStyle = '#d1c3d9'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(84, y + 226); ctx.lineTo(996, y + 226); ctx.stroke(); }
-    });
-    text(d.bankLabel, 84, 934, 25, muted);
-    text(d.bankValue, 84, 990, 48, ink);
-    text(d.bankNote, 84, 1026, 23, muted);
-    if (d.debt) text(d.debtLabel + ': ' + d.debtValue, 84, 1070, 26, ink);
-    wrap(d.note, 84, 1125, 912, 24, 30);
-    ctx.strokeStyle = '#d1c3d9'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(84, 1190); ctx.lineTo(996, 1190); ctx.stroke();
-    text(d.footer, 84, 1232, 24, muted);
-    text(d.url, 84, 1276, 25, ink);
-    return canvas;
-  }
-  async function download(s) {
-    const snapshot = JSON.parse(JSON.stringify(s));
-    const canvas = await createCanvas(snapshot);
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-    if (!blob) throw new Error('Image saving is unavailable. You can screenshot your card.');
-    const url = URL.createObjectURL(blob), link = document.createElement('a');
-    link.href = url; link.download = 'near-bag-my-two-companies.png';
-    document.body.appendChild(link); link.click(); link.remove();
-    root.setTimeout(() => URL.revokeObjectURL(url), 60000);
-  }
-  root.NearBagCareerResult = { describe, render, download, createCanvas };
+  root.NearBagCareerResult = { describe, render };
 })(window);
 
 (function(root){
@@ -1262,11 +1395,38 @@ function contract(c,checking,bank,doc){
  else{tokens(s,105,39,10,10);tokens(s,300,39,10,5);text(s,145,128,'Keep all',25);text(s,340,128,'Keep half',25);text(s,145,159,'Lawyer: $5,000',14,MUTED);text(s,340,159,checking?'Keep the rule':'Sign as written',14,MUTED);text(s,240,195,'Earned options if you quit',12,MUTED);}
  return s;
 }
+function offer(c,doc){
+ const terms=root.NearBag&&root.NearBag.rounds&&root.NearBag.rounds[c.round],grants=terms?[terms.cash.grant,terms.equity.grant]:[c.grant||0];
+ const grantText=grants.map(count).join(' or '),firstYear=grants.map(n=>count(Math.floor(n/4))).join(' or ');
+ const s=svg('Options are the right to buy shares. A share is a small piece of a company. Pay '+money(c.strike)+' for each share. Cash is money you can spend, received only if a sale pays you. Your offer has '+grantText+' options, earned over four years while you stay. After one year, earn the first 25 percent: '+firstYear+' options. Then earn more each month.',210,doc);
+ [8,176,344].forEach((x,i)=>box(s,x,8,128,77,i===2?LIME:PAPER,8));
+ text(s,72,34,'Options',23);text(s,240,34,'Shares',23);text(s,408,34,'Cash',23);
+ text(s,72,58,'A right',16);text(s,72,77,'to buy',16);
+ text(s,240,58,'A small piece',16);text(s,240,77,'of a company',16);
+ text(s,408,58,'Money you',16);text(s,408,77,'can spend',16);
+ arrow(s,156,47);arrow(s,324,47);
+ text(s,156,105,'Buy at '+money(c.strike)+' each',15,MUTED);text(s,348,105,'Sell, if a sale pays you',15,MUTED);
+ text(s,87,132,'Year 1',15,MUTED);text(s,393,132,'Year 4',15,MUTED);
+ for(let i=0;i<4;i++)box(s,40+i*102,142,94,18,i===0?INK:PAPER,3);
+ text(s,118,189,'First options after 1 year',17);
+ text(s,362,189,'All earned after 4 years',17);
+ return s;
+}
+function salariedJob(state,doc){
+ const s=svg('A new salaried job pays '+money(state.activePay)+' a month. No new startup options. Your earlier options and shares stay separate.',210,doc);
+ add(s,'path',{d:'M105 65 V49 H153 V65',fill:'none',stroke:INK,'stroke-width':7,'stroke-linejoin':'round'});
+ box(s,68,65,122,83,INK,9);line(s,68,100,190,100,PAPER,2);box(s,116,91,26,19,LIME,3);
+ text(s,321,65,'Your new salary',18,MUTED);text(s,321,108,money(state.activePay),36);text(s,321,138,'each month',18);
+ text(s,240,188,'No new startup options',17,MUTED);
+ return s;
+}
 function render(container,state,view){
  const c=(state.companies||[]).find(x=>x.id===(view&&view.companyId||state.focusCompanyId))||(state.companies||[]).find(x=>x.id===state.activeJobId)||(state.companies||[]).at(-1);
  if(!c){container.replaceChildren();return false;}
  const stage=state.stage,doc=container.ownerDocument;let s;
- if(['offer','new_role','job_offer','choose_company'].includes(stage))s=scene(c,doc);
+ if(stage==='offer')s=offer(c,doc);
+ else if(stage==='new_role')s=salariedJob(state,doc);
+ else if(['job_offer','choose_company'].includes(stage))s=scene(c,doc);
  else if(stage==='contract'||stage==='contract_check')s=contract(c,stage==='contract_check',state.bank,doc);
  else if(stage==='company_draw'){
   s=svg('Historical companies: about one in three exited; about one in one hundred reached a one-billion-dollar valuation. These are separate measures. This game uses three exit chips out of ten, not your personal payout probability.',190,doc);
@@ -1274,23 +1434,26 @@ function render(container,state,view){
   for(let i=0;i<10;i++)box(s,59+i*37,42,27,33,i<3?INK:LILAC,4);
   text(s,240,126,'About 1 in 3 exit',32);text(s,240,158,'1 in 100 reach $1B',17,MUTED);
  }else if(stage==='dilution'){
-  const total=1000000+c.preferredShares,held=c.options+c.shares,after=held/total,before=c.financingRounds?held/(total/1.25):after;
-  s=svg('Earned equity, including options if bought: before financing '+(before*100).toFixed(2)+' percent, after '+(after*100).toFixed(2)+' percent. Count unchanged.',210,doc);
-  ring(s,145,74,43,before);ring(s,335,74,43,after);arrow(s,240,74);
-  text(s,145,143,(before*100).toFixed(2)+'%',29);text(s,335,143,(after*100).toFixed(2)+'%',29);
-  text(s,145,173,'Before',14,MUTED);text(s,335,173,'After',14,MUTED);text(s,240,202,c.options?'Earned equity, if options bought':'Your shares',12,MUTED);
+  const options=c.options||0,shares=c.shares||0,total=1000000+(c.preferredShares||0),held=options+shares,after=held/total,before=c.financingRounds?held/(total/1.25):after;
+  const basis=options?'If you buy all earned options':'Your owned shares';
+  s=svg(count(options)+' options to buy and '+count(shares)+' shares owned. Both counts stay the same. '+basis+': your piece of the company was '+(before*100).toFixed(2)+' percent, now '+(after*100).toFixed(2)+' percent.',210,doc);
+  text(s,240,20,count(options)+' options to buy · '+count(shares)+' shares owned',17);
+  ring(s,145,70,35,before);ring(s,335,70,35,after);arrow(s,240,70);
+  text(s,145,136,(before*100).toFixed(2)+'%',29);text(s,335,136,(after*100).toFixed(2)+'%',29);
+  text(s,145,157,'Before',15,MUTED);text(s,335,157,'After',15,MUTED);
+  text(s,240,183,basis,16);text(s,240,205,'Same counts. Each share is a smaller piece.',14,MUTED);
  }else if(stage==='exercise'){
   const n=c.options||0;s=svg(count(n)+' options can become '+count(n)+' shares for '+money(n*c.strike)+'.',210,doc);
   box(s,77,31,125,107,PAPER,8);box(s,280,31,125,107,INK,8);tokens(s,101,49,5,5);tokens(s,304,49,5,5,PAPER);arrow(s,240,87);
   text(s,139,116,count(n),26);text(s,342,116,count(n),26,PAPER);text(s,139,164,'Options',17);text(s,342,164,'Shares',17);text(s,240,199,money(n*c.strike)+' to buy',15,MUTED);
  }else if(stage==='public_sale'||(stage==='company_result'&&['ipo','unicorn'].includes(c.outcome))){
   const original=c.ipoPrice||0,current=stage==='public_sale'?c.salePrice:original,max=Math.max(original,current,1);
-  s=svg(stage==='public_sale'?'Share price at IPO '+money(original)+', now '+money(current)+'.':'IPO share price '+money(original)+'. Selling is locked for 180 days.',210,doc);
+  s=svg(stage==='public_sale'?'Share price at IPO '+money(original)+', now '+money(current)+'.':'IPO share price '+money(original)+'. Selling is locked for 6 months.',210,doc);
   if(stage==='public_sale'){
    const a=90*original/max,b=90*current/max;box(s,107,134-a,72,a,LILAC,3);box(s,301,134-b,72,b,INK,3);line(s,75,135,407,135,MUTED,1);
    text(s,143,30,money(original),26);text(s,337,30,money(current),26);text(s,143,165,'At IPO',15,MUTED);text(s,337,165,'Now',15,MUTED);arrow(s,240,86);
   }else{
-   box(s,186,76,108,68,INK,8);add(s,'path',{d:'M207 76 V60 A33 33 0 0 1 273 60 V76',fill:'none',stroke:INK,'stroke-width':9});circle(s,240,104,7,PAPER);line(s,240,105,240,122,PAPER,4);text(s,240,182,'180 days locked',19);
+   box(s,186,76,108,68,INK,8);add(s,'path',{d:'M207 76 V60 A33 33 0 0 1 273 60 V76',fill:'none',stroke:INK,'stroke-width':9});circle(s,240,104,7,PAPER);line(s,240,105,240,122,PAPER,4);text(s,240,182,'6 months locked',19);
   }
  }else if(stage==='burnout'){
   s=svg('Burnout: energy is low. Decide whether to leave or continue working.',190,doc);
@@ -1324,13 +1487,15 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
   const put = (key, value) => { if (fields[key]) fields[key].textContent = value == null ? '' : value; };
   const el = (tag, cls, text) => { const n = doc.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
   const money = n => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
+  const duration = n => { const y = Math.floor(n / 12), m = n % 12; return [y ? y + (y === 1 ? ' year' : ' years') : '', m ? m + (m === 1 ? ' month' : ' months') : ''].filter(Boolean).join(', ') || '0 months'; };
+  const signed = n => (n > 0 ? '+' : '') + money(n);
   const questions = [
     { key: 'industry', title: 'Which industry?', choices: [['space', 'Space', 'Satellites and launches'], ['climate', 'Climate', 'Energy and manufacturing'], ['software', 'Software', 'Apps and software']] },
     { key: 'size', title: 'What size company?', choices: [['small', 'Small', 'An early team'], ['growing', 'Growing', 'An expanding business'], ['large', 'Large', 'An established company']] },
     { key: 'risk', title: 'How much risk?', choices: [['steady', 'Less risk', 'Salary matters most'], ['balanced', 'Some risk', 'Salary and equity'], ['bold', 'More risk', 'Equity matters most']] }
   ];
   const freshSetup = () => ({ step: 0, profile: { industry: 'software', size: 'growing', risk: 'balanced' }, round: null });
-  let state = model.create(), setup = freshSetup(), interacted = false;
+  let state = model.create(), setup = freshSetup(), interacted = false, lastMove = null;
   /* STANDALONE_STORAGE_START */
   const standaloneStorage = {
     load() { try { return JSON.parse(window.localStorage.getItem('near-bag-career-v10') || 'null'); } catch (_) { return null; } },
@@ -1340,23 +1505,63 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
   const storage = app.nearBagHost || standaloneStorage;
   const snapshot = () => ({ uiVersion: 10, state: JSON.parse(JSON.stringify(state)), setup: JSON.parse(JSON.stringify(setup)) });
   function save() { try { const result = storage.save(snapshot(), { game: 'The Near-Bag Experience', stage: state.stage, month: state.month, bank: state.bank, companies: state.companies.map(c => ({ name: c.name, status: c.status })) }); if (result && result.catch) result.catch(() => {}); } catch (_) {} }
-  function reset() { interacted = true; state = model.create(); setup = freshSetup(); render(); save(); }
+  function reset() { interacted = true; state = model.create(); setup = freshSetup(); lastMove = null; render(); save(); }
   function restore(saved) {
     if (!saved || saved.uiVersion !== 10 || !saved.setup || !Number.isInteger(saved.setup.step) || saved.setup.step < 0 || saved.setup.step > 3) return false;
     if (!questions.every(q => q.choices.some(c => c[0] === saved.setup.profile?.[q.key]))) return false;
     if (saved.setup.round !== null && !['A', 'B', 'C', 'D'].includes(saved.setup.round)) return false;
     const restored = model.restore(saved.state); if (!restored) return false;
-    state = restored; setup = JSON.parse(JSON.stringify(saved.setup)); render(); return true;
+    state = restored; setup = JSON.parse(JSON.stringify(saved.setup)); lastMove = null; render(); return true;
   }
   function act(id, payload) {
     interacted = true;
     const previous = state;
     try { state = model.act(state, id, payload); } catch (error) { put('announcement', error.message || 'Please choose again.'); return; }
     if (state === previous) return;
+    lastMove = { months: state.month - previous.month, before: previous.bank, after: state.bank, ledger: state.ledger.slice(previous.ledger.length) };
     if (state.stage === 'choose_company') { setup = freshSetup(); if (state.companies.length) setup.profile = { ...state.companies[state.companies.length - 1].profile }; }
     if (fields['all-details']) fields['all-details'].open = false;
     render(); save();
     if (typeof window.scrollTo === 'function') window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  function renderStatus(view, ending) {
+    const status = fields['career-status']; if (!status) return;
+    status.hidden = ending || !state.companies.length;
+    app.dataset.hasCareer = state.companies.length ? 'true' : 'false';
+    if (status.hidden) return;
+    put('bank', money(state.bank)); put('date', duration(state.month));
+    const focus = state.companies.find(c => c.id === view.companyId);
+    const employer = state.companies.find(c => c.id === state.activeJobId);
+    const lastCompany = state.companies[state.companies.length - 1];
+    const salariedMonths = lastCompany && lastCompany.departedMonth !== null ? Math.max(0, state.month - lastCompany.departedMonth - (lastCompany.departureReason === 'layoff' ? 3 : 0)) : 0;
+    const offering = ['offer', 'contract'].includes(state.stage);
+    const shown = offering ? focus : employer;
+    fields['company-logo'].replaceChildren();
+    if (shown && window.NearBagVisuals) fields['company-logo'].append(window.NearBagVisuals.logo(shown, 28));
+    put('company-name', shown ? shown.name : state.activePay ? 'New salaried job' : 'Between jobs');
+    put('job-context', offering ? 'Job offer · Company ' + (state.companies.indexOf(focus) + 1) + ' of 2' : employer ? (state.stage === 'layoff' ? 'This job ends now' : duration(state.month - employer.startMonth) + ' here · ' + money(state.activePay) + ' / month') : state.activePay ? duration(salariedMonths) + ' here · ' + money(state.activePay) + ' / month' : 'No salary');
+    const change = fields['time-change']; change.replaceChildren();
+    change.hidden = !lastMove || state.stage === 'receipt' || (!lastMove.months && lastMove.before === lastMove.after);
+    if (!change.hidden) {
+      const totals = {}; lastMove.ledger.forEach(r => { totals[r.kind] = (totals[r.kind] || 0) + r.amount; });
+      const caption = el('div', 'nb-change-heading');
+      caption.append(el('strong', '', lastMove.months ? duration(lastMove.months) + ' later' : 'Your bank'), el('span', '', money(lastMove.before) + ' → ' + money(lastMove.after)));
+      change.append(caption);
+      const changes = el('div', 'nb-change-amounts');
+      [[(totals.salary || 0) + (totals.living || 0), totals.salary ? 'pay after living costs' : 'living costs'], [totals.share_purchase, 'shares bought'], [totals.legal, 'lawyer'], [totals.accounting, 'accountant'], [totals.equity_sale, 'share sale'], [totals.unpaid_bills, 'unpaid bills']].forEach(([value, label]) => { if (value) changes.append(el('span', '', signed(value) + ' ' + label)); });
+      change.append(changes);
+    }
+    const holdings = fields['held-positions']; holdings.replaceChildren();
+    state.companies.filter(c => c.options || c.shares).forEach(c => {
+      const row = el('div', 'nb-position');
+      row.append(el('strong', '', c.name), el('span', '', c.options.toLocaleString('en-US') + ' earned options'), el('span', '', c.shares.toLocaleString('en-US') + ' shares owned'));
+      holdings.append(row);
+    });
+    holdings.hidden = !holdings.children.length || offering;
+  }
+  function timeHint(action) {
+    if (!['hire_lawyer', 'skip_lawyer', 'review_contract', 'continue', 'continue_receipt', 'stay_job', 'buy_options', 'expire_options', 'hold_all', 'close_position'].includes(action.id)) return '';
+    try { const after = model.act(state, action.id), months = after.month - state.month; return months > 0 ? duration(months) + ' will pass' : ''; } catch (_) { return ''; }
   }
   function renderSetup() {
     const recommended = setup.step === 3;
@@ -1367,7 +1572,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     put('route-progress', '');
     if (recommended) {
       put('setup-title', typeof rec.company === 'string' ? rec.company : rec.company.name);
-      put('setup-copy', 'Based on your choices.');
+      put('setup-copy', state.companies.length ? 'Same size and risk. A new company.' : 'Based on your choices.');
       put('match-series', 'Series ' + rec.round + ' / ' + ({ space: 'Space', climate: 'Climate', software: 'Software' }[setup.profile.industry]));
       put('match-story', ''); put('match-pay', money(rec.offers.equity.pay) + ' to ' + money(rec.offers.cash.pay) + ' / mo');
       put('match-strike', money(rec.strike) + ' each');
@@ -1388,6 +1593,8 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
       const button = el('button', 'nb-action'); button.type = 'button'; button.dataset.kind = action.kind || 'normal'; button.dataset.actionId = action.id;
       const concise = window.NearBagVisuals && ['contract', 'contract_check'].includes(state.stage);
       button.append(el('span', 'nb-action-label', action.label), el('span', 'nb-action-value', action.value || ''), el('span', 'nb-action-detail', concise ? '' : action.detail || ''));
+      if (state.stage === 'offer') button.children[2].textContent += ' over 4 years';
+      const timing = timeHint(action); if (timing) button.append(el('span', 'nb-action-time', timing));
       button.disabled = Boolean(action.disabled);
       button.addEventListener('click', () => { if (state !== renderedState || button.disabled) return; button.disabled = true; act(action.id); });
       fields.actions.appendChild(button);
@@ -1402,11 +1609,11 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     if (r.rows && r.rows.length) {
       const details = el('details', 'nb-settlement-details'), dl = el('dl', 'nb-settlement-rows');
       r.rows.forEach(row => { const n = el('div', 'nb-settlement-row'); n.append(el('dt', '', row.label), el('dd', '', typeof row.value === 'number' ? money(row.value) : row.value)); dl.append(n); });
-      details.append(el('summary', '', 'How this payout works'), dl); target.append(details);
+      details.append(el('summary', '', r.kind === 'expense' ? 'Bill details' : 'Sale details'), dl); target.append(details);
     }
     if (r.note && r.note !== 'Equity taxes are not calculated.') target.append(el('p', 'nb-settlement-note', r.note));
     const previous = state;
-    view.actions.forEach(a => { const b = el('button', 'nb-settlement-continue', a.label); b.type = 'button'; b.addEventListener('click', () => { if (state !== previous || b.disabled) return; b.disabled = true; act(a.id); }); target.append(b); });
+    view.actions.forEach(a => { const b = el('button', 'nb-settlement-continue', a.label); const timing = timeHint(a); if (timing) b.append(el('small', 'nb-action-time', timing)); b.type = 'button'; b.addEventListener('click', () => { if (state !== previous || b.disabled) return; b.disabled = true; act(a.id); }); target.append(b); });
   }
   function details(view) {
     put('detail', view.detail || '');
@@ -1424,6 +1631,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     app.dataset.stage = ending ? 'result' : state.stage; app.dataset.mode = choosing ? 'setup' : settling ? 'settlement' : 'play';
     fields.setup.hidden = !choosing; fields.board.hidden = choosing || settling; fields.settlement.hidden = !settling; fields['result-card'].hidden = !ending;
     fields.intro.hidden = !choosing; if (fields['all-details']) fields['all-details'].hidden = choosing;
+    renderStatus(view, ending);
     if (choosing) { renderSetup(); put('announcement', fields['setup-title'].textContent); return; }
     details(view);
     if (settling) { receipt(view); put('announcement', view.receipt.companyName + '. ' + view.receipt.headline + ' Bank: ' + money(view.receipt.bankAfter) + '.'); return; }
@@ -1434,20 +1642,18 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
       const fresh = el('button', 'nb-action', 'Pick a new company'); fresh.type = 'button'; fresh.dataset.kind = 'primary'; fresh.addEventListener('click', () => { if (state === atResult) reset(); });
       controls.append(fresh); put('choice-note', ''); put('announcement', 'Both companies finished. Cash from shares: ' + money(state.equityProceeds) + '.'); return;
     }
-    put('bank', money(state.bank)); put('date', 'Month ' + state.month); put('company-name', view.companyName || 'Your career');
     const focusedCompany = state.companies.find(c => c.id === view.companyId);
-    if (fields['company-logo']) { fields['company-logo'].replaceChildren(); if (focusedCompany && window.NearBagVisuals) fields['company-logo'].append(window.NearBagVisuals.logo(focusedCompany)); }
-    const previousCompany = state.companies.length === 2 && view.companyId === state.companies[0].id;
-    put('stage-label', previousCompany ? 'Your first company' : ''); put('title', view.headline); put('story', view.body);
-    const currentEmployer = state.companies.find(c => c.id === state.activeJobId);
-    const paySource = previousCompany && currentEmployer && currentEmployer.id !== view.companyId && state.period && state.period.months > 0 && view.feedback ? ' Salary from ' + currentEmployer.name + '.' : '';
-    put('feedback', (view.feedback || '') + paySource); put('choice-note', '');
+    const previousCompany = focusedCompany && focusedCompany.departedMonth !== null;
+    put('stage-label', previousCompany && state.stage !== 'new_role' ? 'Previous company · ' + focusedCompany.name : ''); put('title', view.headline); put('story', view.body);
+    put('feedback', state.stage === 'exercise' ? view.feedback : ''); put('choice-note', '');
     fields.visual.replaceChildren();
     if (window.NearBagVisuals) {
       window.NearBagVisuals.render(fields.visual, state, view);
       if (['career_draw', 'public_sale', 'contract_check', 'company_draw'].includes(state.stage) || state.stage === 'contract' && state.bank >= 5000) put('story', '');
-      if (state.stage === 'offer' && focusedCompany) put('story', 'Options let you buy shares at ' + money(focusedCompany.strike) + '. Living costs: $3,500 / month.');
-      if (state.stage === 'dilution') put('story', 'Your share count stays the same.');
+      if (state.stage === 'offer' && focusedCompany) { put('story', ''); put('choice-note', 'Pay is after tax. Living costs: $3,500 / month.'); }
+      if (state.stage === 'dilution') put('story', 'The company added more shares. Each share is a smaller piece.');
+      if (state.stage === 'new_role') { put('title', 'You start a new salaried job.'); put('story', 'No new options. Your old shares stay in play.'); }
+      if (state.stage === 'company_result' && ['ipo', 'unicorn'].includes(focusedCompany.outcome)) put('story', 'Shares start trading at ' + money(focusedCompany.ipoPrice) + '. You must wait 6 months to sell.');
     } else if (view.stats) { const dl = el('div', 'nb-chance-grid'); view.stats.forEach(stat => { const n = el('div', 'nb-chance-stat'); n.append(el('strong', '', stat.value), el('span', '', stat.label)); dl.append(n); }); fields.visual.append(dl); }
     actionButtons(view.actions); put('announcement', view.companyName + '. ' + view.headline + ' ' + (view.feedback || ''));
   }
