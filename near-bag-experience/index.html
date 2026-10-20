@@ -342,9 +342,9 @@ h1{font-weight:400;line-height:1.07;letter-spacing:-.045em}
 .nb-position{display:flex;flex-wrap:wrap;gap:4px 12px;line-height:1.35;color:var(--nb-muted)}
 .nb-position strong{font-weight:600;color:var(--nb-ink)}
 .nb-position span{white-space:nowrap}
-.nb-action-time{display:block;line-height:1.3;font-weight:400;color:var(--nb-orange);margin-top:9px}
+.nb-action-time{display:block;line-height:1.3;font-weight:400;color:#a63b00;margin-top:9px}
 .nb-settlement-continue .nb-action-time,.nb-actions[data-single="true"] .nb-action-time{color:var(--nb-lilac)}
-.nb-settlement-continue:hover .nb-action-time,.nb-actions[data-single="true"] .nb-action:hover .nb-action-time{color:var(--nb-ink)}
+.nb-settlement-continue:hover .nb-action-time,.nb-settlement-continue:focus-visible .nb-action-time,.nb-actions[data-single="true"] .nb-action:hover .nb-action-time,.nb-actions[data-single="true"] .nb-action:focus-visible .nb-action-time{color:var(--nb-ink)}
 .nb-feedback:empty{display:none}
 .nb-stage-help{line-height:1.4;margin:4px 0 10px}
 .nb-scene-label{text-transform:none;letter-spacing:0}
@@ -507,7 +507,7 @@ h1{font-size:var(--nb-type-brand);line-height:1.15;letter-spacing:-.025em}
 .nb-action-detail{margin-top:6px}
 .nb-action-time{margin-top:7px}
 .nb-current-job strong,.nb-company-heading{overflow-wrap:break-word}
-.nb-match-terms{grid-template-columns:minmax(0,1fr) minmax(105px,.6fr)}
+.nb-match-terms{grid-template-columns:minmax(0,1fr)}
 .nb-result-summary{gap:20px}
 .nb-result-company-cash,.nb-result-holding-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
 .nb-result-company-cash dd,.nb-result-holding-stats dd{overflow-wrap:anywhere}
@@ -547,11 +547,14 @@ h1{font-size:var(--nb-type-brand);line-height:1.15;letter-spacing:-.025em}
  .nb-scene-svg text[font-size="26"],.nb-scene-svg text[font-size="29"],
  .nb-scene-svg text[font-size="30"]{font-size:32px}
 }
+@media(max-width:359px){
+ .nb-app[data-stage="public_sale"] .nb-actions{grid-template-columns:1fr}
+}
 </style>
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-17">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-18">
   <header class="nb-header">
     <div><p class="nb-eyebrow">Kram + Emma</p><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">new game</button>
@@ -1118,7 +1121,7 @@ h1{font-size:var(--nb-type-brand);line-height:1.15;letter-spacing:-.025em}
     if(s.stage==='public_sale') {
       var q=c.options+c.shares,received=cents(q*c.salePrice-c.options*c.strike);
       if(!q)return [option('close_position','See the result','','You have no equity left.','primary')];
-      return [option('sell_all','Sell all shares','Receive '+money(received),count(q)+' at '+money(c.salePrice)+' each.','primary'),option('hold_all','Keep the equity','No sale',count(q)+(c.shares?' shares kept.':' options kept.'))];
+      return [option('sell_all',c.options?'Buy + sell shares':'Sell all shares','Receive '+money(received),c.options?money(c.options*c.strike)+' to buy, paid from the sale.':count(q)+' at '+money(c.salePrice)+' each.','primary'),option('hold_all','Keep the equity','No sale',count(q)+(c.shares?' shares kept.':' options kept.'))];
     }
     if(s.stage==='result')return [option('restart','Start a new career','','','primary')];
     return [];
@@ -1169,7 +1172,7 @@ h1{font-size:var(--nb-type-brand);line-height:1.15;letter-spacing:-.025em}
     else if(s.stage==='contract'){v.headline='Review the contract.';v.body=s.bank>=5000?'This contract says you lose half your earned options if you quit.':'A lawyer costs $5,000. You have '+money(s.bank)+'. Quitting will cancel half your earned options.';v.detail='In this game, quitting makes you a bad leaver: you lose half your earned options. For $5,000, a lawyer negotiates good-leaver terms and the company agrees: you keep them all. Layoffs keep earned options either way. Real contracts differ; hiring a lawyer does not guarantee this result.';}
     else if(s.stage==='career_draw'){v.headline=c.employed?'What happens at work?':c.name+' has an update.';v.body=c.employed?'A career event can change your job or equity.':'Your shares can change after you leave.';}
     else if(s.stage==='company_draw'){v.headline='Will the company sell or go public?';v.body='3 in 10 do in this game. Your payout is a separate question.';v.stats=[{label:'Historically sold or went public',value:'About 1 in 3'},{label:'Historically became worth $1 billion',value:'About 1 in 100'}];v.detail='The game gives each company a separate 30% exit draw. Of 100 outcomes, '+((s.outcomeRules || 1) === 1 ? '1 is an authored unicorn IPO, 9 are normal IPOs, 10 large sales, 10 small sales' : '1 is an authored unicorn IPO, 2 are normal IPOs, 13 large sales, 14 small sales')+', 30 remain private and 40 close. These splits are model assumptions. A unicorn is a private company worth $1 billion or more. The historical study tracked 30% exits and about 1.07% unicorns as separate measures, not employee payout odds. These are historical company rates, not the odds of your offer.';}
-    else if(s.stage==='dilution'){v.headline='Dilution.';v.body='The company issued new shares to raise money.';v.detail='Your option and share counts stayed the same. Total company shares increased 25%, so your percentage fell 20%. For options, the chart shows your ownership if you buy them. This changes the payout calculation and this game\'s IPO price.';}
+    else if(s.stage==='dilution'){v.headline='Dilution.';v.body='The company issued new shares to raise money.';v.detail='Your option and share counts stayed the same. Total company shares increased 25%, so your percentage fell 20%. For options, the chart shows your ownership if you buy them. Percentages include the full option pool; unused options do not share in an acquisition payout. This changes the payout calculation and this game\'s IPO price.';}
     else if(s.stage==='contract_check'){v.headline='Change the quitting rule?';v.body=c.clauseRemoved?'You keep your earned options if you quit.':'You lose half your earned options if you quit.';v.detail='For $5,000, a lawyer negotiates to remove this fictional rule. The company agrees. A layoff keeps your earned options either way. Unearned options always stop when you leave.'+(!c.clauseRemoved&&s.bank<5000?' You have '+money(s.bank)+', so you cannot afford the lawyer.':'');}
     else if(s.stage==='burnout'){v.headline='You are burned out.';v.body='The founder expects nights and weekends.';}
     else if(s.stage==='layoff'){v.headline='You were laid off.';v.body='Your earned options remain. The next job starts in three months.';}
@@ -1312,7 +1315,7 @@ h1{font-size:var(--nb-type-brand);line-height:1.15;letter-spacing:-.025em}
     else if (c.outcome === 'shutdown') exit = 'Company closed';
     else exit = c.status === 'private' ? 'Still private' : 'Company outcome pending';
     let outcomeValue = '';
-    if (acquisition) outcomeValue = 'Sale cash: ' + shortMoney(c.exitCash);
+    if (acquisition) outcomeValue = 'Company sale cash: ' + shortMoney(c.exitCash);
     else if (publicCompany) {
       outcomeValue = (c.valuation ? 'Company value ' + shortMoney(c.valuation) + ' · ' : '') + 'IPO ' + money(c.ipoPrice) + '/share';
       if (!owned) outcomeValue += ' → ' + (c.lastSale && c.lastSale.type === 'public' ? 'sale ' : 'after wait ') + money(c.salePrice) + '/share';
@@ -1422,7 +1425,7 @@ h1{font-size:var(--nb-type-brand);line-height:1.15;letter-spacing:-.025em}
       row.append(timeline);
       if (c.outcomeValue) row.append(el('p', 'nb-result-outcome-value', c.outcomeValue));
       const cash = el('dl', 'nb-result-company-cash');
-      [['Paid for shares', money(c.paid)], ['From shares', money(c.received)]].forEach(([label, value]) => {
+      [['Paid for shares', money(c.paid)], ['Your cash received', money(c.received)]].forEach(([label, value]) => {
         const pair = el('div', ''); pair.append(el('dt', '', label), el('dd', '', value)); cash.append(pair);
       });
       row.append(cash);
@@ -1542,8 +1545,8 @@ function ring(s,cx,cy,r,fraction){circle(s,cx,cy,r,LILAC);const a=Math.min(1,Mat
 function contract(c,checking,bank,doc){
  const single=c.clauseRemoved||bank<5000;
  const s=svg(single?'Earned options kept if you quit: '+(c.clauseRemoved?'all':'half'):'Contract choice: pay a lawyer to keep all earned options if you quit, or keep the rule and lose half.',210,doc);
- if(single){tokens(s,204,42,10,c.clauseRemoved?10:5);text(s,240,131,c.clauseRemoved?'100% kept':'50% kept',30);text(s,240,165,'Earned options if you quit',14,MUTED);}
- else{tokens(s,105,39,10,10);tokens(s,300,39,10,5);text(s,145,128,'Keep all',25);text(s,340,128,'Keep half',25);text(s,240,175,'Earned options if you quit',16,MUTED);}
+ if(single){text(s,240,22,c.clauseRemoved?'With lawyer':'As written',17,MUTED);tokens(s,204,42,10,c.clauseRemoved?10:5);text(s,240,131,c.clauseRemoved?'100% kept':'50% kept',30);text(s,240,165,'Earned options if you quit',14,MUTED);}
+ else{text(s,145,20,'With lawyer',17,MUTED);text(s,340,20,'As written',17,MUTED);tokens(s,105,39,10,10);tokens(s,300,39,10,5);text(s,145,128,'Keep all',25);text(s,340,128,'Keep half',25);text(s,240,175,'Earned options if you quit',16,MUTED);}
  return s;
 }
 function offer(c,doc){
@@ -1551,10 +1554,10 @@ function offer(c,doc){
  const grantText=grants.map(count).join(' or '),firstYear=grants.map(n=>count(Math.floor(n/4))).join(' or ');
  const s=svg('Options are the right to buy shares. A share is a small piece of a company. Pay '+money(c.strike)+' for each share. Cash is money you can spend, received only if a sale pays you. Your offer has '+grantText+' options, earned over four years while you stay. Leave before the one-year cliff and earn zero. At one year, earn the first 25 percent: '+firstYear+' options. Then earn more each month.',210,doc);
  [8,176,344].forEach((x,i)=>box(s,x,8,128,77,i===2?LIME:PAPER,8));
- text(s,72,34,'Options',23);text(s,240,34,'Shares',23);text(s,408,34,'Cash',23);
- text(s,72,58,'Right to',16);text(s,72,77,'buy shares',16);
- text(s,240,58,'Part of',16);text(s,240,77,'a company',16);
- text(s,408,58,'Money to',16);text(s,408,77,'spend',16);
+ text(s,72,29,'Options',23);text(s,240,29,'Shares',23);text(s,408,29,'Cash',23);
+ text(s,72,53,'Right to',16);text(s,72,77,'buy shares',16);
+ text(s,240,53,'Part of',16);text(s,240,77,'a company',16);
+ text(s,408,53,'Money to',16);text(s,408,77,'spend',16);
  arrow(s,156,47);arrow(s,324,47);
  text(s,156,105,'Buy: '+money(c.strike)+'/share',15,MUTED);text(s,348,105,'Sell',15,MUTED);
  text(s,72,134,'Before year 1',15,MUTED);text(s,240,134,'Year 1',15,MUTED);text(s,408,134,'Year 4',15,MUTED);
@@ -1655,7 +1658,11 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
   const storage = app.nearBagHost || standaloneStorage;
   const snapshot = () => ({ uiVersion: 10, state: JSON.parse(JSON.stringify(state)), setup: JSON.parse(JSON.stringify(setup)) });
   function save() { try { const result = storage.save(snapshot(), { game: 'The Near-Bag Experience', stage: state.stage, month: state.month, bank: state.bank, companies: state.companies.map(c => ({ name: c.name, status: c.status })) }); if (result && result.catch) result.catch(() => {}); } catch (_) {} }
-  function reset() { interacted = true; state = model.create(); setup = freshSetup(); lastMove = null; render(); save(); }
+  function focusScene() {
+    const target = state.stage === 'choose_company' ? fields['setup-title'] : state.stage === 'result' ? fields['result-card'] : state.stage === 'receipt' ? fields.settlement.querySelector('.nb-settlement-title') || fields.settlement : fields.title;
+    if (target) { target.setAttribute('tabindex', '-1'); target.focus?.({ preventScroll: true }); }
+  }
+  function reset(keyboard = false) { interacted = true; state = model.create(); setup = freshSetup(); lastMove = null; render(); save(); if (keyboard) focusScene(); }
   function restore(saved) {
     if (!saved || saved.uiVersion !== 10 || !saved.setup || !Number.isInteger(saved.setup.step) || saved.setup.step < 0 || saved.setup.step > 3) return false;
     if (!questions.every(q => q.choices.some(c => c[0] === saved.setup.profile?.[q.key]))) return false;
@@ -1663,7 +1670,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     const restored = model.restore(saved.state); if (!restored) return false;
     state = restored; setup = JSON.parse(JSON.stringify(saved.setup)); lastMove = null; equityReadyAt = state.stage === 'exercise' ? Date.now() + 600 : 0; render(); return true;
   }
-  function act(id, payload) {
+  function act(id, payload, keyboard = false) {
     // A second tap on the previous screen must not buy or discard equity.
     if (state.stage === 'exercise' && Date.now() < equityReadyAt) return;
     interacted = true;
@@ -1676,6 +1683,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     if (fields['all-details']) fields['all-details'].open = false;
     render(); save();
     if (typeof window.scrollTo === 'function') window.scrollTo({ top: 0, behavior: 'instant' });
+    if (keyboard) focusScene();
   }
   function renderStatus(view, ending) {
     const status = fields['career-status']; if (!status) return;
@@ -1753,7 +1761,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
       const button = el('button', 'nb-action'); button.type = 'button'; button.dataset.kind = action.kind || 'normal'; button.dataset.actionId = action.id;
       let label = action.label, value = action.value || '', detail = action.detail || '';
       if (window.NearBagVisuals) {
-        if (['contract', 'contract_check'].includes(state.stage) || state.stage === 'burnout' && action.id === 'stay_job' || state.stage === 'public_sale' && action.id !== 'close_position') detail = '';
+        if (['contract', 'contract_check'].includes(state.stage) || state.stage === 'burnout' && action.id === 'stay_job' || state.stage === 'public_sale' && action.id !== 'close_position' && !(action.id === 'sell_all' && state.companies.find(c => c.id === state.focusCompanyId)?.options)) detail = '';
         if (state.stage === 'offer') detail = detail.replace(' · ', '\n');
         if (action.id === 'roll_event') label = 'Reveal event';
         if (action.id === 'roll_company') label = 'Reveal outcome';
@@ -1767,7 +1775,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
       button.append(el('span', 'nb-action-label', label), el('span', 'nb-action-value', value), el('span', 'nb-action-detail', detail));
       const timing = timeHint(action); if (timing) button.append(el('span', 'nb-action-time', timing));
       button.disabled = Boolean(action.disabled);
-      button.addEventListener('click', event => { if (state !== renderedState || button.disabled || event?.detail > 1) return; act(action.id); });
+      button.addEventListener('click', event => { if (state !== renderedState || button.disabled || event?.detail > 1) return; act(action.id, undefined, event?.detail === 0); });
       fields.actions.appendChild(button);
     });
   }
@@ -1784,7 +1792,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     }
     if (r.kind !== 'expense' && r.note && r.note !== 'Equity taxes are not calculated.') target.append(el('p', 'nb-settlement-note', r.note));
     const previous = state;
-    view.actions.forEach(a => { const b = el('button', 'nb-settlement-continue', a.label); const timing = timeHint(a); if (timing) b.append(el('small', 'nb-action-time', timing)); b.type = 'button'; b.addEventListener('click', () => { if (state !== previous || b.disabled) return; b.disabled = true; act(a.id); }); target.append(b); });
+    view.actions.forEach(a => { const b = el('button', 'nb-settlement-continue', a.label); const timing = timeHint(a); if (timing) b.append(el('small', 'nb-action-time', timing)); b.type = 'button'; b.addEventListener('click', event => { if (state !== previous || b.disabled) return; b.disabled = true; act(a.id, undefined, event?.detail === 0); }); target.append(b); });
   }
   function details(view) {
     put('detail', view.detail || '');
@@ -1810,7 +1818,7 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
       window.NearBagCareerResult.render(state, fields['result-card']);
       const controls = fields.actions; controls.replaceChildren(); controls.dataset.single = 'true';
       const atResult = state;
-      const fresh = el('button', 'nb-action', 'Pick a new company'); fresh.type = 'button'; fresh.dataset.kind = 'primary'; fresh.addEventListener('click', () => { if (state === atResult) reset(); });
+      const fresh = el('button', 'nb-action', 'Pick a new company'); fresh.type = 'button'; fresh.dataset.kind = 'primary'; fresh.addEventListener('click', event => { if (state === atResult) reset(event?.detail === 0); });
       controls.append(fresh); put('choice-note', ''); put('announcement', 'Both companies finished. Cash from shares: ' + money(state.equityProceeds) + '.'); return;
     }
     const focusedCompany = state.companies.find(c => c.id === view.companyId);
@@ -1834,15 +1842,15 @@ root.NearBagVisuals={logo,drawLogo,renderCompany,render,identity};
     } else if (view.stats) { const dl = el('div', 'nb-chance-grid'); view.stats.forEach(stat => { const n = el('div', 'nb-chance-stat'); n.append(el('strong', '', stat.value), el('span', '', stat.label)); dl.append(n); }); fields.visual.append(dl); }
     actionButtons(view.actions); put('announcement', view.companyName + '. ' + view.headline + ' ' + (view.feedback || ''));
   }
-  routeSlots.forEach(button => button.addEventListener('click', () => {
+  routeSlots.forEach(button => button.addEventListener('click', event => {
     if (state.stage !== 'choose_company' || setup.step >= 3) return;
     const q = questions[setup.step]; if (!q.choices.some(c => c[0] === button.dataset.routeValue)) return;
-    interacted = true; setup.profile[q.key] = button.dataset.routeValue; setup.step = state.companies.length ? 3 : setup.step + 1; setup.round = null; render(); save();
+    interacted = true; setup.profile[q.key] = button.dataset.routeValue; setup.step = state.companies.length ? 3 : setup.step + 1; setup.round = null; render(); save(); if (event?.detail === 0) focusScene();
   }));
   rounds.forEach(button => button.addEventListener('click', () => { if (state.stage !== 'choose_company') return; interacted = true; setup.round = button.dataset.round; render(); save(); }));
-  command('back').addEventListener('click', () => { if (state.stage === 'choose_company' && setup.step > 0) { interacted = true; setup.step = state.companies.length ? 0 : setup.step - 1; setup.round = null; render(); save(); } });
-  command('start').addEventListener('click', () => { if (state.stage !== 'choose_company' || setup.step !== 3) return; const rec = model.recommend(setup.profile, setup.round, state.companies.length); act('choose_company', { profile: setup.profile, round: rec.round }); });
-  command('restart').addEventListener('click', reset);
+  command('back').addEventListener('click', event => { if (state.stage === 'choose_company' && setup.step > 0) { interacted = true; setup.step = state.companies.length ? 0 : setup.step - 1; setup.round = null; render(); save(); if (event?.detail === 0) focusScene(); } });
+  command('start').addEventListener('click', event => { if (state.stage !== 'choose_company' || setup.step !== 3) return; const rec = model.recommend(setup.profile, setup.round, state.companies.length); act('choose_company', { profile: setup.profile, round: rec.round }, event?.detail === 0); });
+  command('restart').addEventListener('click', event => reset(event?.detail === 0));
   app.nearBagUI = { restore, getSnapshot: snapshot };
   render();
   try { Promise.resolve(storage.load()).then(saved => { if (!interacted && saved) restore(saved); }).catch(() => {}); } catch (_) {}
