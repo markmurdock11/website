@@ -604,14 +604,27 @@ h1{font-size:var(--nb-type-brand);line-height:1.15;letter-spacing:-.025em}
 @media(max-width:359px){
  .nb-app[data-stage="public_sale"] .nb-actions{grid-template-columns:1fr}
 }
+
+/* Keep the pay explanation spacious, even on short screens. */
+.nb-app[data-stage="offer"] .nb-story{padding-top:20px;padding-bottom:28px}
+.nb-app[data-stage="offer"] .nb-story h2{margin-bottom:0}
+.nb-app[data-stage="offer"] .nb-visual.nb-illustrated{margin-top:24px}
+.nb-app[data-stage="offer"] .nb-scene-svg{width:100%;max-width:480px;max-height:none}
+.nb-header>div{min-width:0}
+.nb-header .nb-text-button{
+ flex-shrink:0;min-height:44px;padding:10px 14px;
+ border:1px solid var(--nb-ink);background:var(--nb-paper);color:var(--nb-ink);
+ font-size:14px;line-height:1.2;text-decoration:none;
+}
+.nb-header .nb-text-button:hover{background:var(--nb-lime);text-decoration:none}
 </style>
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-20">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-21">
   <header class="nb-header">
     <div><h1>The Near-Bag Experience</h1></div>
-    <button class="nb-text-button" type="button" data-command="restart">new game</button>
+    <button class="nb-text-button" type="button" data-command="restart">New game</button>
   </header>
   <p class="nb-intro" data-field="intro">Can you turn startup equity into cash?</p>
   <p class="nb-sr-only" data-field="announcement" role="status" aria-live="polite" aria-atomic="true"></p>
@@ -1630,17 +1643,17 @@ function contract(c,checking,bank,doc){
 function offer(c,doc){
  const terms=root.NearBag&&root.NearBag.rounds&&root.NearBag.rounds[c.round],grants=terms?[terms.cash.grant,terms.equity.grant]:[c.grant||0];
  const grantText=grants.map(count).join(' or '),firstYear=grants.map(n=>count(Math.floor(n/4))).join(' or ');
- const s=svg('Options are the right to buy shares. A share is a small piece of a company. Pay '+money(c.strike)+' for each share. Cash is money you can spend, received only if a sale pays you. Your offer has '+grantText+' options, earned over four years while you stay. Leave before the one-year cliff and earn zero. At one year, earn the first 25 percent: '+firstYear+' options. Then earn more each month.',210,doc);
- [8,176,344].forEach((x,i)=>box(s,x,8,128,77,i===2?LIME:PAPER,8));
- text(s,72,29,'Options',23);text(s,240,29,'Shares',23);text(s,408,29,'Cash',23);
- text(s,72,53,'Right to',16);text(s,72,77,'buy shares',16);
- text(s,240,53,'Part of',16);text(s,240,77,'a company',16);
- text(s,408,53,'Money to',16);text(s,408,77,'spend',16);
- arrow(s,156,47);arrow(s,324,47);
- text(s,156,105,'Buy: '+money(c.strike)+'/share',15,MUTED);text(s,348,105,'Sell',15,MUTED);
- text(s,72,134,'Before year 1',15,MUTED);text(s,240,134,'Year 1',15,MUTED);text(s,408,134,'Year 4',15,MUTED);
- line(s,72,153,408,153,MUTED,2);[72,240,408].forEach(x=>circle(s,x,153,4,INK));
- text(s,72,189,'0 earned',17);text(s,240,189,'25% earned',17);text(s,408,189,'All earned',17);
+ const s=svg('Options are the right to buy shares. A share is a small piece of a company. Pay '+money(c.strike)+' for each share. Cash is money you can spend, received only if a sale pays you. Your offer has '+grantText+' options, earned over four years while you stay. Leave before the one-year cliff and earn zero. At one year, earn the first 25 percent: '+firstYear+' options. Then earn more each month.',256,doc);
+ [8,176,344].forEach((x,i)=>box(s,x,12,128,100,i===2?LIME:PAPER,8));
+ text(s,72,44,'Options',23);text(s,240,44,'Shares',23);text(s,408,44,'Cash',23);
+ text(s,72,74,'Right to',16);text(s,72,99,'buy shares',16);
+ text(s,240,74,'Part of',16);text(s,240,99,'a company',16);
+ text(s,408,74,'Money to',16);text(s,408,99,'spend',16);
+ arrow(s,156,63);arrow(s,324,63);
+ text(s,156,139,'Buy: '+money(c.strike)+'/share',15,MUTED);text(s,348,139,'Sell',15,MUTED);
+ text(s,72,180,'Before year 1',15,MUTED);text(s,240,180,'Year 1',15,MUTED);text(s,408,180,'Year 4',15,MUTED);
+ line(s,72,201,408,201,MUTED,2);[72,240,408].forEach(x=>circle(s,x,201,4,INK));
+ text(s,72,238,'0 earned',17);text(s,240,238,'25% earned',17);text(s,408,238,'All earned',17);
  return s;
 }
 function salariedJob(state,doc){
