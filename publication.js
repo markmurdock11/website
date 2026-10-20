@@ -11,7 +11,7 @@
   let activeFilter = 'personal';
   let search = '';
   let externalWriting = [];
-  let selectedIdea = 'x-second-brain';
+  let selectedIdea = new URL(location.href).searchParams.get('idea') || 'x-second-brain';
   let ideaHistory = [];
   let archiveItems = [];
   const cache = new Map();
@@ -26,11 +26,14 @@
     return categories.some(category => category.id === filter) ? filter : 'personal';
   };
   activeFilter = readFilter();
-  const rememberFilter = () => {
+  const rememberFilter = (push = false) => {
     const url = new URL(location.href);
     if (activeFilter === 'personal') url.searchParams.delete('archive');
     else url.searchParams.set('archive', activeFilter);
-    history.replaceState(history.state, '', url);
+    if (selectedIdea) url.searchParams.set('idea', selectedIdea);
+    else url.searchParams.delete('idea');
+    if (url.href !== location.href) history[push ? 'pushState' : 'replaceState'](history.state, '', url);
+    window.KramNavigation?.syncFrameLinks();
   };
   // An editorial reading order: complete pieces first, rather than newest first.
   const readingOrder = [
@@ -200,7 +203,7 @@
   const titleFor = post => displayTitles[post.slug] || post.title.replace(/^(?:KURATE|KOMPLEX)\s*(?:#?\d+)?\s*[–—:\-]\s*/i, '').trim();
   const topicsFor = post => topicMap[post.slug] || (post.category === 'work' ? ['marketing','internet'] : ['culture','writing']);
   const linkAttributes = post => post.kind === 'game'
-    ? `href="${escape(post.url)}" target="_top"`
+    ? `href="${escape(post.url)}?era=${document.documentElement.dataset.era || 'signal'}" target="_top"`
     : `href="${post.external ? escape(post.url) : postURL(post.slug)}"${post.external ? ' target="_blank" rel="noopener"' : ` data-native-post="${post.slug}"`}`;
   const date = value => new Date(value).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', timeZone:'UTC' });
   const duration = seconds => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
@@ -209,7 +212,14 @@
     const fromQuery = new URL(location.href).searchParams.get('post');
     return fromPath || (/^[a-z0-9-]+$/.test(fromQuery || '') ? fromQuery : null);
   };
-  const postURL = slug => `/writing-${slug}.html?era=${document.documentElement.dataset.era || 'signal'}`;
+  const postURL = slug => {
+    const url = new URL(location.href);
+    url.pathname = `/writing-${slug}.html`;
+    url.searchParams.delete('post');
+    url.searchParams.set('era', document.documentElement.dataset.era || 'signal');
+    url.hash = '';
+    return url.href;
+  };
   const loadCatalogue = () => catalogue || (catalogue = fetch('/publication-index.json').then(response => {
     if (!response.ok) throw new Error('The archive could not load.');
     return response.json();
@@ -264,6 +274,7 @@
       if (post.video) reader.querySelector('.native-video').style.setProperty('--native-video-ratio', `${post.video.width} / ${post.video.height}`);
       renderedSlug = slug;
       refreshLinks();
+      window.KramNavigation?.syncFrameLinks();
       setTitle(titleFor(post));
     } catch (error) {
       if (request !== requestNumber) return;
@@ -350,7 +361,7 @@
     if (remember && selectedIdea && selectedIdea !== target.slug) ideaHistory.push(selectedIdea);
     selectedIdea = target.slug;
     activeFilter = target.category;
-    rememberFilter();
+    rememberFilter(true);
     return renderArchive().then(() => { doc.querySelector('[data-idea-focus-title]')?.focus(); });
   }
 
@@ -402,8 +413,8 @@
       const filter = event.target.closest?.('[data-native-filter]');
       if (filter) {
         activeFilter = filter.dataset.nativeFilter;
-        rememberFilter();
-        selectedIdea = null;
+        selectedIdea = activeFilter === 'personal' ? 'x-second-brain' : null;
+        rememberFilter(true);
         ideaHistory = [];
         search = '';
         archive.querySelector('input').value = '';
@@ -424,9 +435,13 @@
   window.KramPublication = { currentSlug, showPost, refreshLinks };
   window.addEventListener('popstate', () => {
     activeFilter = readFilter();
-    selectedIdea = null;
+    selectedIdea = new URL(location.href).searchParams.get('idea') || 'x-second-brain';
     ideaHistory = [];
-    if (doc) renderArchive();
+    search = '';
+    if (doc) {
+      doc.querySelector('.native-search input').value = '';
+      renderArchive();
+    }
   });
   frame.addEventListener('load', mount);
   if (frame.contentDocument?.querySelector('.knm-scene-home')) mount();

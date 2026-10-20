@@ -34,7 +34,7 @@
   function currentPage() {
     if (window.KramPublication?.currentSlug()) return 'post';
     const page = location.hash.slice(1);
-    return page === 'inbox' ? 'about' : page === 'media' ? 'writing' : (pages.has(page) ? page : 'home');
+    return page === 'inbox' ? 'about' : page === 'media' ? 'library' : (pages.has(page) ? page : 'home');
   }
 
   function updateURL(page, push) {
@@ -67,10 +67,11 @@
       else link.removeAttribute('aria-current');
     });
     doc.querySelectorAll('.era-location').forEach(node => { node.textContent = `https://kram.bio${page === 'post' ? location.pathname : `/${page === 'home' ? '' : `#${page}`}`}`; });
-    doc.querySelectorAll('.era-window-title').forEach(node => { node.textContent = {home: "Kram's desktop", about: 'About me.txt', writing: 'Archive', library: 'Media library', post: 'Reading room'}[page]; });
+    doc.querySelectorAll('.era-window-title').forEach(node => { node.textContent = {home: "Kram's desktop", about: 'About me.txt', writing: 'Archive', library: 'My personal media library', post: 'Reading room'}[page]; });
     document.title = page === 'home' ? 'Kram.bio — Mark Murdock' : `${pageNames[page]} — Kram.bio`;
     win.document.title = document.title;
     if (page === 'post') window.KramPublication?.showPost(window.KramPublication.currentSlug());
+    if (page === 'library') win.KramLibrary?.show(new URL(location.href).searchParams.get('shelf'));
     // Keep the frame route in step without making a second browser-history entry.
     win.history.replaceState({ page }, '', `${win.location.pathname}${win.location.search}${page === 'home' ? '' : `#${page}`}`);
     if (scroll) win.scrollTo({ top: 0, behavior: 'instant' });
@@ -85,15 +86,18 @@
 
   function syncFrameLinks() {
     if (!frameState) return;
-    frameState.doc.querySelectorAll('a[data-site-page]').forEach(link => {
+    frameState.doc.querySelectorAll('a[data-site-page], a[data-era-page]').forEach(link => {
       const target = new URL(location.href);
       target.pathname = '/';
       target.searchParams.delete('post');
-      target.hash = link.dataset.sitePage === 'home' ? '' : link.dataset.sitePage;
+      const page = link.dataset.sitePage || link.dataset.eraPage;
+      target.hash = page === 'home' ? '' : page;
       link.href = target.href;
     });
     window.KramPublication?.refreshLinks();
+    frameState.win.KramLibrary?.refreshLinks();
   }
+  window.KramNavigation = { syncFrameLinks };
 
   function applyMode(mode, push = false, announce = false) {
     const previousMode = activeMode;
@@ -130,14 +134,14 @@
     doc.head.appendChild(chromeDefaults);
     const alternateStyles = doc.createElement('link');
     alternateStyles.rel = 'stylesheet';
-    alternateStyles.href = 'eras-content.css?v=20261020c';
+    alternateStyles.href = 'eras-content.css?v=20261020f';
     alternateStyles.media = 'not all';
     doc.head.appendChild(alternateStyles);
     const nativeStyles = doc.querySelector('link[data-native-styles]');
     if (nativeStyles) doc.head.appendChild(nativeStyles);
     const polishStyles = doc.createElement('link');
     polishStyles.rel = 'stylesheet';
-    polishStyles.href = 'polish.css?v=20261020d';
+    polishStyles.href = 'polish.css?v=20261020f';
     polishStyles.dataset.keepEnabled = 'true';
     doc.head.appendChild(polishStyles);
     const site = doc.querySelector('.kram-site');
@@ -148,7 +152,7 @@
     shortcuts.setAttribute('aria-label', 'Desktop shortcuts');
     shortcuts.innerHTML = [
       ['home', 'computer', 'Desktop'], ['about', 'document', 'About me'], ['writing', 'folder', 'Archive'], ['library', 'books', 'Media library']
-    ].map(([page, icon, label]) => `<button type="button" data-era-page="${page}"><span class="era-shortcut-icon era-icon-${icon}" aria-hidden="true"></span><span>${label}</span></button>`).join('');
+    ].map(([page, icon, label]) => `<a href="/?era=${activeMode}${page === 'home' ? '' : `#${page}`}" target="_top" data-era-page="${page}"><span class="era-shortcut-icon era-icon-${icon}" aria-hidden="true"></span><span>${label}</span></a>`).join('');
     doc.body.prepend(shortcuts);
     doc.querySelector('.kram-home-hero').insertAdjacentHTML('beforeend', `
       <aside class="era-home-extra era-injected"><div class="era-portrait"><img src="mark-portrait.jpg" alt="Mark Murdock" width="160" height="160" decoding="async"></div></aside>`);
@@ -189,6 +193,19 @@
     renderPage(currentPage(), true);
   });
   window.addEventListener('hashchange', () => { renderPage(currentPage(), true); syncFrameLinks(); });
+  window.addEventListener('kram:open-shelf', event => {
+    const category = event.detail;
+    if (!['blogs', 'movies', 'tv', 'books', 'songs', 'all'].includes(category)) return;
+    const url = new URL(location.href);
+    url.pathname = '/';
+    url.searchParams.delete('post');
+    url.searchParams.set('era', activeMode);
+    url.searchParams.set('shelf', category);
+    url.hash = 'library';
+    if (url.href !== location.href) history.pushState({ era: activeMode, page: 'library', shelf: category }, '', url);
+    renderPage('library', true);
+    syncFrameLinks();
+  });
   window.addEventListener('kram:open-post', event => {
     const slug = event.detail;
     if (!/^[a-z0-9-]+$/.test(slug)) return;

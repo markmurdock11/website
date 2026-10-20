@@ -139,8 +139,8 @@ html[data-era='html'] { --era-ink: #000; --era-paper: #fff; --era-link: #0000ee;
 html[data-era='desktop'] { --era-ink: #241d2c; --era-paper: #fffdfb; --era-link: #512f8d; --era-rule: #9c8ea7; font: 14px/1.55 Arial, Helvetica, sans-serif; background: #b9a5d0; }
 [data-era='desktop'] body { padding: 34px 30px 44px 126px; background-image: radial-gradient(#d5c5e4 .65px, transparent .65px); background-size: 4px 4px; }
 [data-era='desktop'] .era-desktop-shortcuts { display: flex; flex-direction: column; gap: 24px; position: absolute; left: 18px; top: 30px; width: 88px; }
-[data-era='desktop'] .era-desktop-shortcuts button { background: transparent; border: 1px solid transparent; padding: 5px 2px; font: 12px/1.2 Arial,sans-serif; text-align: center; }
-[data-era='desktop'] .era-desktop-shortcuts button:hover, [data-era='desktop'] .era-desktop-shortcuts button:focus-visible { background: #d6c6e477; border: 1px dotted #4c365f; }
+[data-era='desktop'] .era-desktop-shortcuts a { display: block; color: inherit; text-decoration: none; background: transparent; border: 1px solid transparent; padding: 5px 2px; font: 12px/1.2 Arial,sans-serif; text-align: center; }
+[data-era='desktop'] .era-desktop-shortcuts a:hover, [data-era='desktop'] .era-desktop-shortcuts a:focus-visible { background: #d6c6e477; border: 1px dotted #4c365f; }
 [data-era='desktop'] .era-shortcut-icon { display: block; width: 42px; height: 38px; margin: 0 auto 7px; font: 31px/38px Georgia,serif; color: #4c2f66; text-shadow: 1px 1px #f8f2ff; }
 [data-era='desktop'] .kram-site { max-width: 1080px; margin: 0 auto; border: 3px solid; border-color: #f9f1fc #61546b #61546b #f9f1fc; background: #d7cedd; box-shadow: 9px 10px 0 #4b365738; padding: 3px; }
 [data-era='desktop'] .era-window-bar { display: flex; min-height: 29px; justify-content: space-between; align-items: center; gap: 10px; padding: 2px 5px 2px 9px; background: linear-gradient(90deg,#4b2c6a,#9775b1); color: white; font-size: 12px; font-weight: 700; }
@@ -209,7 +209,7 @@ html[data-era='desktop'] { --era-ink: #241d2c; --era-paper: #fffdfb; --era-link:
   [data-era='html'] .kram-home-copy h1 { font-size: 55px; }
   [data-era='desktop'] body { padding: 18px 12px 28px; }
   [data-era='desktop'] .era-desktop-shortcuts { position: static; flex-direction: row; justify-content: flex-start; gap: 10px; width: 100%; margin: 0 0 18px; }
-  [data-era='desktop'] .era-desktop-shortcuts button { width: 72px; font-size: 11px; }
+  [data-era='desktop'] .era-desktop-shortcuts a { width: 72px; font-size: 11px; }
   [data-era='desktop'] .era-shortcut-icon { height: 30px; font-size: 27px; line-height: 30px; margin-bottom: 4px; }
   [data-era='desktop'] .kram-site-head { flex-direction: row; flex-wrap: wrap; gap: 6px 20px; padding: 3px 8px 9px; }
   [data-era='desktop'] .kram-site-head nav { gap: 14px; }
@@ -248,8 +248,8 @@ html[data-era='desktop'] { --era-ink: #241d2c; --era-paper: #fffdfb; --era-link:
 [data-era='desktop'] .kram-view { margin-top: 5px; }
 [data-era='desktop'] .kram-page-head { padding-bottom: 0; border: 0; }
 [data-era='desktop'] .kram-page-head h1 { font-size: 34px; }
-[data-era='desktop'] .era-desktop-shortcuts button { min-height: 78px; }
-[data-era='desktop'] .era-desktop-shortcuts button[data-era-current] { background: #d6c6e477; border: 1px dotted #4c365f; }
+[data-era='desktop'] .era-desktop-shortcuts a { min-height: 78px; }
+[data-era='desktop'] .era-desktop-shortcuts a[data-era-current] { background: #d6c6e477; border: 1px dotted #4c365f; }
 [data-era='desktop'] .era-shortcut-icon { position: relative; width: 38px; height: 34px; margin: 0 auto 9px; border: 1px solid #51415c; box-shadow: 2px 2px 0 #4b365738; }
 [data-era='desktop'] .era-icon-folder { height: 27px; margin-top: 7px; background: #e8d390; border-top: 3px solid #f7e8af; }
 [data-era='desktop'] .era-icon-folder::before { content:''; position:absolute; width:18px; height:7px; left:-1px; top:-8px; background:#dcc47c; border:1px solid #51415c; border-bottom:0; }
@@ -262,12 +262,12 @@ html[data-era='desktop'] { --era-ink: #241d2c; --era-paper: #fffdfb; --era-link:
 @media(max-width:760px) {
   [data-era='desktop'] body { padding:14px 10px 24px; }
   [data-era='desktop'] .era-desktop-shortcuts { margin-bottom:14px; gap:12px; }
-  [data-era='desktop'] .era-desktop-shortcuts button { width:76px; min-height:74px; font-size:12px; }
+  [data-era='desktop'] .era-desktop-shortcuts a { width:76px; min-height:74px; font-size:12px; }
   [data-era='desktop'] .kram-view { padding:24px 18px; }
   [data-era='desktop'] .kram-page-head h1 { font-size:30px; }
 }
 [data-era='desktop'] .era-icon-books { background:linear-gradient(90deg,#c5a3d6 0 28%,#6d4d8b 28% 33%,#e6d0a0 33% 63%,#6d4d8b 63% 68%,#b5bad4 68%); border:2px ridge #eee4f4; border-bottom:4px solid #51415c; }
 @media(max-width:760px) {
   [data-era='desktop'] .era-desktop-shortcuts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
-  [data-era='desktop'] .era-desktop-shortcuts button { width:auto; min-width:0; padding-inline:2px; line-height:1.3; }
+  [data-era='desktop'] .era-desktop-shortcuts a { width:auto; min-width:0; padding-inline:2px; line-height:1.3; }
 }
