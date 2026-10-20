@@ -221,7 +221,7 @@
     return url.href;
   };
   const loadCatalogue = () => catalogue || (catalogue = fetch('/publication-index.json').then(response => {
-    if (!response.ok) throw new Error('The archive could not load.');
+    if (!response.ok) throw new Error('The portfolio could not load.');
     return response.json();
   }));
 
@@ -251,11 +251,11 @@
     renderedSlug = null;
     stopVideo();
     reader.setAttribute('aria-busy', 'true');
-    reader.innerHTML = '<a href="/#writing" data-site-page="writing">Back to archive</a><p class="native-reader-body" role="status">Loading…</p>';
+    reader.innerHTML = '<a href="/#writing" data-site-page="writing">Back to portfolio</a><p class="native-reader-body" role="status">Loading…</p>';
     try {
       const index = await loadCatalogue();
       const item = index.posts.find(post => post.slug === slug);
-      if (!item) throw new Error('This page is not in the archive.');
+      if (!item) throw new Error('This page is not in the portfolio.');
       let post = cache.get(slug);
       if (!post) {
         const response = await fetch(`${item.data}?v=20261020c`);
@@ -266,11 +266,11 @@
       if (request !== requestNumber || currentSlug() !== slug) return;
       const related = post.relatedVideo ? index.posts.find(item => item.slug === post.relatedVideo) : null;
       reader.innerHTML = `
-        <a href="/#writing" data-site-page="writing">Back to archive</a>
+        <a href="/#writing" data-site-page="writing">Back to portfolio</a>
         <header class="native-reader-head"><span class="native-post-kind">${post.kind === 'video' ? 'VIDEO' : (post.series === 'Kinetic' ? 'KINETIC' : 'ESSAY')}</span><time datetime="${escape(post.date)}">${date(post.date)}</time><h1>${escape(titleFor(post))}</h1>${post.subtitle ? `<p>${escape(post.subtitle)}</p>` : ''}${related ? `<a class="native-watch-link" href="${postURL(related.slug)}" data-native-post="${related.slug}">Watch the video · ${duration(related.duration)}</a>` : ''}</header>
         ${post.video ? `<figure class="native-video"><video controls playsinline preload="metadata" poster="${escape(post.video.poster)}" src="${escape(post.video.src)}" width="${post.video.width}" height="${post.video.height}" aria-label="${escape(post.title)}"><a href="${escape(post.video.src)}">Play video</a></video></figure>` : ''}
         <article class="native-reader-body">${post.html}</article>
-        <footer class="native-reader-source"><a href="${escape(post.source)}" target="_blank" rel="noopener">Originally published on ${post.kind === 'video' ? 'Substack Notes' : 'Kram Not Mark'}</a><a href="/#writing" data-site-page="writing">Back to archive</a></footer>`;
+        <footer class="native-reader-source"><a href="${escape(post.source)}" target="_blank" rel="noopener">Originally published on ${post.kind === 'video' ? 'Substack Notes' : 'Kram Not Mark'}</a><a href="/#writing" data-site-page="writing">Back to portfolio</a></footer>`;
       if (post.video) reader.querySelector('.native-video').style.setProperty('--native-video-ratio', `${post.video.width} / ${post.video.height}`);
       renderedSlug = slug;
       refreshLinks();
@@ -278,7 +278,7 @@
       setTitle(titleFor(post));
     } catch (error) {
       if (request !== requestNumber) return;
-      reader.innerHTML = `<a href="/#writing" data-site-page="writing">Back to archive</a><div class="native-reader-body"><h1>This page could not load.</h1><p>Return to the archive or try this page again.</p><a href="${escape(location.href)}" target="_top">Try again</a></div>`;
+      reader.innerHTML = `<a href="/#writing" data-site-page="writing">Back to portfolio</a><div class="native-reader-body"><h1>This page could not load.</h1><p>Return to the portfolio or try this page again.</p><a href="${escape(location.href)}" target="_top">Try again</a></div>`;
     } finally {
       if (request === requestNumber) reader.removeAttribute('aria-busy');
     }
@@ -347,7 +347,7 @@
     else if (era === 'desktop') list.innerHTML = groupedResults(filtered, fileLink, query, true);
     else if (era === 'signal' && !query) list.innerHTML = ideaMap(filtered, archiveItems);
     else list.innerHTML = groupedResults(filtered, compactRow, query);
-    doc.querySelector('.native-result-count').textContent = query ? `${filtered.length} ${filtered.length === 1 ? 'match' : 'matches'} across the archive` : `${filtered.length} ${categories.find(category => category.id === activeFilter).label.toLowerCase()}, in selected reading order${era === 'signal' ? `. Exploring ${titleFor(archiveItems.find(post => post.slug === selectedIdea))}.` : ''}`;
+    doc.querySelector('.native-result-count').textContent = query ? `${filtered.length} ${filtered.length === 1 ? 'match' : 'matches'} across the portfolio` : `${filtered.length} ${categories.find(category => category.id === activeFilter).label.toLowerCase()}, in selected reading order${era === 'signal' ? `. Exploring ${titleFor(archiveItems.find(post => post.slug === selectedIdea))}.` : ''}`;
     doc.querySelectorAll('[data-native-filter]').forEach(button => {
       const category = categories.find(category => category.id === button.dataset.nativeFilter);
       button.setAttribute('aria-pressed', String(!query && category.id === activeFilter));
@@ -378,8 +378,8 @@
     const writing = doc.querySelector('[data-site-view="writing"]');
     const archive = doc.createElement('section');
     archive.className = 'native-archive';
-    archive.setAttribute('aria-label', 'Archive');
-    archive.innerHTML = `<div class="native-archive-controls"><nav class="native-filter" aria-label="Archive categories">${categories.map(category => `<button type="button" data-native-filter="${category.id}" aria-pressed="${category.id === activeFilter}" aria-controls="native-archive-results">${category.label}</button>`).join('')}</nav><label class="native-search"><span class="kram-sr-only">Search archive</span><input type="search" placeholder="Search archive" aria-label="Search archive"></label></div><p class="native-result-count kram-sr-only" role="status" aria-live="polite"></p><div class="native-post-list" id="native-archive-results"><p>Loading the archive…</p></div>`;
+    archive.setAttribute('aria-label', 'Portfolio');
+    archive.innerHTML = `<div class="native-archive-controls"><nav class="native-filter" aria-label="Portfolio categories">${categories.map(category => `<button type="button" data-native-filter="${category.id}" aria-pressed="${category.id === activeFilter}" aria-controls="native-archive-results">${category.label}</button>`).join('')}</nav><label class="native-search"><span class="kram-sr-only">Search portfolio</span><input type="search" placeholder="Search portfolio" aria-label="Search portfolio"></label></div><p class="native-result-count kram-sr-only" role="status" aria-live="polite"></p><div class="native-post-list" id="native-archive-results"><p>Loading the portfolio…</p></div>`;
     writing.querySelector('.kram-page-head').after(archive);
     // Fold the existing clips into the same categories; avoid older aliases of
     // essays already available in the native catalogue.
@@ -429,7 +429,7 @@
     observer.observe(reader, { attributes:true, attributeFilter:['hidden'] });
     const eraObserver = new MutationObserver(() => { renderArchive(); });
     eraObserver.observe(doc.documentElement, { attributes:true, attributeFilter:['data-era'] });
-    renderArchive().catch(() => { archive.querySelector('.native-post-list').innerHTML = '<p>The archive could not load. <a href="https://kramnotmark.substack.com/archive" target="_blank" rel="noopener">Visit Kram Not Mark</a></p>'; });
+    renderArchive().catch(() => { archive.querySelector('.native-post-list').innerHTML = '<p>The portfolio could not load. <a href="https://kramnotmark.substack.com/archive" target="_blank" rel="noopener">Visit Kram Not Mark</a></p>'; });
   }
 
   window.KramPublication = { currentSlug, showPost, refreshLinks };

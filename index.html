@@ -13,8 +13,8 @@
   <meta property="og:type" content="website">
   <link rel="preload" href="home-arrival-v1.jpg" as="image">
   <link rel="stylesheet" href="eras-shell.css?v=20261020c">
-  <script src="publication.js?v=20261020f" defer></script>
-  <script src="eras.js?v=20261020f" defer></script>
+  <script src="publication.js?v=20261020g" defer></script>
+  <script src="eras.js?v=20261020g" defer></script>
   <style>
     html, body { width: 100%; min-height: 100%; margin: 0; background: #e5d5f1; }
     #knm-preview { width: 100%; height: 100svh; display: block; border: 0; visibility: hidden; background: #e5d5f1; }
@@ -64,7 +64,7 @@
 
         const headerWriting = doc.querySelector('.kram-site-head nav [data-site-page="writing"]');
         const headerAbout = doc.querySelector('.kram-site-head nav [data-site-page="about"]');
-        pointLink(headerWriting, "writing", "archive");
+        pointLink(headerWriting, "writing", "portfolio");
         doc.querySelector('.kram-site-head nav [data-site-page="media"]')?.remove();
         if (headerWriting && headerAbout) headerWriting.before(headerAbout);
         headerWriting?.insertAdjacentHTML("afterend", '<a href="#library" data-site-page="library">library</a>');
@@ -75,7 +75,7 @@
         /* Archive: writing with a reason to click, then the full library. */
         const writingView = doc.querySelector('[data-site-view="writing"]');
         const writingTitle = writingView?.querySelector(".kram-page-head h1");
-        if (writingTitle) writingTitle.textContent = "archive";
+        if (writingTitle) writingTitle.textContent = "portfolio";
 
         const writingQuotes = new Map([
           ["The Manifest Destiny of Space", "Optimism sees space not as a void, but a canvas."],

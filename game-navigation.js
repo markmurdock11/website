@@ -15,7 +15,7 @@
   const nav = document.createElement('nav');
   nav.className = 'kram-game-nav';
   nav.setAttribute('aria-label', 'Kram.bio');
-  [['', 'kram.bio'], ['about', 'about'], ['writing', 'archive'], ['library', 'library']].forEach(([page, label]) => {
+  [['', 'kram.bio'], ['about', 'about'], ['writing', 'portfolio'], ['library', 'library']].forEach(([page, label]) => {
     const link = document.createElement('a');
     link.href = destination(page);
     link.textContent = label;

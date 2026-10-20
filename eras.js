@@ -10,7 +10,7 @@
   ];
   const validModes = new Set(modes.map(mode => mode.id));
   const pages = new Set(['home', 'about', 'writing', 'library', 'post']);
-  const pageNames = { home: 'home', about: 'about', writing: 'archive', library: 'media library', post: 'archive' };
+  const pageNames = { home: 'home', about: 'about', writing: 'portfolio', library: 'media library', post: 'portfolio' };
   const aliases = { modern: 'signal', skeumorphism: 'desktop' };
   const readStoredMode = () => {
     try { return localStorage.getItem('kram-era'); } catch { return null; }
@@ -67,7 +67,7 @@
       else link.removeAttribute('aria-current');
     });
     doc.querySelectorAll('.era-location').forEach(node => { node.textContent = `https://kram.bio${page === 'post' ? location.pathname : `/${page === 'home' ? '' : `#${page}`}`}`; });
-    doc.querySelectorAll('.era-window-title').forEach(node => { node.textContent = {home: "Kram's desktop", about: 'About me.txt', writing: 'Archive', library: 'My personal media library', post: 'Reading room'}[page]; });
+    doc.querySelectorAll('.era-window-title').forEach(node => { node.textContent = {home: "Kram's desktop", about: 'About me.txt', writing: 'Portfolio', library: 'My personal media library', post: 'Reading room'}[page]; });
     document.title = page === 'home' ? 'Kram.bio — Mark Murdock' : `${pageNames[page]} — Kram.bio`;
     win.document.title = document.title;
     if (page === 'post') window.KramPublication?.showPost(window.KramPublication.currentSlug());
@@ -151,7 +151,7 @@
     shortcuts.className = 'era-desktop-shortcuts era-injected';
     shortcuts.setAttribute('aria-label', 'Desktop shortcuts');
     shortcuts.innerHTML = [
-      ['home', 'computer', 'Desktop'], ['about', 'document', 'About me'], ['writing', 'folder', 'Archive'], ['library', 'books', 'Media library']
+      ['home', 'computer', 'Desktop'], ['about', 'document', 'About me'], ['writing', 'folder', 'Portfolio'], ['library', 'books', 'Media library']
     ].map(([page, icon, label]) => `<a href="/?era=${activeMode}${page === 'home' ? '' : `#${page}`}" target="_top" data-era-page="${page}"><span class="era-shortcut-icon era-icon-${icon}" aria-hidden="true"></span><span>${label}</span></a>`).join('');
     doc.body.prepend(shortcuts);
     doc.querySelector('.kram-home-hero').insertAdjacentHTML('beforeend', `
