@@ -18,8 +18,20 @@
   const categories = [
     { id:'personal', label:'Personal essays' },
     { id:'work', label:'Work examples' },
-    { id:'video', label:'Videos' }
+    { id:'video', label:'Videos' },
+    { id:'games', label:'Games' }
   ];
+  const readFilter = () => {
+    const filter = new URL(location.href).searchParams.get('archive');
+    return categories.some(category => category.id === filter) ? filter : 'personal';
+  };
+  activeFilter = readFilter();
+  const rememberFilter = () => {
+    const url = new URL(location.href);
+    if (activeFilter === 'personal') url.searchParams.delete('archive');
+    else url.searchParams.set('archive', activeFilter);
+    history.replaceState(history.state, '', url);
+  };
   // An editorial reading order: complete pieces first, rather than newest first.
   const readingOrder = [
     'crete-friendship-and-what-technology',
@@ -60,7 +72,7 @@
     'video-359173007'
   ];
   readingOrder.splice(6, 0, 'x-second-brain', 'x-social-network-features');
-  readingOrder.push('x-tech-founder-beer-matrix');
+  readingOrder.push('x-tech-founder-beer-matrix', 'near-bag-experience', 'cheeky-pint-matrix');
   const rank = new Map(readingOrder.map((slug, position) => [slug, position]));
   const displayTitles = {
     'kurate-4-internal-tech-emails':'Internal Tech Emails',
@@ -108,6 +120,8 @@
     'crosschain-risk-framework':'Crosschain Risk',
     'how-to-choose-a-cryptocurrency':'Choosing a Cryptocurrency',
     'x-tech-founder-beer-matrix':'The Tech Founder Beer Matrix',
+    'near-bag-experience':'Near-Bag Experience',
+    'cheeky-pint-matrix':'Beer Matrix',
     'video-361129384':'Grantland',
     'video-359973771':'Patrick Collison’s Website',
     'video-362571491':'Internal Tech Emails',
@@ -154,7 +168,9 @@
     'video-359173007':['culture','internet','writing'],
     'x-second-brain':['internet','writing','technology'],
     'x-social-network-features':['internet','attention','technology'],
-    'x-tech-founder-beer-matrix':['culture','marketing','internet']
+    'x-tech-founder-beer-matrix':['culture','marketing','internet'],
+    'near-bag-experience':['money','technology','culture'],
+    'cheeky-pint-matrix':['culture','technology','internet']
   };
   // Explicit first connections make each trail a reading choice, not random motion.
   const preferredConnections = {
@@ -165,7 +181,10 @@
     'kurate-2-grantland-2011-2015':['video-361129384','kurate-1-the-website-of-patrick-collison','q1-2024'],
     'video-361129384':['kurate-2-grantland-2011-2015','video-359973771','words-are-power-words-are-code'],
     'x-second-brain':['kurate-1-the-website-of-patrick-collison','x-social-network-features','a-place-for-me-to-be-me'],
-    'x-social-network-features':['x-second-brain','how-to-actually-get-attentionwhen','kurate-1-the-website-of-patrick-collison']
+    'x-social-network-features':['x-second-brain','how-to-actually-get-attentionwhen','kurate-1-the-website-of-patrick-collison'],
+    'near-bag-experience':['cheeky-pint-matrix','bitcoin-and-crypto','kurate-3-vibecession'],
+    'cheeky-pint-matrix':['near-bag-experience','x-tech-founder-beer-matrix','x-social-network-features'],
+    'x-tech-founder-beer-matrix':['cheeky-pint-matrix','near-bag-experience','how-to-actually-get-attentionwhen']
   };
   // Verified public social clips are added here alongside the existing work.
   const socialClips = [
@@ -173,10 +192,16 @@
     { slug:'x-social-network-features', title:'Four Features I Want Social Networks to Build', category:'personal', kind:'essay', publisher:'X essay', url:'https://x.com/kramnotmark/status/2107503299079372894', external:true },
     { slug:'x-tech-founder-beer-matrix', title:'The Tech Founder Beer Matrix', category:'work', kind:'post', publisher:'2.7M views on X', url:'https://x.com/kramnotmark/status/2109925155397149145', external:true, viral:true }
   ];
+  const games = [
+    { slug:'near-bag-experience', title:'The Near-Bag Experience', subtitle:'A startup equity game by Kram + Emma.', category:'games', kind:'game', url:'/near-bag-experience/', action:'Play game' },
+    { slug:'cheeky-pint-matrix', title:'The Tech Founder Beer Matrix', subtitle:'Make your own beer chugger matrix. Drag the founders, add someone new, and export your chart.', category:'games', kind:'game', url:'/cheeky-pint-matrix/', action:'Open matrix' }
+  ];
   const escape = value => String(value || '').replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
   const titleFor = post => displayTitles[post.slug] || post.title.replace(/^(?:KURATE|KOMPLEX)\s*(?:#?\d+)?\s*[–—:\-]\s*/i, '').trim();
   const topicsFor = post => topicMap[post.slug] || (post.category === 'work' ? ['marketing','internet'] : ['culture','writing']);
-  const linkAttributes = post => `href="${post.external ? escape(post.url) : postURL(post.slug)}"${post.external ? ' target="_blank" rel="noopener"' : ` data-native-post="${post.slug}"`}`;
+  const linkAttributes = post => post.kind === 'game'
+    ? `href="${escape(post.url)}" target="_top"`
+    : `href="${post.external ? escape(post.url) : postURL(post.slug)}"${post.external ? ' target="_blank" rel="noopener"' : ` data-native-post="${post.slug}"`}`;
   const date = value => new Date(value).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', timeZone:'UTC' });
   const duration = seconds => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
   const currentSlug = () => {
@@ -254,7 +279,7 @@
   }
 
   function fileLink(post) {
-    const extension = post.kind === 'video' ? 'mp4' : post.kind === 'post' ? 'url' : post.external ? 'link' : 'txt';
+    const extension = post.kind === 'game' ? 'app' : post.kind === 'video' ? 'mp4' : post.kind === 'post' ? 'url' : post.external ? 'link' : 'txt';
     const caption = desktopNames[post.slug] || titleFor(post);
     const accessibleTitle = caption === titleFor(post) ? caption : `${caption}: ${titleFor(post)}`;
     return `<a class="native-file" ${linkAttributes(post)} title="${escape(titleFor(post))}" aria-label="${escape(accessibleTitle)}${post.kind === 'video' ? ', video' : ''}"><span class="native-file-icon native-file-icon-${extension}" aria-hidden="true">${post.kind === 'video' ? '<span>MP4</span>' : ''}</span><span class="native-file-title">${escape(caption)}</span>${post.kind === 'video' ? `<span class="native-file-size">${duration(post.duration)}</span>` : ''}</a>`;
@@ -282,13 +307,13 @@
     const focus = posts.find(post => post.slug === selectedIdea) || posts[0];
     selectedIdea = focus.slug;
     const connections = connectionsFor(focus, allItems);
-    const image = focus.cover || (focus.category === 'work' ? '/work-bridge-v1.jpg' : '/archive-library-v1.jpg');
-    const action = focus.kind === 'video' ? 'Watch video' : focus.kind === 'post' ? 'Open post' : 'Read essay';
+    const image = focus.kind === 'game' ? null : focus.cover || (focus.category === 'work' ? '/work-bridge-v1.jpg' : '/archive-library-v1.jpg');
+    const action = focus.action || (focus.kind === 'video' ? 'Watch video' : focus.kind === 'post' ? 'Open post' : 'Read essay');
     const indexButton = post => `<button type="button" data-idea-select="${post.slug}" aria-pressed="${post.slug === focus.slug}">${escape(titleFor(post))}${post.kind === 'video' ? `<span>${duration(post.duration)}</span>` : ''}</button>`;
-    return `<div class="native-idea-map">
+    return `<div class="native-idea-map${focus.kind === 'game' ? ' native-idea-map-game' : ''}">
       <svg class="native-idea-paths" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path d="M530 250 C620 250 615 90 715 90"/><path d="M530 250 L715 250"/><path d="M530 250 C620 250 615 410 715 410"/></svg>
-      <article class="native-idea-focus">${ideaHistory.length ? '<button type="button" class="native-idea-previous" data-idea-back>Previous idea</button>' : ''}<h3 tabindex="-1" data-idea-focus-title>${escape(titleFor(focus))}</h3>${focus.viral ? `<p class="native-idea-excerpt">${escape(focus.publisher)}</p>` : ''}<a class="native-idea-open" ${linkAttributes(focus)}>${action}${focus.kind === 'video' ? ` · ${duration(focus.duration)}` : ''}</a><figure><img src="${escape(image)}" alt="" width="720" height="400" loading="lazy" decoding="async"></figure></article>
-      <nav class="native-idea-connections" aria-label="Related work"><h4 class="native-connections-heading">Related</h4>${connections.map(({ item }) => `<button type="button" data-idea-select="${item.slug}"><span class="native-connection-title">${escape(titleFor(item))}${item.kind === 'video' ? ' (video)' : ''}</span></button>`).join('')}</nav>
+      <article class="native-idea-focus">${ideaHistory.length ? '<button type="button" class="native-idea-previous" data-idea-back>Previous idea</button>' : ''}<h3 tabindex="-1" data-idea-focus-title>${escape(titleFor(focus))}</h3>${focus.viral ? `<p class="native-idea-excerpt">${escape(focus.publisher)}</p>` : ''}<a class="native-idea-open" ${linkAttributes(focus)}>${action}${focus.kind === 'video' ? ` · ${duration(focus.duration)}` : ''}</a>${image ? `<figure><img src="${escape(image)}" alt="" width="720" height="400" loading="lazy" decoding="async"></figure>` : ''}</article>
+      <nav class="native-idea-connections" aria-label="Related work"><h4 class="native-connections-heading">Related</h4>${connections.map(({ item }) => `<button type="button" data-idea-select="${item.slug}"><span class="native-connection-title">${escape(titleFor(item))}${item.kind === 'video' ? ' (video)' : item.kind === 'game' ? ' (play)' : item.kind === 'post' ? ' (post)' : ''}</span></button>`).join('')}</nav>
     </div><details class="native-idea-index"><summary>Browse all</summary><div class="native-idea-index-list">${posts.map(indexButton).join('')}</div></details>`;
   }
 
@@ -302,7 +327,7 @@
     archiveItems = index.posts.map(post => ({
       ...post,
       category:post.kind === 'video' ? 'video' : post.series?.toLowerCase() === 'komplex' ? 'work' : 'personal'
-    })).concat(externalWriting, socialClips).sort((a, b) => (rank.get(a.slug) ?? 100) - (rank.get(b.slug) ?? 100));
+    })).concat(externalWriting, socialClips, games).sort((a, b) => (rank.get(a.slug) ?? 100) - (rank.get(b.slug) ?? 100));
     const query = search.trim().toLocaleLowerCase();
     const filtered = archiveItems.filter(post => query
       ? `${post.title} ${post.subtitle || ''} ${post.series || ''} ${post.publisher || ''} ${topicsFor(post).map(topic => topicNames[topic]).join(' ')}`.toLocaleLowerCase().includes(query)
@@ -325,6 +350,7 @@
     if (remember && selectedIdea && selectedIdea !== target.slug) ideaHistory.push(selectedIdea);
     selectedIdea = target.slug;
     activeFilter = target.category;
+    rememberFilter();
     return renderArchive().then(() => { doc.querySelector('[data-idea-focus-title]')?.focus(); });
   }
 
@@ -334,15 +360,15 @@
     doc = nextDoc;
     const styles = doc.createElement('link');
     styles.rel = 'stylesheet';
-    styles.href = '/native-content.css?v=20261020d';
+    styles.href = '/native-content.css?v=20261020e';
     styles.dataset.keepEnabled = 'true';
     styles.dataset.nativeStyles = 'true';
     doc.head.appendChild(styles);
     const writing = doc.querySelector('[data-site-view="writing"]');
     const archive = doc.createElement('section');
     archive.className = 'native-archive';
-    archive.setAttribute('aria-label', 'Writing archive');
-    archive.innerHTML = `<div class="native-archive-controls"><nav class="native-filter" aria-label="Archive categories">${categories.map(category => `<button type="button" data-native-filter="${category.id}" aria-pressed="${category.id === activeFilter}" aria-controls="native-archive-results">${category.label}</button>`).join('')}</nav><label class="native-search"><span class="kram-sr-only">Search all writing and videos</span><input type="search" placeholder="Search all writing" aria-label="Search all writing and videos"></label></div><p class="native-result-count kram-sr-only" role="status" aria-live="polite"></p><div class="native-post-list" id="native-archive-results"><p>Loading the archive…</p></div>`;
+    archive.setAttribute('aria-label', 'Archive');
+    archive.innerHTML = `<div class="native-archive-controls"><nav class="native-filter" aria-label="Archive categories">${categories.map(category => `<button type="button" data-native-filter="${category.id}" aria-pressed="${category.id === activeFilter}" aria-controls="native-archive-results">${category.label}</button>`).join('')}</nav><label class="native-search"><span class="kram-sr-only">Search archive</span><input type="search" placeholder="Search archive" aria-label="Search archive"></label></div><p class="native-result-count kram-sr-only" role="status" aria-live="polite"></p><div class="native-post-list" id="native-archive-results"><p>Loading the archive…</p></div>`;
     writing.querySelector('.kram-page-head').after(archive);
     // Fold the existing clips into the same categories; avoid older aliases of
     // essays already available in the native catalogue.
@@ -376,6 +402,7 @@
       const filter = event.target.closest?.('[data-native-filter]');
       if (filter) {
         activeFilter = filter.dataset.nativeFilter;
+        rememberFilter();
         selectedIdea = null;
         ideaHistory = [];
         search = '';
@@ -395,6 +422,12 @@
   }
 
   window.KramPublication = { currentSlug, showPost, refreshLinks };
+  window.addEventListener('popstate', () => {
+    activeFilter = readFilter();
+    selectedIdea = null;
+    ideaHistory = [];
+    if (doc) renderArchive();
+  });
   frame.addEventListener('load', mount);
   if (frame.contentDocument?.querySelector('.knm-scene-home')) mount();
 })();
