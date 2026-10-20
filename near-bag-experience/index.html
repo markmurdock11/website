@@ -605,11 +605,56 @@ h1{font-size:var(--nb-type-brand);line-height:1.15;letter-spacing:-.025em}
  .nb-app[data-stage="public_sale"] .nb-actions{grid-template-columns:1fr}
 }
 
-/* Keep the pay explanation spacious, even on short screens. */
-.nb-app[data-stage="offer"] .nb-story{padding-top:20px;padding-bottom:28px}
+/* The buying steps and the earning timeline are separate groups. */
+.nb-app[data-stage="offer"] .nb-story{padding-top:20px;padding-bottom:32px}
 .nb-app[data-stage="offer"] .nb-story h2{margin-bottom:0}
-.nb-app[data-stage="offer"] .nb-visual.nb-illustrated{margin-top:24px}
-.nb-app[data-stage="offer"] .nb-scene-svg{width:100%;max-width:480px;max-height:none}
+.nb-app[data-stage="offer"] .nb-visual.nb-illustrated{max-width:560px;margin-top:32px}
+.nb-offer-guide{width:100%}
+.nb-offer-flow{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;
+ list-style:none;margin:0;padding:0;
+}
+.nb-offer-card{
+ position:relative;display:grid;grid-template-rows:auto 1fr 36px;
+ gap:12px;min-width:0;padding:20px 12px 16px;
+ border-radius:8px;background:var(--nb-paper);
+}
+.nb-offer-card-cash{background:var(--nb-lime)}
+.nb-offer-name{font-size:23px;line-height:1.2}
+.nb-offer-definition{max-width:120px;margin:0 auto;font-size:16px;line-height:1.4;text-wrap:balance}
+.nb-offer-step{display:flex;flex-direction:column;justify-content:center;font-size:14px;line-height:1.3;color:var(--nb-muted)}
+.nb-offer-price{white-space:nowrap}
+.nb-offer-arrow{position:absolute;left:100%;top:50%;width:24px;transform:translateY(-50%);font-size:24px;line-height:1;color:var(--nb-muted)}
+.nb-offer-vesting{margin-top:28px;padding-top:20px;border-top:1px solid rgba(21,20,25,.16)}
+.nb-offer-vesting-title{font-size:16px;line-height:1.3;margin-bottom:20px;text-align:left}
+.nb-offer-milestones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));list-style:none;margin:0;padding:0}
+.nb-offer-milestone{position:relative;display:grid;justify-items:center;gap:10px;min-width:0}
+.nb-offer-milestone::after{content:"";position:absolute;top:31px;left:50%;width:100%;height:1px;background:rgba(21,20,25,.3)}
+.nb-offer-milestone:last-child::after{display:none}
+.nb-offer-date{font-size:14px;line-height:18px;color:var(--nb-muted)}
+.nb-offer-dot{position:relative;z-index:1;width:7px;height:7px;border-radius:50%;background:var(--nb-ink)}
+.nb-offer-earned{font-size:22px;line-height:1.2}
+@media(max-width:600px){
+ .nb-app[data-stage="offer"] .nb-story{padding-left:0;padding-right:0}
+ .nb-app[data-stage="offer"] .nb-visual.nb-illustrated{margin-top:26px}
+ .nb-offer-flow{gap:18px}
+ .nb-offer-card{gap:10px;padding:16px 8px 13px}
+ .nb-offer-name{font-size:20px}
+ .nb-offer-definition{font-size:14px;line-height:1.4}
+ .nb-offer-step{font-size:13px}
+ .nb-offer-arrow{width:18px;font-size:20px}
+ .nb-offer-vesting{margin-top:24px;padding-top:18px}
+ .nb-offer-vesting-title{font-size:15px;margin-bottom:18px}
+ .nb-offer-date{font-size:13px}
+ .nb-offer-earned{font-size:20px}
+}
+@media(max-width:359px){
+ .nb-offer-flow{gap:14px}
+ .nb-offer-card{padding-left:5px;padding-right:5px}
+ .nb-offer-name{font-size:18px}
+ .nb-offer-arrow{width:14px;font-size:17px}
+ .nb-offer-date{font-size:12px}
+}
 .nb-header>div{min-width:0}
 .nb-header .nb-text-button{
  flex-shrink:0;min-height:44px;padding:10px 14px;
@@ -621,7 +666,7 @@ h1{font-size:var(--nb-type-brand);line-height:1.15;letter-spacing:-.025em}
   
 </head>
 <body>
-<main id="near-bag-app" class="nb-app" data-edition="webapp-21">
+<main id="near-bag-app" class="nb-app" data-edition="webapp-22">
   <header class="nb-header">
     <div><h1>The Near-Bag Experience</h1></div>
     <button class="nb-text-button" type="button" data-command="restart">New game</button>
@@ -1641,19 +1686,42 @@ function contract(c,checking,bank,doc){
  return s;
 }
 function offer(c,doc){
+ doc=doc||root.document||document;
  const terms=root.NearBag&&root.NearBag.rounds&&root.NearBag.rounds[c.round],grants=terms?[terms.cash.grant,terms.equity.grant]:[c.grant||0];
  const grantText=grants.map(count).join(' or '),firstYear=grants.map(n=>count(Math.floor(n/4))).join(' or ');
- const s=svg('Options are the right to buy shares. A share is a small piece of a company. Pay '+money(c.strike)+' for each share. Cash is money you can spend, received only if a sale pays you. Your offer has '+grantText+' options, earned over four years while you stay. Leave before the one-year cliff and earn zero. At one year, earn the first 25 percent: '+firstYear+' options. Then earn more each month.',256,doc);
- [8,176,344].forEach((x,i)=>box(s,x,12,128,100,i===2?LIME:PAPER,8));
- text(s,72,44,'Options',23);text(s,240,44,'Shares',23);text(s,408,44,'Cash',23);
- text(s,72,74,'Right to',16);text(s,72,99,'buy shares',16);
- text(s,240,74,'Part of',16);text(s,240,99,'a company',16);
- text(s,408,74,'Money to',16);text(s,408,99,'spend',16);
- arrow(s,156,63);arrow(s,324,63);
- text(s,156,139,'Buy: '+money(c.strike)+'/share',15,MUTED);text(s,348,139,'Sell',15,MUTED);
- text(s,72,180,'Before year 1',15,MUTED);text(s,240,180,'Year 1',15,MUTED);text(s,408,180,'Year 4',15,MUTED);
- line(s,72,201,408,201,MUTED,2);[72,240,408].forEach(x=>circle(s,x,201,4,INK));
- text(s,72,238,'0 earned',17);text(s,240,238,'25% earned',17);text(s,408,238,'All earned',17);
+ const html=(tag,cls,value)=>{const n=doc.createElement(tag);n.className=cls;if(value!==undefined)n.textContent=value;return n;};
+ const s=html('div','nb-offer-guide'),flow=html('ol','nb-offer-flow');
+ flow.setAttribute('aria-label','From options to cash');
+ const cards=[
+  ['Options','Right to buy shares','Buy',money(c.strike)+'/share'],
+  ['Shares','Part of a company','Sell',''],
+  ['Cash','Money to spend','','']
+ ];
+ cards.forEach(([title,description,action,price],i)=>{
+  const card=html('li','nb-offer-card'+(i===2?' nb-offer-card-cash':''));
+  card.appendChild(html('strong','nb-offer-name',title));
+  card.appendChild(html('p','nb-offer-definition',description));
+  const step=html('div','nb-offer-step');
+  if(action)step.appendChild(html('span','',action));
+  if(price)step.appendChild(html('span','nb-offer-price',price));
+  card.appendChild(step);
+  if(i<2){const next=html('span','nb-offer-arrow','→');next.setAttribute('aria-hidden','true');card.appendChild(next);}
+  flow.appendChild(card);
+ });
+ s.appendChild(flow);
+ const vesting=html('section','nb-offer-vesting');
+ vesting.setAttribute('aria-label','Options earned');
+ vesting.appendChild(html('p','nb-offer-vesting-title','Options earned'));
+ const milestones=html('ol','nb-offer-milestones');
+ [['Before year 1','0%'],['Year 1','25%'],['Year 4','100%']].forEach(([date,value])=>{
+  const milestone=html('li','nb-offer-milestone');
+  milestone.appendChild(html('span','nb-offer-date',date));
+  const dot=html('span','nb-offer-dot');dot.setAttribute('aria-hidden','true');milestone.appendChild(dot);
+  milestone.appendChild(html('strong','nb-offer-earned',value));
+  milestones.appendChild(milestone);
+ });
+ vesting.appendChild(milestones);s.appendChild(vesting);
+ s.appendChild(html('p','nb-sr-only','Options are the right to buy shares. A share is a small piece of a company. Pay '+money(c.strike)+' for each share. Cash is money you can spend, received only if a sale pays you. Your offer has '+grantText+' options, earned over four years while you stay. Leave before the one-year cliff and earn zero. At one year, earn the first 25 percent: '+firstYear+' options. Then earn more each month.'));
  return s;
 }
 function salariedJob(state,doc){
