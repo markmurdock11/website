@@ -176,7 +176,6 @@
   const escape = value => String(value || '').replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
   const titleFor = post => displayTitles[post.slug] || post.title.replace(/^(?:KURATE|KOMPLEX)\s*(?:#?\d+)?\s*[–—:\-]\s*/i, '').trim();
   const topicsFor = post => topicMap[post.slug] || (post.category === 'work' ? ['marketing','internet'] : ['culture','writing']);
-  const labelFor = post => post.kind === 'video' ? duration(post.duration) : post.publisher || (['From the Archive','KURATE','Komplex'].includes(post.series) ? '' : post.series);
   const linkAttributes = post => `href="${post.external ? escape(post.url) : postURL(post.slug)}"${post.external ? ' target="_blank" rel="noopener"' : ` data-native-post="${post.slug}"`}`;
   const date = value => new Date(value).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', timeZone:'UTC' });
   const duration = seconds => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
@@ -250,7 +249,7 @@
   }
 
   function compactRow(post) {
-    const label = labelFor(post);
+    const label = post.kind === 'video' ? duration(post.duration) : post.viral ? post.publisher : '';
     return `<article class="native-post-row${post.kind === 'video' ? ' native-post-row-video' : ''}"><a ${linkAttributes(post)}><div class="native-post-info"><h3>${escape(titleFor(post))}</h3>${label ? `<p class="native-post-meta">${escape(label)}</p>` : ''}</div>${post.cover ? `<figure class="native-post-cover"><img src="${escape(post.cover)}" alt="" width="300" height="200" loading="lazy" decoding="async"></figure>` : ''}</a></article>`;
   }
 
@@ -258,16 +257,14 @@
     const extension = post.kind === 'video' ? 'mp4' : post.kind === 'post' ? 'url' : post.external ? 'link' : 'txt';
     const caption = desktopNames[post.slug] || titleFor(post);
     const accessibleTitle = caption === titleFor(post) ? caption : `${caption}: ${titleFor(post)}`;
-    return `<a class="native-file" ${linkAttributes(post)} title="${escape(titleFor(post))}" aria-label="${escape(accessibleTitle)}"><span class="native-file-icon native-file-icon-${extension}" aria-hidden="true"><span>${extension}</span></span><span class="native-file-title">${escape(caption)}</span>${post.kind === 'video' ? `<span class="native-file-size">${duration(post.duration)}</span>` : ''}</a>`;
+    return `<a class="native-file" ${linkAttributes(post)} title="${escape(titleFor(post))}" aria-label="${escape(accessibleTitle)}${post.kind === 'video' ? ', video' : ''}"><span class="native-file-icon native-file-icon-${extension}" aria-hidden="true">${post.kind === 'video' ? '<span>MP4</span>' : ''}</span><span class="native-file-title">${escape(caption)}</span>${post.kind === 'video' ? `<span class="native-file-size">${duration(post.duration)}</span>` : ''}</a>`;
   }
 
   function groupedResults(posts, render, isSearch, files = false) {
     return categories.filter(category => isSearch || category.id === activeFilter).map(category => {
       const entries = posts.filter(post => post.category === category.id);
       if (!entries.length) return '';
-      const ordinary = entries.filter(post => !post.viral);
-      const viral = entries.filter(post => post.viral);
-      return `<section class="native-category" aria-labelledby="native-category-${category.id}"><h2 id="native-category-${category.id}"${isSearch ? '' : ' class="kram-sr-only"'}>${category.label}</h2><div${files ? ' class="native-file-grid"' : ''}>${ordinary.map(render).join('')}</div>${viral.length ? `<section class="native-viral" aria-label="Viral posts"><h3>Viral posts</h3><div${files ? ' class="native-file-grid"' : ''}>${viral.map(render).join('')}</div></section>` : ''}</section>`;
+      return `<section class="native-category" aria-labelledby="native-category-${category.id}"><h2 id="native-category-${category.id}"${isSearch ? '' : ' class="kram-sr-only"'}>${category.label}</h2><div${files ? ' class="native-file-grid"' : ''}>${entries.map(render).join('')}</div></section>`;
     }).join('');
   }
 
@@ -287,15 +284,12 @@
     const connections = connectionsFor(focus, allItems);
     const image = focus.cover || (focus.category === 'work' ? '/work-bridge-v1.jpg' : '/archive-library-v1.jpg');
     const action = focus.kind === 'video' ? 'Watch video' : focus.kind === 'post' ? 'Open post' : 'Read essay';
-    const category = categories.find(category => category.id === activeFilter);
     const indexButton = post => `<button type="button" data-idea-select="${post.slug}" aria-pressed="${post.slug === focus.slug}">${escape(titleFor(post))}${post.kind === 'video' ? `<span>${duration(post.duration)}</span>` : ''}</button>`;
-    const ordinary = posts.filter(post => !post.viral);
-    const viral = posts.filter(post => post.viral);
     return `<div class="native-idea-map">
       <svg class="native-idea-paths" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path d="M530 250 C620 250 615 90 715 90"/><path d="M530 250 L715 250"/><path d="M530 250 C620 250 615 410 715 410"/></svg>
-      <article class="native-idea-focus">${ideaHistory.length ? '<button type="button" class="native-idea-previous" data-idea-back>Previous idea</button>' : ''}<p class="native-idea-topics">${topicsFor(focus).map(topic => escape(topicNames[topic])).join(' · ')}</p><h3 tabindex="-1" data-idea-focus-title>${escape(titleFor(focus))}</h3>${focus.subtitle || focus.viral ? `<p class="native-idea-excerpt">${escape(focus.subtitle || focus.publisher)}</p>` : ''}<a class="native-idea-open" ${linkAttributes(focus)}>${action}${focus.kind === 'video' ? ` · ${duration(focus.duration)}` : ''}</a><figure><img src="${escape(image)}" alt="" width="720" height="400" loading="lazy" decoding="async"></figure></article>
-      <nav class="native-idea-connections" aria-label="Connected ideas"><h4 class="native-connections-heading">Connected ideas</h4>${connections.map(({ item, shared }) => `<button type="button" data-idea-select="${item.slug}" aria-label="Explore ${escape(titleFor(item))}${item.kind === 'video' ? ', video' : ''}"><span class="native-connection-topic">${escape(topicNames[shared[0]])}${item.kind === 'video' ? ' · video' : ''}</span><span class="native-connection-title">${escape(titleFor(item))}</span></button>`).join('')}</nav>
-    </div><details class="native-idea-index"><summary>All ${category.label.toLowerCase()} <span>${posts.length}</span></summary><div class="native-idea-index-list">${ordinary.map(indexButton).join('')}${viral.length ? `<h4>Viral posts</h4>${viral.map(indexButton).join('')}` : ''}</div></details>`;
+      <article class="native-idea-focus">${ideaHistory.length ? '<button type="button" class="native-idea-previous" data-idea-back>Previous idea</button>' : ''}<h3 tabindex="-1" data-idea-focus-title>${escape(titleFor(focus))}</h3>${focus.viral ? `<p class="native-idea-excerpt">${escape(focus.publisher)}</p>` : ''}<a class="native-idea-open" ${linkAttributes(focus)}>${action}${focus.kind === 'video' ? ` · ${duration(focus.duration)}` : ''}</a><figure><img src="${escape(image)}" alt="" width="720" height="400" loading="lazy" decoding="async"></figure></article>
+      <nav class="native-idea-connections" aria-label="Related work"><h4 class="native-connections-heading">Related</h4>${connections.map(({ item }) => `<button type="button" data-idea-select="${item.slug}"><span class="native-connection-title">${escape(titleFor(item))}${item.kind === 'video' ? ' (video)' : ''}</span></button>`).join('')}</nav>
+    </div><details class="native-idea-index"><summary>Browse all</summary><div class="native-idea-index-list">${posts.map(indexButton).join('')}</div></details>`;
   }
 
   async function renderArchive() {
@@ -313,16 +307,15 @@
     const filtered = archiveItems.filter(post => query
       ? `${post.title} ${post.subtitle || ''} ${post.series || ''} ${post.publisher || ''} ${topicsFor(post).map(topic => topicNames[topic]).join(' ')}`.toLocaleLowerCase().includes(query)
       : post.category === activeFilter);
-    if (!filtered.length) list.innerHTML = '<p class="native-empty">No matches. Try another title, topic, or series.</p>';
-    else if (era === 'desktop') list.innerHTML = `<div class="native-folder-path"><span>My documents / ${query ? 'Search results' : categories.find(category => category.id === activeFilter).label}</span><span>${filtered.length} files</span></div>${groupedResults(filtered, fileLink, query, true)}`;
+    if (!filtered.length) list.innerHTML = '<p class="native-empty">No matches. Try another search.</p>';
+    else if (era === 'desktop') list.innerHTML = groupedResults(filtered, fileLink, query, true);
     else if (era === 'signal' && !query) list.innerHTML = ideaMap(filtered, archiveItems);
     else list.innerHTML = groupedResults(filtered, compactRow, query);
     doc.querySelector('.native-result-count').textContent = query ? `${filtered.length} ${filtered.length === 1 ? 'match' : 'matches'} across the archive` : `${filtered.length} ${categories.find(category => category.id === activeFilter).label.toLowerCase()}, in selected reading order${era === 'signal' ? `. Exploring ${titleFor(archiveItems.find(post => post.slug === selectedIdea))}.` : ''}`;
     doc.querySelectorAll('[data-native-filter]').forEach(button => {
       const category = categories.find(category => category.id === button.dataset.nativeFilter);
-      const count = archiveItems.filter(post => post.category === category.id).length;
       button.setAttribute('aria-pressed', String(!query && category.id === activeFilter));
-      button.innerHTML = `<span class="native-folder-icon" aria-hidden="true"></span><span>${category.label}</span><span class="native-filter-count">${count}</span>`;
+      button.innerHTML = `<span class="native-folder-icon" aria-hidden="true"></span><span>${category.label}</span>`;
     });
   }
 
@@ -341,7 +334,7 @@
     doc = nextDoc;
     const styles = doc.createElement('link');
     styles.rel = 'stylesheet';
-    styles.href = '/native-content.css?v=20261020c';
+    styles.href = '/native-content.css?v=20261020d';
     styles.dataset.keepEnabled = 'true';
     styles.dataset.nativeStyles = 'true';
     doc.head.appendChild(styles);

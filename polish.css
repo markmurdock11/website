@@ -218,13 +218,13 @@ html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-caree
 html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field li { font-size:21px; }
 }
 /* Archive content is the main event. */
-html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing { min-height:120px; height:120px; padding:24px clamp(20px,7vw,100px); }
-html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing h1 { font-size:42px; line-height:1.15; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing { min-height:0; height:auto; padding:24px clamp(24px,7vw,104px) 0; background:#e5d5f1; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing h1 { width:100%; max-width:1080px; margin-inline:auto; font-size:32px; line-height:1.2; letter-spacing:-.025em; }
 html.knm-visual[data-era='desktop'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing { display:none; }
 html.knm-visual[data-era='desktop'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-about h1 { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
 @media(max-width:760px) {
-  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing { min-height:96px; height:96px; padding:20px; }
-  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing h1 { font-size:36px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing { min-height:0; height:auto; padding:20px 22px 0; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing h1 { font-size:28px; }
 }
 /* The media library has one destination in the primary navigation. */
 html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page='writing'] .knm-archive-recommendations,
@@ -239,3 +239,5 @@ html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page='library'] 
 
 html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-receipt-heading { color:#c7bacd; }
 html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-belief-label { color:#514359; }
+
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing .knm-scene { display:none; }

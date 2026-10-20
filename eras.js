@@ -137,7 +137,7 @@
     if (nativeStyles) doc.head.appendChild(nativeStyles);
     const polishStyles = doc.createElement('link');
     polishStyles.rel = 'stylesheet';
-    polishStyles.href = 'polish.css?v=20261020c';
+    polishStyles.href = 'polish.css?v=20261020d';
     polishStyles.dataset.keepEnabled = 'true';
     doc.head.appendChild(polishStyles);
     const site = doc.querySelector('.kram-site');
