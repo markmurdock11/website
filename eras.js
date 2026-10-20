@@ -4,13 +4,13 @@
   const frame = document.getElementById('knm-preview');
   if (!frame) return;
   const modes = [
-    { id: 'html', name: 'HTML', year: '1991', description: 'Just the words. The beginning of the web.' },
-    { id: 'desktop', name: 'Desktop', year: '2003', description: 'Open a window. Make yourself at home.' },
-    { id: 'signal', name: 'Singularity', year: 'NOW', description: 'The present-day Kram.bio.' },
+    { id: 'html', name: 'HTML' },
+    { id: 'desktop', name: 'Desktop' },
+    { id: 'signal', name: 'Singularity' },
   ];
   const validModes = new Set(modes.map(mode => mode.id));
-  const pages = new Set(['home', 'about', 'writing', 'post']);
-  const pageNames = { home: 'home', about: 'about', writing: 'archive', post: 'archive' };
+  const pages = new Set(['home', 'about', 'writing', 'library', 'post']);
+  const pageNames = { home: 'home', about: 'about', writing: 'archive', library: 'media library', post: 'archive' };
   const aliases = { modern: 'signal', skeumorphism: 'desktop' };
   const readStoredMode = () => {
     try { return localStorage.getItem('kram-era'); } catch { return null; }
@@ -24,9 +24,8 @@
   dock.className = 'era-dock';
   dock.setAttribute('aria-label', 'Website versions');
   dock.innerHTML = `
-    <div class="era-dock-intro"><span class="era-dock-title">same me, different internet.</span><span class="era-dock-caption">choose a version</span></div>
     <fieldset class="era-options"><legend class="era-sr-only">Choose a website version</legend>
-      ${modes.map(mode => `<label class="era-option"><input type="radio" name="website-era" value="${mode.id}" aria-label="${mode.name}" ${mode.id === activeMode ? 'checked' : ''}><span class="era-option-year" aria-hidden="true">${mode.year}</span><span class="era-option-name">${mode.name}</span></label>`).join('')}
+      ${modes.map(mode => `<label class="era-option"><input type="radio" name="website-era" value="${mode.id}" aria-label="${mode.name}" ${mode.id === activeMode ? 'checked' : ''}><span class="era-option-name">${mode.name}</span></label>`).join('')}
     </fieldset>
     <span class="era-sr-only" id="era-announcement" role="status" aria-live="polite"></span>`;
   document.body.appendChild(dock);
@@ -55,9 +54,10 @@
     if (!frameState) return;
     const { doc, win } = frameState;
     const site = doc.querySelector('.kram-site');
+    const displayPage = page === 'library' ? 'writing' : page;
     site.dataset.page = page;
     doc.querySelectorAll('[data-site-view]').forEach(view => {
-      view.hidden = view.dataset.siteView !== page;
+      view.hidden = view.dataset.siteView !== displayPage;
     });
     doc.querySelectorAll('.kram-site-head [data-site-page], [data-era-page]').forEach(link => {
       const selected = (link.dataset.sitePage || link.dataset.eraPage) === (page === 'post' ? 'writing' : page);
@@ -67,7 +67,7 @@
       else link.removeAttribute('aria-current');
     });
     doc.querySelectorAll('.era-location').forEach(node => { node.textContent = `https://kram.bio${page === 'post' ? location.pathname : `/${page === 'home' ? '' : `#${page}`}`}`; });
-    doc.querySelectorAll('.era-window-title').forEach(node => { node.textContent = `kram.bio — ${pageNames[page]}`; });
+    doc.querySelectorAll('.era-window-title').forEach(node => { node.textContent = {home: "Kram's desktop", about: 'About me.txt', writing: 'Archive', library: 'Media library', post: 'Reading room'}[page]; });
     document.title = page === 'home' ? 'Kram.bio — Mark Murdock' : `${pageNames[page]} — Kram.bio`;
     win.document.title = document.title;
     if (page === 'post') window.KramPublication?.showPost(window.KramPublication.currentSlug());
@@ -101,7 +101,6 @@
     document.documentElement.dataset.era = activeMode;
     dock.querySelectorAll('input').forEach(input => { input.checked = input.value === activeMode; });
     const modeInfo = modes.find(item => item.id === activeMode);
-    dock.querySelector('.era-dock-caption').textContent = modeInfo.description;
     document.querySelector('meta[name="theme-color"]').content = activeMode === 'html' ? '#ffffff' : '#e5d5f1';
     if (frameState) {
       const { doc, originalStyles, alternateStyles, alternateReady } = frameState;
@@ -117,7 +116,7 @@
     updateURL(currentPage(), push);
     syncFrameLinks();
     try { localStorage.setItem('kram-era', activeMode); } catch { /* Storage is optional. */ }
-    if (announce) document.getElementById('era-announcement').textContent = `${modeInfo.name} version selected. ${modeInfo.description}`;
+    if (announce) document.getElementById('era-announcement').textContent = `${modeInfo.name} version selected.`;
   }
 
   function attachFrame() {
@@ -131,29 +130,28 @@
     doc.head.appendChild(chromeDefaults);
     const alternateStyles = doc.createElement('link');
     alternateStyles.rel = 'stylesheet';
-    alternateStyles.href = 'eras-content.css?v=20261019c';
+    alternateStyles.href = 'eras-content.css?v=20261020b';
     alternateStyles.media = 'not all';
     doc.head.appendChild(alternateStyles);
     const nativeStyles = doc.querySelector('link[data-native-styles]');
     if (nativeStyles) doc.head.appendChild(nativeStyles);
     const polishStyles = doc.createElement('link');
     polishStyles.rel = 'stylesheet';
-    polishStyles.href = 'polish.css?v=20261019c';
+    polishStyles.href = 'polish.css?v=20261020b';
     polishStyles.dataset.keepEnabled = 'true';
     doc.head.appendChild(polishStyles);
     const site = doc.querySelector('.kram-site');
     site.insertAdjacentHTML('afterbegin', `
-      <div class="era-window-bar era-injected"><span class="era-window-title">kram.bio — home</span><span class="era-window-controls" aria-hidden="true"><span>▱</span></span></div>
-      <div class="era-address-bar era-injected"><span>Address</span><span class="era-location">https://kram.bio/</span></div>`);
+      <div class="era-window-bar era-injected"><span class="era-window-title" role="heading" aria-level="1">Kram's desktop</span><button type="button" class="era-window-close" data-era-page="home" aria-label="Return to desktop">×</button></div>`);
     const shortcuts = doc.createElement('nav');
     shortcuts.className = 'era-desktop-shortcuts era-injected';
     shortcuts.setAttribute('aria-label', 'Desktop shortcuts');
     shortcuts.innerHTML = [
-      ['home', '▣', 'My home'], ['about', '☺', 'About me'], ['writing', '▤', 'Archive']
-    ].map(([page, icon, label]) => `<button type="button" data-era-page="${page}"><span class="era-shortcut-icon" aria-hidden="true">${icon}</span><span>${label}</span></button>`).join('');
+      ['home', 'computer', 'Desktop'], ['about', 'document', 'About me'], ['writing', 'folder', 'Archive'], ['library', 'books', 'Media library']
+    ].map(([page, icon, label]) => `<button type="button" data-era-page="${page}"><span class="era-shortcut-icon era-icon-${icon}" aria-hidden="true"></span><span>${label}</span></button>`).join('');
     doc.body.prepend(shortcuts);
     doc.querySelector('.kram-home-hero').insertAdjacentHTML('beforeend', `
-      <aside class="era-home-extra era-injected"><div class="era-portrait"><img src="mark-portrait.jpg" alt="Mark Murdock" width="160" height="160" decoding="async"></div><p class="era-home-label">welcome to kram.bio</p><p class="era-home-note">reading · travel · biotech · crypto · nuclear · space · <em>sunglasses</em></p></aside>`);
+      <aside class="era-home-extra era-injected"><div class="era-portrait"><img src="mark-portrait.jpg" alt="Mark Murdock" width="160" height="160" decoding="async"></div></aside>`);
     frameState = { doc, win, originalStyles, alternateStyles, alternateReady: false };
     // Capturing also makes dynamically inserted navigation behave like original links.
     doc.addEventListener('click', event => {

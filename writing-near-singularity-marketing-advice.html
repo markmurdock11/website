@@ -12,9 +12,9 @@
   <meta property="og:url" content="https://kram.bio/writing-near-singularity-marketing-advice.html">
   <meta property="og:type" content="article">
   <link rel="preload" href="home-arrival-v1.jpg" as="image">
-  <link rel="stylesheet" href="eras-shell.css?v=20261019c">
-  <script src="publication.js?v=20261019c" defer></script>
-  <script src="eras.js?v=20261019c" defer></script>
+  <link rel="stylesheet" href="eras-shell.css?v=20261020b">
+  <script src="publication.js?v=20261020b" defer></script>
+  <script src="eras.js?v=20261020b" defer></script>
   <style>
     html, body { width: 100%; min-height: 100%; margin: 0; background: #e5d5f1; }
     #knm-preview { width: 100%; height: 100svh; display: block; border: 0; visibility: hidden; background: #e5d5f1; }
@@ -32,7 +32,7 @@
       const initialPage = requested === "inbox" ? "about" : requested === "media" ? "writing" : (pages.has(requested) ? requested : "home");
       if (requested === "inbox") history.replaceState(null, "", `${location.pathname}${location.search}#about`);
       if (requested === "media") history.replaceState(null, "", `${location.pathname}${location.search}#writing`);
-      frame.src = `site-core.html?v=20261019c${initialPage === "home" ? "" : `#${initialPage}`}`;
+      frame.src = `site-core.html?v=20261020b${initialPage === "home" ? "" : `#${initialPage}`}`;
 
       const scene = (name, inner = "") => `<div class="knm-scene knm-scene-${name}" aria-hidden="true">${inner}</div>`;
 
@@ -60,7 +60,7 @@
           homeTitle.textContent = "KRAM";
         }
         const homeIdentity = doc.querySelector(".kram-home-identity");
-        if (homeIdentity) homeIdentity.innerHTML = `I'm <a href="https://www.linkedin.com/in/mark-murdock-/" target="_blank" rel="noopener" aria-label="Mark Murdock on LinkedIn">Mark Murdock <span aria-hidden="true">↗</span></a> but most people call me...`;
+        if (homeIdentity) homeIdentity.textContent = "I'm Mark Murdock, but most people call me…";
         const homeCredo = doc.querySelector(".kram-home-copy > p:not(.kram-home-identity)");
         if (homeCredo) homeCredo.textContent = "my favorite thing is doing something for the first time.";
 
@@ -69,13 +69,10 @@
         pointLink(headerWriting, "writing", "archive");
         doc.querySelector('.kram-site-head nav [data-site-page="media"]')?.remove();
         if (headerWriting && headerAbout) headerWriting.before(headerAbout);
+        headerWriting?.insertAdjacentHTML("afterend", '<a href="#library" data-site-page="library">library</a>');
 
-        const doors = [...doc.querySelectorAll(".kram-doors a")];
-        pointLink(doors[0], "about");
-        if (doors[0]) doors[0].querySelector("strong").textContent = "about me";
-        pointLink(doors[1], "writing");
-        if (doors[1]) doors[1].querySelector("strong").textContent = "archive";
-        doors[2]?.remove();
+        doc.querySelector(".kram-doors")?.remove();
+        doc.querySelector(".kram-newsletter-line")?.remove();
 
         /* Archive: writing with a reason to click, then the full library. */
         const writingView = doc.querySelector('[data-site-view="writing"]');
@@ -111,13 +108,14 @@
         if (writingView && mediaExplorer && professionalWriting) {
           const recommendations = doc.createElement("section");
           recommendations.className = "knm-archive-recommendations";
+          recommendations.id = "personal-media-library";
           recommendations.setAttribute("aria-labelledby", "knm-recommendations-title");
           recommendations.innerHTML = `
             <div class="knm-archive-recommendations-art">
               <img src="media-constellation-v1.jpg" alt="" loading="lazy" decoding="async">
               <div class="knm-recommendations-copy">
-                <span id="knm-recommendations-title">things worth returning to</span>
-                <p>Films, books, songs, essays, and esoteric PDFs I've saved and liked over the years.</p>
+                <span id="knm-recommendations-title" role="heading" aria-level="1">my personal media library</span>
+                <p>Films, books, songs, and other things I’ve saved.</p>
               </div>
             </div>`;
           recommendations.appendChild(mediaExplorer);
@@ -173,63 +171,43 @@
           }
         }
         aboutIntro?.querySelector(".kram-about-lede")?.remove();
-        if (aboutPath) {
-          aboutPath.innerHTML = `I'm semi-available for positioning, launches, and narrative work through <a href="https://aurient.ai/" target="_blank" rel="noopener">Aurient</a> with <a href="https://www.emmajoelle.com/" target="_blank" rel="noopener">Emma</a> and <a href="https://ldf.bio/" target="_blank" rel="noopener">LDF</a>.`;
-          const currentCopy = doc.createElement("div");
-          currentCopy.className = "knm-about-current-copy";
-          aboutPath.before(currentCopy);
-          currentCopy.appendChild(aboutPath);
-          currentCopy.insertAdjacentHTML("beforeend", `<a class="knm-work-with-us" href="https://aurient.ai/" target="_blank" rel="noopener">Work with us <span class="ui-arrow" aria-hidden="true">→</span></a>`);
-          currentCopy.insertAdjacentHTML("afterend", `
-            <div class="knm-belief-field" aria-labelledby="knm-belief-title">
-              <span class="knm-belief-label" id="knm-belief-title">IN GENERAL, I BELIEVE…</span>
-              <ol>
-                <li class="belief-friendship">friendship is the most important salve for scrolling.</li>
-                <li class="belief-life">life should be lived as if you get one shot at it.</li>
-                <li class="belief-romance">grand romance is alive and well—and should be more consistently espoused.</li>
-                <li class="belief-flatcoin">fiat will eventually be replaced by an algorithmic flatcoin.</li>
-                <li class="belief-terraforming">terraforming is probably the most interesting research frontier.</li>
-              </ol>
-            </div>`);
-        }
+        aboutPath?.remove();
         interests?.remove();
+        aboutIntro?.insertAdjacentHTML("beforeend", `
+          <section class="knm-belief-field" aria-labelledby="knm-belief-title">
+            <h2 class="knm-belief-label" id="knm-belief-title">In general, I believe…</h2>
+            <ol>
+              <li>friendship is the most important salve for scrolling.</li>
+              <li>life should be lived as if you get one shot at it.</li>
+              <li>grand romance is alive and well—and should be more consistently espoused.</li>
+              <li>fiat will eventually be replaced by an algorithmic flatcoin.</li>
+              <li>terraforming is probably the most interesting research frontier.</li>
+            </ol>
+            <aside class="knm-belief-interests" aria-labelledby="knm-interests-title">
+              <h3 id="knm-interests-title">Drawn to</h3>
+              <p>reading · travel · biotech · crypto · nuclear · space · <em>sunglasses</em></p>
+            </aside>
+          </section>`);
 
         if (receipts) {
           receipts.innerHTML = `
-            <span class="kram-receipt-heading">EXPERIENCE</span>
-            <p class="knm-experience-intro">Six years in crypto—editorial, product launches, and narrative.</p>
+            <h2 class="kram-receipt-heading">Experience</h2>
             <div class="knm-career-relay">
-              <article class="knm-career-node knm-layerzero-node">
-                <a class="knm-career-name" href="https://x.com/kramnotmark/status/2088356758083514494" target="_blank" rel="noopener">LAYERZERO <span class="knm-mobile-external-mark" aria-hidden="true">↗</span></a>
-                <p>Led narrative, comms + social across products, launches, and crises.</p>
-                <details class="knm-launches"><summary>Selected launches</summary><div class="knm-career-satellites" aria-label="Selected LayerZero launches">
-                  <a href="https://fortune.com/2026/02/10/layerzero-blockchain-ark-citadel-cathie-wood-nyse-dtcc-ice-tokenization-crypto/" target="_blank" rel="noopener"><span>ZERO</span><strong>Citadel · DTCC · ICE · Google Cloud · a16z</strong></a>
-                  <a href="https://stargate.discourse.group/t/layerzero-foundation-acquisition-of-stargate-stg/682" target="_blank" rel="noopener"><span>STARGATE</span><strong>$110M DAO acquisition</strong></a>
-                  <a href="https://layerzero.network/blog/the-zro-token" target="_blank" rel="noopener"><span>ZRO</span><strong>~$5B token launch</strong></a>
-                  <a href="https://layerzero.network/blog/layerzero-v2-deep-dive" target="_blank" rel="noopener"><span>V2</span><strong>product narrative + launch comms</strong></a>
-                </div></details>
+              <article class="knm-career-node">
+                <a class="knm-career-name" href="https://x.com/kramnotmark/status/2088356758083514494" target="_blank" rel="noopener">LayerZero</a>
+                <p>Narrative, comms &amp; social.</p>
               </article>
               <article class="knm-career-node">
-                <a class="knm-career-name" href="https://blog.li.fi/jumper-cryptos-everything-exchange-fa5611abccd1" target="_blank" rel="noopener">JUMPER <span class="knm-mobile-external-mark" aria-hidden="true">↗</span></a>
-                <p>Positioning + launch GTM for crypto's everything exchange.</p>
+                <a class="knm-career-name" href="https://blog.li.fi/jumper-cryptos-everything-exchange-fa5611abccd1" target="_blank" rel="noopener">Jumper / LI.FI</a>
+                <p>Positioning &amp; launch.</p>
               </article>
               <article class="knm-career-node">
-                <a class="knm-career-name" href="https://unchainedcrypto.com/author/mmurdock/" target="_blank" rel="noopener">UNCHAINED <span class="knm-mobile-external-mark" aria-hidden="true">↗</span></a>
-                <p>Wrote a newsletter a day, built it to 10k subscribers, and ran social.</p>
+                <a class="knm-career-name" href="https://unchainedcrypto.com/author/mmurdock/" target="_blank" rel="noopener">Unchained</a>
+                <p>Daily newsletter &amp; social.</p>
               </article>
             </div>`;
         }
 
-        if (aboutView && receipts) {
-          const now = doc.createElement("section");
-          now.className = "knm-about-now";
-          now.innerHTML = `
-            <p>I also write <a href="https://kramnotmark.substack.com/about" target="_blank" rel="noopener">Kram Not Mark</a>.</p>
-            <span class="knm-interests-label">INTERESTS</span>
-            <p class="knm-about-interests">reading · travel · biotech · crypto · nuclear · space · <em>sunglasses</em></p>
-            <a class="knm-about-archive-link" href="#writing" data-site-page="writing">Explore the archive <span class="ui-arrow" aria-hidden="true">→</span></a>`;
-          receipts.insertAdjacentElement("afterend", now);
-        }
         nowStrip?.remove();
         fragment?.remove();
 

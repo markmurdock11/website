@@ -239,3 +239,35 @@ html[data-era='desktop'] { --era-ink: #241d2c; --era-paper: #fffdfb; --era-link:
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* The desktop owns navigation; the document inside it does not repeat it. */
+[data-era='desktop'] .kram-site-head { display: none; }
+[data-era='desktop'] .era-window-bar { padding: 5px 6px 5px 10px; min-height: 34px; }
+[data-era='desktop'] .era-window-close { width: 24px; min-height: 24px; padding: 0; font: 18px/20px Arial,sans-serif; background: #ded4e6; color: #241d2c; border: 2px outset #eee4f4; }
+[data-era='desktop'] .kram-site[data-page='home'] .era-window-close { visibility: hidden; }
+[data-era='desktop'] .kram-view { margin-top: 5px; }
+[data-era='desktop'] .kram-page-head { padding-bottom: 0; border: 0; }
+[data-era='desktop'] .kram-page-head h1 { font-size: 34px; }
+[data-era='desktop'] .era-desktop-shortcuts button { min-height: 78px; }
+[data-era='desktop'] .era-desktop-shortcuts button[data-era-current] { background: #d6c6e477; border: 1px dotted #4c365f; }
+[data-era='desktop'] .era-shortcut-icon { position: relative; width: 38px; height: 34px; margin: 0 auto 9px; border: 1px solid #51415c; box-shadow: 2px 2px 0 #4b365738; }
+[data-era='desktop'] .era-icon-folder { height: 27px; margin-top: 7px; background: #e8d390; border-top: 3px solid #f7e8af; }
+[data-era='desktop'] .era-icon-folder::before { content:''; position:absolute; width:18px; height:7px; left:-1px; top:-8px; background:#dcc47c; border:1px solid #51415c; border-bottom:0; }
+[data-era='desktop'] .era-icon-document { width:27px; background: repeating-linear-gradient(#fffdf8 0 6px,#b8a8c3 6px 7px); border:4px solid #fffdf8; outline:1px solid #51415c; }
+[data-era='desktop'] .era-icon-computer { background:#a794bf; border:4px ridge #eee4f4; }
+[data-era='desktop'] .era-icon-computer::after { content:''; position:absolute; width:28px; height:5px; left:1px; bottom:-10px; background:#ddd0e7; border:1px solid #51415c; }
+[data-era='html'] .kram-site-head { display:flex; align-items:center; flex-direction:row; justify-content:flex-start; flex-wrap:wrap; gap:12px 32px; }
+[data-era='html'] .kram-wordmark { margin:0; }
+[data-era='html'] .kram-site-head nav { gap:20px; }
+@media(max-width:760px) {
+  [data-era='desktop'] body { padding:14px 10px 24px; }
+  [data-era='desktop'] .era-desktop-shortcuts { margin-bottom:14px; gap:12px; }
+  [data-era='desktop'] .era-desktop-shortcuts button { width:76px; min-height:74px; font-size:12px; }
+  [data-era='desktop'] .kram-view { padding:24px 18px; }
+  [data-era='desktop'] .kram-page-head h1 { font-size:30px; }
+}
+[data-era='desktop'] .era-icon-books { background:linear-gradient(90deg,#c5a3d6 0 28%,#6d4d8b 28% 33%,#e6d0a0 33% 63%,#6d4d8b 63% 68%,#b5bad4 68%); border:2px ridge #eee4f4; border-bottom:4px solid #51415c; }
+@media(max-width:760px) {
+  [data-era='desktop'] .era-desktop-shortcuts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+  [data-era='desktop'] .era-desktop-shortcuts button { width:auto; min-width:0; padding-inline:2px; line-height:1.3; }
+}

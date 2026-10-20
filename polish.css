@@ -133,3 +133,109 @@ html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .
   html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-doors { left: 20px; right: auto; bottom: 24px; flex-direction: row; gap: 26px; }
   html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-newsletter-line { display: none; }
 }
+
+/* October refinement: one hierarchy, readable type, compact biography. */
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-site-head { position:relative; inset:auto; height:auto; min-height:64px; padding:8px clamp(20px,5vw,72px); background:#e5d5f1; color:#151419; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-site-head nav a,
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-wordmark { font-size:14px; line-height:1.4; opacity:1; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-wordmark::before,
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-wordmark::after,
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-site-head nav a::after { display:none; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-site-head a[aria-current="page"] { text-decoration:underline; text-underline-offset:.3em; }
+html.knm-visual[data-era='desktop'] #kram-minimal-preview .kram-site[data-page] .kram-site-head { display:none; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-footer { font-size:13px; letter-spacing:0; line-height:1.5; min-height:64px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-footer a { min-height:44px; display:inline-flex; align-items:center; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-footer .kram-external-mark { display:none; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-about-intro { display:block; margin:0; padding:52px clamp(20px,7vw,100px); }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field { display:grid; grid-template-columns:minmax(0,1fr) minmax(150px,.28fr); gap:26px 64px; width:100%; margin:0; padding:0; border:0; background:transparent; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-label { grid-column:1 / -1; margin:0; font-size:15px; font-weight:500; line-height:1.4; letter-spacing:.03em; text-transform:none; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field ol { grid-template-columns:1fr; gap:24px; padding-left:1.1em; list-style:disc; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field li { max-width:38ch; padding-left:.15em; font-size:clamp(24px,2.4vw,32px); line-height:1.35; letter-spacing:-.015em; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field li::marker { font-size:.5em; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-interests { align-self:end; padding-bottom:4px; max-width:22ch; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-interests h3 { margin:0 0 10px; line-height:1.4; font-size:14px; font-weight:500; letter-spacing:.02em; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-interests p { margin:0; font-size:18px; line-height:1.65; letter-spacing:0; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-interests em { font-style:italic; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-receipts { padding:32px clamp(20px,7vw,100px) 36px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-receipt-heading { margin:0 0 22px; padding:0; font-size:15px; font-weight:500; line-height:1.4; letter-spacing:.02em; text-transform:none; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-relay { grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-name { margin:0 0 4px; font-size:20px; letter-spacing:0; line-height:1.4; color:inherit; text-decoration:underline; text-underline-offset:.22em; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-node > p { font-size:17px; line-height:1.45; margin:0; max-width:none; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-about-intro { margin:0 0 36px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-about-intro { margin:0; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-archive-recommendations-art { display:block; min-height:0; padding:44px clamp(20px,7vw,100px) 0; background:transparent; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-archive-recommendations-art > img,
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-archive-recommendations-art::after { display:none; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-recommendations-copy { position:static; inset:auto; max-width:760px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-recommendations-copy > span { max-width:none; margin:0; font-size:clamp(30px,3.5vw,44px); line-height:1.2; letter-spacing:-.025em; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-recommendations-copy p { margin:12px 0 0; max-width:50ch; font-size:18px; line-height:1.5; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-explorer { gap:28px; padding-top:32px; padding-bottom:48px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs { padding-top:0; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs button { font-size:15px; line-height:1.4; color:inherit; min-height:44px; letter-spacing:0; padding-left:0; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs button::before { display:none; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs button[aria-pressed="true"] { text-decoration:underline; text-underline-offset:.3em; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-list-wrap a { display:block; padding:12px 0; font-size:20px; line-height:1.35; min-height:44px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-list-wrap a::after { display:none; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-library-search { display:block; margin:0 0 12px; font-size:14px; line-height:1.4; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-library-search > span { display:block; margin-bottom:6px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-library-search input { display:block; width:100%; box-sizing:border-box; min-height:44px; padding:10px 12px; border:1px solid currentColor; border-radius:0; font:inherit; font-size:16px; background:transparent; color:inherit; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-library-controls { display:flex; flex-wrap:wrap; gap:6px 18px; align-items:center; margin-top:18px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-library-controls button { min-height:44px; padding:8px 0; border:0; color:inherit; background:transparent; text-decoration:underline; text-underline-offset:.25em; font:inherit; font-size:15px; }
+html.knm-visual[data-era='desktop'] #kram-minimal-preview .kram-site[data-page] .kram-library-controls button { padding:8px 12px; border:2px outset #eee4f4; background:#e0d6e6; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-media-meta { display:flex; justify-content:flex-start; align-items:center; margin:0 0 14px; min-height:24px; font:inherit; font-size:13px; line-height:1.4; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-media-item-title { display:block; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-media-item-detail { display:block; margin-top:4px; font-size:13px; font-style:normal; line-height:1.45; color:inherit; opacity:.72; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-media-list-wrap ol { padding:0; margin:0; list-style:none; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-media-list-wrap li { margin:0; padding:0; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-library-search input:focus-visible,
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-library-controls button:focus-visible { outline:2px solid #175ff1; outline-offset:3px; }
+@media(max-width:760px) {
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field { grid-template-columns:1fr; gap:24px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field li { font-size:23px; line-height:1.38; max-width:36ch; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field ol { gap:22px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-interests { max-width:32ch; margin-top:8px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-interests p { font-size:17px; line-height:1.6; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-relay { grid-template-columns:1fr; gap:14px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-node { display:grid; grid-template-columns:110px minmax(0,1fr); align-items:baseline; gap:12px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-name { font-size:17px; margin:0; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-node > p { font-size:16px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-about-intro { padding:32px 20px 40px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-receipts { padding:28px 20px 32px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-receipt-heading { margin-bottom:18px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-site-head { min-height:58px; padding:7px 20px; height:auto; flex-direction:row; align-items:center; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-site-head nav { gap:22px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-site-head nav a,
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-wordmark { font-size:14px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-archive-recommendations-art { padding:36px 20px 0; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-explorer { padding:24px 20px 40px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs { gap:4px 18px; padding-bottom:18px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs button { font-size:14px; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-list-wrap a { font-size:19px; line-height:1.4; }
+}
+@media(max-width:360px) {
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-node { grid-template-columns:96px minmax(0,1fr); gap:10px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-career-name { font-size:16px; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field li { font-size:21px; }
+}
+/* Archive content is the main event. */
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing { min-height:120px; height:120px; padding:24px clamp(20px,7vw,100px); }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing h1 { font-size:42px; line-height:1.15; }
+html.knm-visual[data-era='desktop'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing { display:none; }
+html.knm-visual[data-era='desktop'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-about h1 { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+@media(max-width:760px) {
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing { min-height:96px; height:96px; padding:20px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-page-head-writing h1 { font-size:36px; }
+}
+/* The media library has one destination in the primary navigation. */
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page='writing'] .knm-archive-recommendations,
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page='library'] .native-archive,
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page='library'] .kram-page-head-writing { display:none; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page='library'] .knm-archive-recommendations { margin-top:0; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page='library'] .knm-recommendations-copy > span { font-weight:500; line-height:1.2; }
+@media(max-width:760px) {
+  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs button { min-height:44px; }
+  html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-site-head nav { gap:16px; }
+}
+
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-receipt-heading { color:#c7bacd; }
+html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .knm-belief-label { color:#514359; }
