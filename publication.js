@@ -224,7 +224,7 @@
       if (!item) throw new Error('This page is not in the archive.');
       let post = cache.get(slug);
       if (!post) {
-        const response = await fetch(item.data);
+        const response = await fetch(`${item.data}?v=20261020c`);
         if (!response.ok) throw new Error('This page could not load.');
         post = await response.json();
         cache.set(slug, post);
@@ -251,7 +251,7 @@
 
   function compactRow(post) {
     const label = labelFor(post);
-    return `<article class="native-post-row${post.kind === 'video' ? ' native-post-row-video' : ''}"><a ${linkAttributes(post)}><div class="native-post-info"><h3>${escape(titleFor(post))}</h3>${label ? `<p class="native-post-meta">${escape(label)}</p>` : ''}</div>${post.cover ? `<figure class="native-post-cover"><img src="${escape(post.cover)}" alt="" width="300" height="200" loading="lazy" decoding="async">${post.kind === 'video' ? '<span class="native-play-mark" aria-hidden="true">▶</span>' : ''}</figure>` : ''}</a></article>`;
+    return `<article class="native-post-row${post.kind === 'video' ? ' native-post-row-video' : ''}"><a ${linkAttributes(post)}><div class="native-post-info"><h3>${escape(titleFor(post))}</h3>${label ? `<p class="native-post-meta">${escape(label)}</p>` : ''}</div>${post.cover ? `<figure class="native-post-cover"><img src="${escape(post.cover)}" alt="" width="300" height="200" loading="lazy" decoding="async"></figure>` : ''}</a></article>`;
   }
 
   function fileLink(post) {
@@ -341,7 +341,7 @@
     doc = nextDoc;
     const styles = doc.createElement('link');
     styles.rel = 'stylesheet';
-    styles.href = '/native-content.css?v=20261020b';
+    styles.href = '/native-content.css?v=20261020c';
     styles.dataset.keepEnabled = 'true';
     styles.dataset.nativeStyles = 'true';
     doc.head.appendChild(styles);

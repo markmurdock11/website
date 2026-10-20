@@ -55,7 +55,6 @@ html[data-era] #kram-minimal-preview .native-post-row > a:hover h3 { text-decora
 html[data-era] #kram-minimal-preview .native-post-info .native-post-meta { margin: 8px 0 0; color: var(--native-muted); font: 12px/1.5 Arial, sans-serif; letter-spacing: 0; }
 html[data-era] #kram-minimal-preview .native-post-cover { position: relative; width: 100%; margin: 0; }
 html[data-era] #kram-minimal-preview .native-post-cover img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
-html[data-era] #kram-minimal-preview .native-play-mark { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%,-50%); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: #151419; background: #f7f1f8; font: 12px/1 Arial,sans-serif; }
 html[data-era] #kram-minimal-preview .native-empty { margin: 24px 0; font-size: 17px; line-height: 1.5; }
 
 /* The reader has its own stable type scale, independent of decorative site type. */
@@ -202,7 +201,6 @@ html[data-era='desktop'] #kram-minimal-preview .native-file-icon { position:rela
 html[data-era='desktop'] #kram-minimal-preview .native-file-icon::before { position:absolute; content:''; top:13px; left:8px; width:23px; height:2px; background:#d4c7db; box-shadow:0 6px #d4c7db,0 12px #d4c7db; }
 html[data-era='desktop'] #kram-minimal-preview .native-file-icon::after { position:absolute; content:''; top:-1px; right:-1px; width:12px; height:12px; border-left:1px solid #796a83; border-bottom:1px solid #796a83; background:#eee7f2; }
 html[data-era='desktop'] #kram-minimal-preview .native-file-icon span { position:absolute; left:0; right:0; bottom:3px; color:#512f8d; font:bold 9px/1 Arial,Helvetica,sans-serif; text-transform:uppercase; }
-html[data-era='desktop'] #kram-minimal-preview .native-file-icon-mp4::before { width:0; height:0; top:17px; left:15px; border-top:7px solid transparent; border-bottom:7px solid transparent; border-left:11px solid #756086; background:transparent; box-shadow:none; }
 html[data-era] #kram-minimal-preview .native-viral { margin-top:28px; }
 html[data-era] #kram-minimal-preview .native-viral > h3 { margin:0 0 14px; font:500 19px/1.4 'Spectral',Georgia,serif; letter-spacing:0; }
 html[data-era='desktop'] #kram-minimal-preview .native-viral > h3 { padding-top:14px; border-top:1px solid #d4c7db; font:bold 12px/1.4 Arial,Helvetica,sans-serif; }

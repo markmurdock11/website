@@ -130,14 +130,14 @@
     doc.head.appendChild(chromeDefaults);
     const alternateStyles = doc.createElement('link');
     alternateStyles.rel = 'stylesheet';
-    alternateStyles.href = 'eras-content.css?v=20261020b';
+    alternateStyles.href = 'eras-content.css?v=20261020c';
     alternateStyles.media = 'not all';
     doc.head.appendChild(alternateStyles);
     const nativeStyles = doc.querySelector('link[data-native-styles]');
     if (nativeStyles) doc.head.appendChild(nativeStyles);
     const polishStyles = doc.createElement('link');
     polishStyles.rel = 'stylesheet';
-    polishStyles.href = 'polish.css?v=20261020b';
+    polishStyles.href = 'polish.css?v=20261020c';
     polishStyles.dataset.keepEnabled = 'true';
     doc.head.appendChild(polishStyles);
     const site = doc.querySelector('.kram-site');

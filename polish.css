@@ -1,3 +1,9 @@
+/* Keep navigation and links text-only at every viewport size. */
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] :is(.ui-arrow, .kram-external-mark, .knm-mobile-external-mark),
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-doors b { display:none; }
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-media-list-wrap a::after,
+html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-receipts b::after { display:none; content:none; }
+
 /* Shared layout rhythm; stays enabled in all three versions. */
 html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-belief-field {
   position: static; min-height: 0; margin: 0; padding: 0;
@@ -84,12 +90,6 @@ html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .
   html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-about-intro { grid-template-columns: 1fr; gap: 36px; }
 }
 @media (max-width: 760px) {
-  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .ui-arrow,
-  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-external-mark,
-  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .knm-mobile-external-mark,
-  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-home-identity a span { display: none; }
-  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-media-list-wrap a::after { display: none; content: none; }
-  html.knm-visual[data-era] #kram-minimal-preview .kram-site[data-page] .kram-doors b { display: none; }
   html.knm-visual[data-era='signal'] #kram-minimal-preview .kram-site[data-page] .kram-media-tabs {
     display: flex; flex-wrap: wrap; gap: 6px 20px; padding: 0 0 20px; overflow: visible;
   }
