@@ -67,7 +67,7 @@
         pointLink(headerWriting, "writing", "portfolio");
         doc.querySelector('.kram-site-head nav [data-site-page="media"]')?.remove();
         if (headerWriting && headerAbout) headerWriting.before(headerAbout);
-        headerWriting?.insertAdjacentHTML("afterend", '<a href="#library" data-site-page="library">library</a>');
+        headerWriting?.insertAdjacentHTML("afterend", '<a href="#library" data-site-page="library">library</a><a href="/portfolio-company-map" target="_top">company map</a>');
 
         doc.querySelector(".kram-doors")?.remove();
         doc.querySelector(".kram-newsletter-line")?.remove();
