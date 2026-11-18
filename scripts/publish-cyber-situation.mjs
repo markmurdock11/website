@@ -49,7 +49,8 @@ const contains = (text,part) => (' '+text+' ').includes(' '+part+' ');
 const interruption = /\b(?:outages?|degrad(?:ed (?:service|performance|availability)|ation of service)|intermittent errors|elevated (?:error rates?|errors|latency)|sign[ -]?in failures?|service degradation|power cuts?|ground stop|interruption|disruption|shutdown|unavailable|inaccessible|offline|went down|lost access|could not (?:log in|sign in|access)|unable to (?:log in|sign in|access)|cancelled flights?|flights? (?:stopped|cancelled)|disrupted|suspended (?:operations|service|flights)|service (?:failed|stopped))\b/i;
 const hypothetical = /\b(?:outage drill|exercise|simulation|simulated|hypothetical|averted an outage|prevented an outage|no (?:actual |operational )?(?:outage|disruption)|no (?:evidence|indication) of (?:a |any )?(?:broad |widespread )?(?:outage|service disruption)|(?:remained|were) (?:fully )?unaffected)\b/i;
 const interruptionOther = /ausfall|störung|\bpanne\b|\bstoring\b|uitval|onderbreking|avería|interrupción|障害|(?:ご)?利用しづらい/iu;
-const hasInterruption = text => (interruption.test(text) || interruptionOther.test(text)) && !hypothetical.test(text);
+const waterInterruption = /\b(?:boil[- ]water (?:advisory|notice|order)|water[- ](?:main|line) break|(?:water main|water line) (?:break|failure)|(?:loss of|low|lost|drop in) water pressure)\b/i;
+const hasInterruption = text => (interruption.test(text) || interruptionOther.test(text) || waterInterruption.test(text)) && !hypothetical.test(text);
 function denialType(quote) {
   const explicit = /\b(?:(?:was|were|is|are)(?: not|n't) (?:the result of |due to |caused by |related to |linked to )?(?:an? )?(?:cyber[ -]?(?:attack|incident|intrusion)|malicious activity)|(?:ruled|rule) out (?:an? )?cyber[ -]?attack|there (?:was|is) no cyber[ -]?attack|no cyber[ -]?attack (?:occurred|took place))\b/i;
   const qualified = /\b(?:no (?:current |present |credible |immediate )?(?:evidence|signs?|indications?)|not aware of (?:any )?(?:evidence|signs?|indications?)|(?:have|has) not (?:found|seen|identified|detected) (?:any )?(?:evidence|signs?|indications?)|does(?: not|n't) (?:currently )?appear to (?:be|have been))\b/i;
@@ -199,7 +200,7 @@ function citedOutage(item, page) {
 async function readSource(url,fetchImpl,webKey) {
   const headers={'Content-Type':'application/json'};
   if(webKey)headers.Authorization='Bearer '+webKey;
-  const body={url,format:'markdown',...(webKey?{solveCaptcha:false}:{})};
+  const body={url,format:'markdown',solveCaptcha:false};
   const response=await fetchImpl('https://request.usestring.ai/v1/fetch',{method:'POST',headers,redirect:'error',
     signal:AbortSignal.timeout(45000),body:JSON.stringify(body)});
   if([401,402,429].includes(response.status)||response.status>=500)throw Error('String Web Access temporarily unavailable (HTTP '+response.status+')');
@@ -538,11 +539,12 @@ export async function publish({html,output,feedName,token,webKey,fetchImpl=fetch
     if(evidenceChanged)snapshot.sync.publishedAt=stamp;
     const exported=!!snapshot.sync.lastExportAt;
     snapshot.sync.publisher=exported?'String Composer and Web Access':(snapshot.sync.channels.watchlists?.lastSuccessAt||snapshot.sync.channels.followups?.lastSuccessAt)?'String Web Access':'Source-reviewed edition';
-    snapshot.sync.statusDetail=exported?'The website has received a private Composer export. The public-source checks are tracked separately.':
-      'The website monitors public sources with String Web Access. The private Composer import has its own delivery status.';
+    if(scheduled)snapshot.sync.automation=runtime.monitorHealth(snapshot,now,webKey);
+    snapshot.sync.statusDetail=snapshot.sync.automation?.detail||(exported?'The website has received a private Composer export.':
+      'Source-reviewed edition; automatic source-check status is unavailable.');
     if(scheduled)snapshot.sync.deliveryNote=exported?'A Composer export has been received.':'The latest private Composer export has not been received.';
     await writeFile(tmp,JSON.stringify(snapshot)+'\n',{flag:'wx'});await rename(tmp,output);
-    return {...result,records:snapshot.records.length,asOf:snapshot.asOf,...(scheduled?{channels:snapshot.sync.channels}:{})};
+    return {...result,records:snapshot.records.length,asOf:snapshot.asOf,...(scheduled?{channels:snapshot.sync.channels,automation:snapshot.sync.automation}:{})};
   }finally{await rm(tmp,{force:true});await lock.close();await rm(lockPath,{force:true});}
 }
 
@@ -553,8 +555,10 @@ if(process.argv[1]&&pathToFileURL(resolve(process.argv[1])).href===import.meta.u
     const result=await publish({html,output,feedName:process.env.STRING_FEED_NAME||'news.cyber_evidence_wire',token:process.env.STRING_FEED_BUILDER_KEY,
       webKey:process.env.STRING_WEB_ACCESS_KEY,scheduled:true});
     console.log(JSON.stringify(result));
+    if(result.automation && result.automation.status!=='configured')console.warn('::warning::'+result.automation.detail);
     for(const [name,detail] of Object.entries(result.channels||{})){
       if(['awaiting_credential','budget','unavailable','partial'].includes(detail.status))console.warn('::warning::String '+name+' status: '+detail.status);
     }
   }catch(error){console.error(error.message);process.exitCode=1;}
 }
+

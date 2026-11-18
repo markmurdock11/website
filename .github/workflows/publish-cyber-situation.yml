@@ -12,7 +12,7 @@ on:
       - '.github/workflows/publish-cyber-situation.yml'
   workflow_dispatch:
   schedule:
-    - cron: '17 * * * *'
+    - cron: '17,47 * * * *'
 permissions:
   contents: write
   pages: write
@@ -30,6 +30,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verify discovery, followups and publication
+        run: node --test scripts/discover-industry-outages.test.mjs scripts/follow-up-outages.test.mjs scripts/monitor-integration.test.mjs
       - name: Check industry sources, follow up on incidents and import Composer
         env:
           STRING_FEED_BUILDER_KEY: ${{ secrets.STRING_FEED_BUILDER_KEY }}
@@ -51,3 +53,4 @@ jobs:
           git push
           # The built-in token's push requires an explicit branch-based Pages build.
           gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds" --silent
+

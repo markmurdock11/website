@@ -147,6 +147,60 @@ function isDedicatedPage(url) {
 function priorInfo(record) {
   return [...claims(record),...(record.changes||[])];
 }
+// Operational updates belong to the incident timeline, never the cyber-assessment
+// change list. Only an already verified operator bulletin can supply them.
+function operationalProposals(record,source,item,page,knownPage,now) {
+  const official = item.sourceIdentity?.original || (knownPage && /official|operator|primary|authority|regulator|government/i.test(source.kind||''));
+  if (!official || !isDedicatedPage(source.url)) return [];
+  const text=String(page).replace(/<(script|style|nav|footer|aside)\b[^>]*>[\s\S]*?<\/\1>/gi,' ')
+    .replace(/<\/(?:p|div|section|h[1-6]|li)>|<br\s*\/?>/gi,'\n').replace(/<[^>]*>/g,' ')
+    .replace(/\[([^\]]+)\]\(https?:\/\/[^)]+\)/g,'$1').replace(/[\t *]+/g,' ').trim();
+  const brand=norm(record.org);
+  if (!brand || !(' '+norm(text)+' ').includes(' '+brand+' ')) return [];
+  const sourceDate=knownPage?'':stamp(source.date,now),detectedAt=new Date(now).toISOString();
+  const result=[];
+  for (const paragraph of text.split(/\n+/)) {
+    if (paragraph.length>1800) continue;
+    const ownParagraph=(' '+norm(paragraph)+' ').includes(' '+brand+' ');
+    for (const raw of paragraph.split(/(?<=[.!?])\s+/)) {
+      const quote=raw.trim();
+      if (quote.length<18 || quote.length>500 || /\b(?:if|when|once|until|will|would|could|should|may|might|expected|expect|anticipat\w*|plan\w*|scheduled|maintenance|before|after|previous|histor\w*|not|never|says|said|reports?|reported|according to|elsewhere|another)\b/i.test(quote)) continue;
+      const explicitOrg=(' '+norm(quote)+' ').includes(' '+brand+' ');
+      const self=ownParagraph && /^(?:We\b|Our\b|This advisory\b|The (?:boil[- ]water )?advisory\b)/i.test(quote);
+      if (!explicitOrg && !self) continue;
+      const boil=/\bboil[- ]water (?:advisory|notice|order)\b/i.test(quote) || (self && /\bboil[- ]water (?:advisory|notice|order)\b/i.test(paragraph));
+      let status='';
+      if (boil && /\b(?:has|have) (?:now )?been (?:lifted|rescinded)|\b(?:is|are) (?:now )?(?:lifted|rescinded)|\b(?:has|have) (?:now )?(?:lifted|rescinded)\b/i.test(quote)) status='advisory-lifted';
+      else if (boil && /\b(?:is|are|remains?) (?:now )?in effect\b|\b(?:has|have) (?:now )?(?:issued|implemented)\b|\b(?:is|are) issuing\b/i.test(quote)) status='advisory-active';
+      else if (/\b(?:service|services|water (?:service|pressure|supply))\b.{0,55}\b(?:has|have) (?:now )?been (?:fully )?restored\b|\b(?:has|have) (?:now )?(?:fully )?restored\b.{0,55}\b(?:service|services|water (?:service|pressure|supply))\b/i.test(quote)) status='service-restored';
+      if (!status) continue;
+      const id=digest(['operational',source.url,status,norm(quote)].join('|'));
+      if ((record.operationalUpdates||[]).some(e=>e.id===id) ||
+          (record.history||[]).some(h=>urlOf(h.url)===source.url && (' '+norm(h.text)+' ').includes(' '+norm(quote)+' '))) continue;
+      result.push({id,kind:'operational',status,quote,sourceUrl:source.url,sourceName:source.name,detectedAt,
+        ...(sourceDate?{sourceDate}:{timeBasis:'observed'})});
+    }
+  }
+  // Conflicting statements on a mutable bulletin need review rather than guessing
+  // which one is current from its order in the HTML.
+  const statuses=new Set(result.map(e=>e.status));
+  if (statuses.has('advisory-active') && statuses.has('advisory-lifted')) return [];
+  return result.slice(0,2);
+}
+function applyOperational(record,source,item,page,knownPage,now) {
+  const accepted=operationalProposals(record,source,item,page,knownPage,now);
+  if (!accepted.length) return accepted;
+  if (!record.sources.some(s=>urlOf(s.url)===source.url)) record.sources.push({...source,date:accepted[0].sourceDate||accepted[0].detectedAt,
+    ...(!accepted[0].sourceDate?{timeBasis:'observed'}:{})});
+  record.operationalUpdates=[...(record.operationalUpdates||[]),...accepted];
+  for (const event of accepted) {
+    const line={date:event.sourceDate||event.detectedAt,text:source.name+' reported: '+event.quote,url:source.url,
+      ...(!event.sourceDate?{timeBasis:'observed'}:{})};
+    if (!(record.history||[]).some(h=>h.url===line.url && h.text===line.text)) (record.history ||= []).push(line);
+  }
+  record.evidenceUpdatedAt=new Date(now).toISOString();
+  return accepted;
+}
 function recordProposal(record,source,item,knownPage,now) {
   const detectedAt=new Date(now).toISOString();
   const freshDate=knownPage ? '' : stamp(source.date,now);
@@ -235,6 +289,7 @@ export async function runFollowups({records,state={},now=Date.now(),fetchPage,se
       if (!item) return;
       readable=true;
       for (const change of recordProposal(record,source,item,known,now)) updates.push({incidentId:record.id,...change});
+      for (const change of applyOperational(record,source,item,page,known,now)) updates.push({incidentId:record.id,...change});
     }
     try {
       const source=chooseSource(record,entry);
@@ -263,3 +318,4 @@ export async function runFollowups({records,state={},now=Date.now(),fetchPage,se
   stats.changes=updates.length;
   return {state:{version:1,incidents:entries},updates,stats};
 }
+

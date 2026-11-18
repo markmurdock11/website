@@ -58,6 +58,24 @@ export function failedChannel(previous, now, error) {
   return channel(previous,now,error?.code==='BUDGET'?'budget':'unavailable',false,{});
 }
 
+export function monitorHealth(snapshot, now, webKey) {
+  const usage=snapshot.webAccessUsage||{};
+  const publicWindow=Math.floor(now/dayMs);
+  const used=!webKey && usage.mode==='public' && usage.window===publicWindow ? Number(usage.credits)||0 : 0;
+  const channels=snapshot.sync?.channels||{};
+  const successes=[channels.watchlists?.lastSuccessAt,channels.followups?.lastSuccessAt].filter(t=>Number.isFinite(Date.parse(t)));
+  const attempts=[channels.watchlists?.lastAttemptAt,channels.followups?.lastAttemptAt].filter(t=>Number.isFinite(Date.parse(t)));
+  const exhausted=!webKey && (used>=90 || (usage.window===publicWindow && (usage.requests>=45 || usage.retryAfter>now)));
+  const degraded=[channels.watchlists,channels.followups].some(c=>['budget','unavailable','deferred'].includes(c?.status));
+  return {status:exhausted?'paused':degraded?'degraded':webKey?'configured':'limited',mode:webKey?'authenticated':'public',
+    webAccessKeyConfigured:Boolean(webKey),...(attempts.length?{lastAttemptAt:attempts.sort((a,b)=>Date.parse(b)-Date.parse(a))[0]}:{}),
+    ...(successes.length?{lastSuccessfulCheckAt:successes.sort((a,b)=>Date.parse(b)-Date.parse(a))[0]}:{}),
+    ...(!webKey?{dailyCreditsUsed:used,dailyCreditLimit:90}:{}),
+    detail:exhausted?'Automatic source checks are paused because the public allowance is exhausted or rate-limited.':
+      degraded?'Some automatic source checks could not complete.':webKey?'Authenticated source checks are configured; individual checks can still be delayed or unavailable.':
+      'Automatic checks use a limited public allowance; authenticated String Web Access is not configured.'};
+}
+
 export async function supplement({snapshot, now, webKey, transport, runDiscovery, runFollowups, accept, verify, readPage}) {
   const stamp = new Date(now).toISOString();
   const channels = snapshot.sync.channels;
@@ -75,10 +93,11 @@ export async function supplement({snapshot, now, webKey, transport, runDiscovery
     channels.watchlists = failedChannel(channels.watchlists,stamp,error);
   }
   try {
-    // One search every three hours is sustainable on the public allowance. Known
-    // page checks can still run in the intervening hours without a search.
+    // Reserve public credits for cross-industry discovery. Authenticated jobs
+    // can search every run; public followups inspect one known page every 3h.
     const hour = Math.floor(now / hourMs);
-    const search = webKey || hour % 3 === 1 ? query => searchForFollowup(query,{fetchString:transport.fetchString,webKey}) : undefined;
+    if(!webKey && (hour % 3 !== 1 || snapshot.sync.channels.followups?.lastAttemptAt?.slice(0,13)===stamp.slice(0,13))) return;
+    const search = webKey ? query => searchForFollowup(query,{fetchString:transport.fetchString,webKey}) : undefined;
     const records = structuredClone(snapshot.records);
     const result = await runFollowups({records,state:snapshot.followupState,now,fetchPage:readPage,search,verify,limit:webKey?3:1});
     snapshot.followupState = result.state;
@@ -92,3 +111,4 @@ export async function supplement({snapshot, now, webKey, transport, runDiscovery
     channels.followups = failedChannel(channels.followups,stamp,error);
   }
 }
+

@@ -17,7 +17,8 @@ export const WATCHLIST = [
   {sector:'Sport', org:'IIHF', aliases:['International Ice Hockey Federation'], board:'https://www.iihf.com/en/news', account:'IIHFHockey', locale:'fr-CA', peers:['LNH','NHL','Ligue nationale de hockey']},
   {sector:'Technology', org:'GitHub', board:'https://www.githubstatus.com/api/v2/incidents.json', statusPage:true, account:'githubstatus', locale:'en-US', peers:['Microsoft 365','OpenAI','Anthropic','Workday']},
   {sector:'Telecom', org:'NTT Docomo', aliases:['NTTドコモ','ドコモ','Docomo'], board:'https://www.docomo.ne.jp/info/network/', locale:'ja-JP', peers:['KDDI','SoftBank'], socialOrg:'T-Mobile', account:'TMobileNews'},
-  {sector:'Transport', org:'Amtrak', board:'https://www.amtrak.com/service-alerts-and-notices', account:'AmtrakNECAlerts', locale:'it-IT', peers:['Trenitalia','Rete Ferroviaria Italiana','Deutsche Bahn']}
+  {sector:'Transport', org:'Amtrak', board:'https://www.amtrak.com/service-alerts-and-notices', account:'AmtrakNECAlerts', locale:'it-IT', peers:['Trenitalia','Rete Ferroviaria Italiana','Deutsche Bahn']},
+  {sector:'Water', org:'Spartanburg Water', board:'https://www.spartanburgwater.org/news', locale:'en-US', peers:['American Water','Thames Water','Yorkshire Water'], openUtility:true}
 ];
 const searchTerms = {
   en:'outage OR "service disruption" OR "went offline" OR "ground stop"',
@@ -26,8 +27,11 @@ const searchTerms = {
   nl:'storing OR uitval OR onderbreking', ja:'通信障害 OR システム障害 OR 利用しづらい'
 };
 const outage = /\boutage|ground stop|interruption|disruption|degrad(?:ed (?:service|performance|availability)|ation of service)|intermittent errors|elevated (?:errors?|error rates?|latency)|(?:login|sign[- ]in) (?:errors?|failures?)|unavailable|inaccessible|offline|service (?:halt|suspension)|power (?:cut|failure)|flights? (?:grounded|cancelled)|störung|ausfall|\bpanne\b|interrupción|indisponible|avería|\bstoring\b|uitval|onderbreking|\bguasto\b|\bdisservizio\b|interruzione|障害|利用しづらい|ご利用できない/iu;
+const waterEvent = /\bboil[- ]water (?:advisory|notice|order|warning)|\bwater[- ]main (?:break|burst|failure)|\bwater (?:outage|service interruption)|\b(?:loss of|lost|low|reduced) water pressure|\bwater pressure (?:loss|drop)/i;
+const waterNonEvent = /\b(?:planned|scheduled)\b|\b(?:how to|what to do|prepare for|tips for|guide to)\b|\b(?:no|without) (?:a )?boil[- ]water (?:advisory|notice|order)|\b(?:lifted|rescinded|canceled|cancelled|expired|ends?|ended)\b/i;
 const nonEvent = /\bplanned (?:outage|interruption|maintenance)|scheduled maintenance|(?:test|testing|simulation) (?:of )?(?:an? )?(?:outage|disruption)|no (?:outages?|disruption)(?:\b|s)|(?:how to|what to do|prepare for|risk of|could (?:face|cause)) (?:an? )?(?:outage|disruption)|\bmaintenance window\b/i;
-const isOutage = s => outage.test(s) && !nonEvent.test(s);
+const isWaterEvent = s => waterEvent.test(s) && !waterNonEvent.test(s) && !nonEvent.test(s);
+const isOutage = s => (outage.test(s) || isWaterEvent(s)) && !nonEvent.test(s);
 const fold = s => String(s??'').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 const label = s => fold(s).replaceAll(' ','');
 const normalizedHost = url => new URL(url).hostname.replace(/^www\./,'');
@@ -123,6 +127,32 @@ function orgHit(text,lane) {
   const matches=entries.filter(names=>names.some(n=>/[\u3040-\u30ff\u3400-\u9fff]/.test(n)?hay.includes(fold(n)):hay.includes(' '+fold(n)+' ')));
   return matches.length===1?matches[0][0]:'';
 }
+// Discover a new provider only when the article itself names one unambiguous
+// water utility. Search snippets never supply identity or publication evidence.
+function utilityOrg(text) {
+  const matches=new Set();
+  const pattern=/\b(?:[A-Z][\p{L}\p{N}'’.-]*\s+){1,5}(?:Water(?:\s+(?:(?:and|&)\s+Sewer|Authority|District|Department|Services?|Utility|Utilities|Commission))?|Utilities(?:\s+(?:Authority|District|Department|Commission))?)\b/gu;
+  for(const match of String(text).matchAll(pattern)) {
+    const name=match[0].replace(/^(?:(?:The|Today|Update|Breaking|According|Officials|Residents|Customers)\s+)+/,'').trim();
+    if(name.length<8 || name.length>100 || /^(?:Boil|Drinking|Public|Safe|Clean|National|Bottled|Hot|Cold|Mayor|Governor|Senator|President|Mr|Ms|Dr)\b/.test(name))continue;
+    matches.add(name);
+  }
+  // A municipality may operate its own water system. Require the municipality
+  // itself to issue/report the water event in the same sentence; a mayor's
+  // name or an unrelated city elsewhere in an article is not an operator.
+  for(const sentence of String(text).split(/\n+|(?<=[.!?])\s+/)) {
+    if(!isWaterEvent(sentence))continue;
+    const municipalities=[...sentence.matchAll(/\b((?:City|Town|Village|Borough|Municipality|County) of [A-Z][\p{L}'’.-]*(?:\s+(?:[A-Z][\p{L}'’.-]*|of|the)){0,3})\b/gu)];
+    if(new Set(municipalities.map(match=>match[1])).size!==1)continue;
+    const match=municipalities[0];
+    if(!match || /\b(?:Mayor|Council|Manager|Commissioner|Secretary|Director|Chief|Spokesperson|Spokesman|Spokeswoman)\b/.test(match[1]))continue;
+    if(!/^\s+(?:(?:has|have)\s+)?(?:issued|issues|announced|reports|reported|lost|experienced|is advising|are advising|is experiencing)\b/i.test(sentence.slice(match.index+match[0].length)))continue;
+    matches.add(match[1]);
+  }
+  return matches.size===1?[...matches][0]:'';
+}
+const mentionsOrg = (text,org) => (' '+fold(text)+' ').includes(' '+fold(org)+' ');
+const currentWaterNotice = s => /\b(?:issues?|has issued|have issued|is issuing|are issuing|is advising|are advising|is under|are under|currently|today|this (?:morning|afternoon|evening))\b/i.test(s);
 function makeLead({org,lane,title,evidence,detail,date,published,url,name,kind,id},ctx) {
   if(!dateValue(date)||!dateValue(published)||!urlOf(url)||!isOutage(detail)||!title||!org)return;
   if(Date.parse(date)<ctx.start||Date.parse(published)<ctx.recent||Date.parse(published)>ctx.now||
@@ -164,7 +194,7 @@ function errStatus(e) {return e.code==='BUDGET'||e.status===429?'budget':'unavai
 async function request(path,body,ctx) {
   const headers={'Content-Type':'application/json'};
   if(ctx.webKey)headers.Authorization='Bearer '+ctx.webKey;
-  if(path==='/fetch' && ctx.webKey)body={...body,solveCaptcha:false};
+  if(path==='/fetch')body={...body,solveCaptcha:false};
   const res=await ctx.fetchImpl(origin+path,{method:'POST',headers,body:JSON.stringify(body),redirect:'error',signal:AbortSignal.timeout(22000)});
   if(!res.ok)throw Object.assign(Error('String request failed'),{status:res.status});
   if(path==='/fetch'){
@@ -188,16 +218,21 @@ async function readStory(candidate,lane,ctx) {
   const {url,source,owner}=candidate;
   const info=pageInfo(await fetchPage(url,ctx));
   if(!info.title || !info.published || Date.parse(info.published)<ctx.recent)return;
-  const org=orgHit(info.title,lane)|| (owner?lane.org:'');
+  const openWater=lane.openUtility && isWaterEvent(info.title);
+  const org=orgHit(info.title,lane)|| (owner?lane.org:'') || (openWater?utilityOrg(info.body):'');
   if(!org||(!owner&&!isOutage(info.title)))return;
   const lines=info.body.split(/\n+|(?<=[.!?。])\s+/).map(l=>l.trim()).filter(l=>l.length>12&&l.length<=1250);
-  for(const line of [info.title,...lines]){
+  // Water alerts need an event-bearing body sentence, not just a headline.
+  // Lifted-only notices are handled by follow-up review, not new discovery.
+  if(lane.openUtility && waterNonEvent.test(info.title))return;
+  for(const line of (openWater?lines.filter(line=>line!==info.title):[info.title,...lines])){
     if(!isOutage(line))continue;
-    const actor=orgHit(line,lane);
+    if(openWater && !isWaterEvent(line))continue;
+    const actor=orgHit(line,lane)|| (openWater && mentionsOrg(line,org)?org:'');
     const selfReport=owner && !actor && (/\b(?:we(?:['’]re| are| have)|our (?:systems?|customers?|services?|users?))\b|当社|弊社/i.test(line) ||
       (new URL(url).hostname==='www.docomo.ne.jp' && new URL(url).pathname.startsWith('/info/network/')));
     if(actor!==org && !selfReport)continue;
-    const date=reportDay(line,info.published);
+    const date=reportDay(line,info.published)|| (openWater && currentWaterNotice(line)?info.published.slice(0,10):'');
     if(!date)continue;
     const lead=makeLead({org,lane,title:info.title,evidence:info.title+'. '+info.body,detail:line,date,published:info.published,
       url,name:owner?lane.org:source||normalizedHost(url),kind:owner?'Official bulletin':'News report'},ctx);
@@ -218,7 +253,7 @@ function searchCandidates(results,lane) {
   if(!Array.isArray(results?.results))throw Error('Invalid search results');
   return results.results.flatMap(hit=>{
     const url=urlOf(hit.url);
-    if(!url||!isOutage(String(hit.title))||!orgHit(hit.title,lane)||/(?:^|\.)(?:youtube\.com|youtu\.be|facebook\.com|x\.com|twitter\.com|news\.google\.com)$/.test(normalizedHost(url)))return [];
+    if(!url||!isOutage(String(hit.title))||!(orgHit(hit.title,lane)||(lane.openUtility&&isWaterEvent(String(hit.title))))||/(?:^|\.)(?:youtube\.com|youtu\.be|facebook\.com|x\.com|twitter\.com|news\.google\.com)$/.test(normalizedHost(url)))return [];
     return [{url,owner:normalizedHost(url)===normalizedHost(lane.board),source:hit.source}];
   });
 }
@@ -285,6 +320,7 @@ export async function discoverIndustryOutages({now=Date.now(),start,records=[],w
     const lane=WATCHLIST[index];
     const log={channel,sector:lane.sector,candidates:0,accepted:0};channels.push(log);
     if(channel==='x' && !keyed){log.status='requires_key';return;}
+    if(channel==='x' && !lane.account){log.status='not_due';next[cursorKey]=(index+1)%WATCHLIST.length;return;}
     if(next[key]===hour){log.status='already_checked';return;}
     if(Number.isSafeInteger(next[key]) && hour-next[key]<frequency){log.status='not_due';return;}
     next[key]=hour;
@@ -297,21 +333,27 @@ export async function discoverIndustryOutages({now=Date.now(),start,records=[],w
   }
   async function articles(candidates,lane,log){
     log.candidates=candidates.length;
-    const allowance=Math.min(storyBudget,keyed?2:1);
+    const allowance=Math.min(storyBudget,log.channel==='utilityDiscovery'?1:keyed?2:1);
     for(const c of candidates.slice(0,allowance)){
       storyBudget--;
       try{const lead=await readStory(c,lane,ctx);if(lead){add(lead);log.accepted++;}}
       catch(e){if(errStatus(e)==='budget')throw e;log.status='partial';}
     }
   }
-  async function search(lane,log){
+  async function search(lane,log,openUtility=false){
     const [language,country]=lane.locale.split('-');
     const entities=[lane.org,...lane.peers].map(x=>'"'+x+'"').join(' OR ');
-    const query='('+entities+') ('+searchTerms[language]+') after:'+iso(now-4*DAY).slice(0,10);
+    const terms=lane.sector==='Water'?'"water outage" OR "water service interruption" OR "boil water" OR "boil-water" OR "water main break" OR "loss of water pressure"':searchTerms[language];
+    const query=(openUtility===true?'':'('+entities+') ')+'('+terms+') after:'+iso(now-4*DAY).slice(0,10);
     const result=await request('/search',{query,language,...(keyed?{country}: {})},ctx);
     await articles(searchCandidates(result,lane),lane,log);
   }
-  await run('search',keyed?1:3,10,search);
+  await run('search',keyed?1:4,10,search);
+  const waterIndex=WATCHLIST.findIndex(lane=>lane.openUtility);
+  await run('utilityDiscovery',keyed?1:6,waterIndex,async(_,log)=>{
+    log.sector='Water';
+    await search(WATCHLIST[waterIndex],log,true);
+  });
   if(keyed)await run('regionalSearch',1,4,search);
   await run('operatorDiscovery',keyed?4:12,0,async(_,log,index)=>{
     log.sector='Cross-industry';
@@ -338,7 +380,7 @@ export async function discoverIndustryOutages({now=Date.now(),start,records=[],w
       }
     }
   });
-  await run('operator',keyed?1:2,9,async(lane,log)=>{
+  await run('operator',keyed?1:8,9,async(lane,log)=>{
     const content=await fetchPage(lane.board,ctx);
     if(lane.statusPage){const events=typeof content==='string'?JSON.parse(content):content;
       const rows=statusRows(events,lane,ctx);log.candidates=events.incidents.length;rows.forEach(add);log.accepted=rows.length;
@@ -350,3 +392,4 @@ export async function discoverIndustryOutages({now=Date.now(),start,records=[],w
   });
   return {leads,state:next,diagnostics:{checkedAt:iso(now),channels,leads:leads.length}};
 }
+
