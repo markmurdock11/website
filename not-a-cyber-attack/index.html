@@ -111,6 +111,7 @@ h1 .title-phrase{color:inherit;white-space:nowrap}
  .board .cell.compact .cell-txt{min-height:1.12em;flex-shrink:0}
  .board .cell.compact .cell-name{display:block;line-height:1.12;white-space:nowrap;text-overflow:ellipsis}
  .board .cell .cell-name{overflow-wrap:normal}
+ .board .group.side-title{flex-direction:row;align-items:stretch}.board .side-title .sector-head{height:auto;min-width:0;padding:0 3px}.board .side-title .tiles{min-width:0;margin:1px 2px}
 }
 </style>
 </head>
@@ -586,10 +587,12 @@ function renderBoard(){
  let all=[...groups].map(([name,records],order)=>({name,records:ordered(records),order,weight:Math.max(1.6,records.reduce((n,r)=>n+(reach[r.impact]||1.28),0))}));
  const slots=unpack(all,w,h),newBoard=document.createDocumentFragment();
  for(const g of slots){
-  const group=document.createElement('section');group.className='group';place(group,g,2);
-  const title=document.createElement('button');title.className='sector-head';title.dataset.sector=g.name;title.setAttribute('aria-label','Open '+metrics.sectorLabel(g.name)+' incidents');title.innerHTML='<span>'+esc(metrics.sectorLabel(g.name))+'</span>'+ico('arrow');title.style.height=headHeight+'px';
+  const sideTitle=mobile&&g.h<54&&g.w>=82;
+  const header=sideTitle?Math.min(66,Math.round(g.w*.38)):mobile&&g.h<55?13:headHeight;
+  const group=document.createElement('section');group.className=sideTitle?'group side-title':'group';place(group,g,2);
+  const title=document.createElement('button');title.className='sector-head';title.dataset.sector=g.name;title.setAttribute('aria-label','Open '+metrics.sectorLabel(g.name)+' incidents');title.innerHTML='<span>'+esc(metrics.sectorLabel(g.name))+'</span>'+ico('arrow');if(sideTitle)title.style.width=header+'px';else title.style.height=header+'px';
   const tiles=document.createElement('div');tiles.className='tiles';group.append(title,tiles);
-  const tileW=Math.max(1,g.w-10),tileH=Math.max(1,g.h-headHeight-8);
+  const tileW=Math.max(1,g.w-10-(sideTitle?header:0)),tileH=Math.max(1,g.h-8-(sideTitle?0:header));
   const caseWeights=g.records.map((r,order)=>({r,order,weight:reach[r.impact]||1.28}));
   for(const cell of unpack(caseWeights,tileW,tileH)){
    const b=document.createElement('button');place(b,cell,.9);
