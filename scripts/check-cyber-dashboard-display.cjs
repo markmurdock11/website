@@ -6,6 +6,45 @@ const { chromium, webkit } = require('playwright');
 
 const root = join(__dirname, '..', 'not-a-cyber-attack');
 const out = process.env.OUTPUT_DIR || '/tmp/monitor-screens';
+async function checkPhone(page, engine, width) {
+  const panes = page.locator('.phone-nav');
+  assert.equal(await panes.isVisible(), true);
+  const industry = page.locator('#phone-industries .industry-card');
+  assert.ok(await industry.count() >= 10);
+  const first = await industry.first().boundingBox();
+  assert.ok(first.y < (await page.viewportSize()).height, 'Industries should start on the first screen');
+  for (const button of await industry.all()) {
+    const box = await button.boundingBox();
+    assert.ok(box.width >= 44 && box.height >= 44, 'Small industry target');
+  }
+  await page.locator('#phone-industries [data-sector="Sport"]').tap();
+  await page.locator('#dialog-body [data-case="iihf-1117"]').tap();
+  assert.match(await page.locator('#dialog-body').innerText(), /Confirmed attack/i);
+  await page.locator('#dialog-body [data-record-view="evidence"]').tap();
+  assert.ok(await page.locator('#dialog-body a[href^="http"]').count());
+  await page.locator('#back').tap();
+  await page.locator('#close').tap();
+  const filter = page.locator('#legend [data-denial-filter="denial"]');
+  await filter.tap();
+  assert.equal(await filter.getAttribute('aria-pressed'), 'true');
+  await page.locator('#legend [data-denial-filter=""]').tap();
+  await panes.locator('[data-pane="trending"]').tap();
+  assert.equal(await page.locator('#trending').isVisible(), true);
+  assert.equal(await page.locator('#phone-industries').isVisible(), false);
+  await panes.locator('[data-pane="sources"]').tap();
+  const rankings = page.locator('[data-view="rankings"]:visible').first();
+  await rankings.tap();
+  await page.locator('dialog [data-rank-select="denial"]').tap();
+  await page.locator('dialog [data-rank-source]').first().tap();
+  assert.ok(await page.locator('dialog .rank-source-list a[href^="http"]').count());
+  await page.locator('#close').tap();
+  await panes.locator('[data-pane="industries"]').tap();
+  await page.locator('#phone-industries [data-sector="Technology"]').tap();
+  await page.locator('dialog [data-case="workday-1113"]').tap();
+  assert.match(await page.locator('#dialog-body').innerText(), /What changed/i);
+  if (width === 390) await page.screenshot({path: join(out, engine + '-incident-390.png')});
+  await page.locator('#close').tap();
+}
 const server = createServer(async (request, response) => {
   const pathname = new URL(request.url, 'http://localhost').pathname;
   const json = pathname === '/situation-feed.json';
@@ -36,6 +75,11 @@ async function inspect(browser, engine, width, height) {
         return rect.width > 0 && rect.height > 0 && rect.top >= 0 && rect.bottom <= innerHeight && Math.min(rect.width, rect.height) < 36;
       }).length }));
     console.log(engine, info);
+    if (mobile) await checkPhone(page, engine, width);
+    else {
+      assert.equal(await page.locator('#board').isVisible(), true);
+      assert.equal(await page.locator('.phone-nav').isVisible(), false);
+    }
     const clock = page.locator('#denial-clock');
     await clock.click();
     await page.locator('dialog[open]').waitFor();
