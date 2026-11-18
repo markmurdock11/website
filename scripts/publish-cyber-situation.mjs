@@ -10,7 +10,6 @@ import { gunzipSync } from 'node:zlib';
 const origin = 'https://feedbuilder.usestring.ai';
 const day = 86400000;
 const tiers = new Set(['confirmed', 'indications', 'unresolved', 'rumor', 'ruled-out']);
-const assessed = new Set(['confirmed', 'indications', 'ruled-out']);
 const impacts = new Set(['systemwide', 'multiservice', 'service', 'limited', 'none']);
 const clean = (s, max = 1500) => typeof s === 'string' && s.trim().length <= max ? s.trim() : '';
 const key = s => s.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
@@ -42,14 +41,15 @@ function publicLink(value) {
   } catch { return ''; }
 }
 
-const scope = 'outage-denials-v1';
-const newsDomain = /(?:^|\.)(?:reuters\.com|apnews\.com|nytimes\.com|wsj\.com|bbc\.(?:com|co\.uk)|theguardian\.com|cnn\.com|cnbc\.com|bloomberg\.com|abcnews\.(?:com|go\.com)|abc\.net\.au|cbc\.ca|9news\.com\.au|aljazeera\.com|therecord\.media|bleepingcomputer\.com|techcrunch\.com|skift\.com|ft\.com|washingtonpost\.com)$/i;
+const scope = 'outage-monitor-v2';
 const socialDomain = /(?:^|\.)(?:x\.com|twitter\.com)$/i;
 const knownHandles = new Map([['msft365status','microsoft'],['clamanna','microsoft'],['faa','faa'],['united','united airlines'],['chase','chase'],['nttdocomo','docomo']]);
 const words = value => key(value).split(' ').filter(w=>w.length>2&&!['the','and','for','organization','corporation','service','services','group','inc','spokesperson'].includes(w));
 const contains = (text,part) => (' '+text+' ').includes(' '+part+' ');
 const interruption = /\b(?:outages?|ground stop|interruption|disruption|shutdown|unavailable|inaccessible|offline|went down|lost access|could not (?:log in|sign in|access)|unable to (?:log in|sign in|access)|cancelled flights?|flights? (?:stopped|cancelled)|disrupted|suspended (?:operations|service|flights)|service (?:failed|stopped))\b/i;
 const hypothetical = /\b(?:outage drill|exercise|simulation|simulated|hypothetical|averted an outage|prevented an outage|no (?:actual |operational )?(?:outage|disruption)|no (?:evidence|indication) of (?:a |any )?(?:broad |widespread )?(?:outage|service disruption)|(?:remained|were) (?:fully )?unaffected)\b/i;
+const interruptionOther = /ausfall|störung|\bpanne\b|\bstoring\b|uitval|onderbreking|avería|interrupción|通信障害|利用しづらい/iu;
+const hasInterruption = text => (interruption.test(text) || interruptionOther.test(text)) && !hypothetical.test(text);
 function denialType(quote) {
   const explicit = /\b(?:(?:was|were|is|are)(?: not|n't) (?:the result of |due to |caused by |related to |linked to )?(?:an? )?(?:cyber[ -]?(?:attack|incident|intrusion)|malicious activity)|(?:ruled|rule) out (?:an? )?cyber[ -]?attack|there (?:was|is) no cyber[ -]?attack|no cyber[ -]?attack (?:occurred|took place))\b/i;
   const qualified = /\b(?:no (?:current |present |credible |immediate )?(?:evidence|signs?|indications?)|not aware of (?:any )?(?:evidence|signs?|indications?)|(?:have|has) not (?:found|seen|identified|detected) (?:any )?(?:evidence|signs?|indications?)|does(?: not|n't) (?:currently )?appear to (?:be|have been))\b/i;
@@ -61,91 +61,139 @@ function denialType(quote) {
     if (/(?:war kein Cyberangriff|(?:es )?handelt (?:es )?sich nicht um einen Cyberangriff|geen sprake van een cyberaanval|(?:n['’]était pas|n['’]est pas) une cyberattaque|no (?:fue|se trató de) un ciberataque)/iu.test(quote)) return 'explicit';
   }
   let result;
-  for (const sentence of quote.replace(/[’‘]/g,"'").split(/[.!?;]/)) {
-    if (denyWrongIssue.test(sentence)) continue;
+  for (const sentence of quote.replace(/[’‘]/g,"'").split(/(?<=[.!?;])/)) {
+    if (denyWrongIssue.test(sentence) || /(?:not|n['’]t)\s+(?:yet\s+)?ruled?\s+out/i.test(sentence) || /\?\s*["']?$/.test(sentence)) continue;
     const m=qualified.exec(sentence);
     if (m) {
       if (/\b(?:cyber[ -]?attack|malicious activity)\s+(?:involved|exposed|accessed|compromised|stole|targeted|affected the data)\b/i.test(sentence)) continue;
       const rest=sentence.slice(m.index+m[0].length), target=cyber.exec(rest);
       if (target && /^(?:(?:a|an|at|this|that|the|it|our|of|to|by|in|any|due|for|as|time|present|moment|result|related|linked|caused|was|is|were|being|been|be|there|has|have|involved|involving|indicate|suggest|suggesting|disruption|incident|outage|issue|failure|system|service|potential|possible|coordinated)\s*){0,18}$/.test(rest.slice(0,target.index).trim().toLowerCase())) result ??= 'qualified';
-    } else if((explicit.test(sentence)||/\b(?:it|this|outage|disruption|issue|incident|interruption)\s+(?:is|was)(?: not|n't)\s+cyber[ -]related\b/i.test(sentence)) && !/\b(?:may|might|probably|believe|think|suggest|unlikely|potentially|possibly)\b/i.test(sentence)) result='explicit';
+    } else {
+      const negative = explicit.test(sentence) ||
+        /\b(?:it|this|outage|disruption|issue|incident|interruption)\s+(?:is|was)(?: not|n't)\s+cyber[ -]related\b/i.test(sentence) ||
+        /(?:^|[:“"—–-])\s*not (?:an? )?cyber[ -]?attack(?=\s*[,.”"!;]|$)|\bden(?:y|ies|ied) (?:that )?(?:an? )?cyber[ -]?attack (?:caused|was behind|was responsible)/i.test(sentence);
+      if (negative) result = /\b(?:think|believe|suspect|apparently|possibly)\b/i.test(sentence) ? (result || 'qualified') : 'explicit';
+    }
   }
   return result;
 }
-function attribution(org,speaker,source,reviewed,trustedDomains) {
-  if (!speaker || /\b(?:anonymous|unnamed|unidentified|commentator|analyst|observer|critic|unaffiliated)\b/i.test(speaker)) return;
-  const url=new URL(source.url),host=url.hostname.replace(/^www\./,'');
-  if (/^(?:news\.google\.com|.*downdetector\.[a-z.]+)$/.test(host)) return;
-  const who=key(speaker),brand=key(org),brandWords=words(org);
-  const related=contains(who,brand)||brandWords.some(w=>contains(who,w));
-  const authority=/\b(?:fbi|cisa|ncsc|police|white house|department of|national cyber security centre|federal aviation administration)\b/i.test(speaker);
-  if (!related&&!authority || /^(?:police|local police|officials|investigators|security officials)$/i.test(speaker)) return;
-  const kind=key(source.kind);
-  if (socialDomain.test(host)) {
-    const handle=url.pathname.match(/^\/([A-Za-z0-9_]+)\/status\/\d+\/?$/)?.[1].toLowerCase();
-    const account=knownHandles.get(handle);
-    return account&&(contains(brand,account)||contains(who,account))&&(related||authority)?'statement':undefined;
-  }
-  if (/(?:reddit\.com|bsky\.app|threads\.(?:net|com)|facebook\.com|tiktok\.com)$/.test(host)) return;
-  if (newsDomain.test(host)||trustedDomains.has(host)||(reviewed&&/\b(?:news|newsroom|wire|press|journalist|reporting)\b/.test(kind))) return 'report';
-  if (/\b(?:official|operator|primary|regulator|authority|agency|government|status)\b/.test(kind)) {
-    const domainWords=host.split('.'),acronym=brand.split(' ').map(w=>w[0]).join('');
-    if (brandWords.some(w=>domainWords.includes(w))||(acronym.length>1&&domainWords.includes(acronym))||(/(?:^|\.)gov(?:\.[a-z]{2})?$/.test(host)&&(authority||related))) return 'statement';
-  }
+const socialSite = /(?:^|\.)(?:x\.com|twitter\.com|reddit\.com|bsky\.app|threads\.(?:net|com)|facebook\.com|tiktok\.com|mastodon\.social)$/i;
+function sourceIdentity(source, org) {
+  const url = new URL(source.url), host = url.hostname.replace(/^www\./, '');
+  const social = socialSite.test(host);
+  const handle = socialDomain.test(host) && url.pathname.match(/^\/([\w]+)\/status\/\d+\/?$/i)?.[1];
+  const government = /(?:^|\.)gov(?:\.[a-z]{2})?$/.test(host);
+  const officialKind = /official|operator|primary|regulator|authority|agency|government|status/i.test(source.kind);
+  const brand = key(org), hostParts = host.split('.');
+  const initials = brand.split(' ').map(w => w[0]).join('');
+  const orgHost = words(org).some(w => hostParts.includes(w)) || (initials.length > 1 && hostParts.includes(initials));
+  const original = (officialKind && (orgHost || government)) || (handle && knownHandles.get(handle.toLowerCase()) === brand);
+  const role = original ? (government ? 'Public authority' : 'Operator') : social ? 'Public post' :
+    /news|press|wire|journalis|reporting/i.test(source.kind) ? 'News outlet' : 'Published source';
+  return {original, role, handle, government};
 }
-function candidate(row,start,now,trustedDomains) {
-  if (!row||row.approved===false||row.approved==='false'||(row.review_status&&!['approved','verified'].includes(row.review_status))) return;
-  const org=clean(row.org,150),title=clean(row.title,320),incident=date(row.date,now);
-  const url=publicLink(row.source_url),name=clean(row.source_name,150),kind=clean(row.source_kind||row.kind,60),published=date(row.source_date,now);
-  const speaker=clean(row.speaker,200),quote=clean(row.quote),summary=clean(row.summary),rationale=clean(row.rationale);
-  if (!org||!title||!incident||time(incident)<time(start)||!url||!name||!kind||!published||published.slice(0,10)<incident.slice(0,10)||!summary||!speaker||quote.length<15) return;
-  const source={name,kind,url,date:published};
-  const basis=attribution(org,speaker,source,row.review_status==='verified'||row.approved===true,trustedDomains);
-  if (!basis||row.tier==='rumor') return;
-  const type=denialType(quote);
-  const correction=!type && row.tier==='confirmed' && (row.correction===true||/\b(?:correction|retraction|revised assessment)\b/i.test(rationale))
-    && /\b(?:confirmed?|detected?|attributed?|caused by|result of|disrupted by|compromised by)\b/i.test(quote)
-    && /\b(?:cyber[ -]?attack|ransomware|malicious activity)\b/i.test(quote) && !/\b(?:not|no|unconfirmed|simulat\w*|might|possibly|suspect\w*)\b/i.test(quote);
-  if (!type&&!correction) return;
-  // A breach or a forecast on its own does not establish service interruption.
-  const operational=[title,summary,clean(row.impact_note)].filter(Boolean).join(' ');
-  if (hypothetical.test(operational)||!interruption.test(operational)||row.impact==='none') return;
-  const record={org,title,date:incident,speaker,quote,summary,rationale:rationale||quote,tier:type==='explicit'?'ruled-out':type?'unresolved':'confirmed'};
-  record.impact=impacts.has(row.impact)?row.impact:'service';
-  record.impactNote=clean(row.impact_note)||summary;
-  if (clean(row.sector,100)) record.sector=clean(row.sector,100);
-  if (clean(row.cause)) record.cause=clean(row.cause);
-  const id=clean(row.incident_id||row.id,180);
-  record.id=/^[a-zA-Z0-9_-]{1,100}$/.test(id)?id:'case-'+hash(id||identity(record));
-  if (id) record.composerIncidentId=record.id;
-  if (type) {
-    record.verifiedOutageDenial=true;
-    record.denial={type,when:published,sourceName:name,sourceUrl:url,basis,speaker,quote,quoteKind:'verbatim'};
+function candidate(row, start, now) {
+  if (!row || row.approved === false || row.approved === 'false' || /^(?:rejected|excluded|invalid|discarded)$/i.test(row.review_status)) return;
+  const org = clean(row.org || row.organization || row.organisation || row.entity, 150);
+  const title = clean(row.title || row.headline, 320);
+  const incident = date(row.date || row.incident_date || row.outage_date, now);
+  const url = publicLink(row.source_url || row.source?.url || row.url);
+  const published = date(row.source_date || row.source?.date || row.published_at || row.publication_date, now);
+  const summary = clean(row.summary || row.description || row.impact_note) || title;
+  if (!org || !title || !incident || time(incident) < time(start) || !url || !published ||
+      published.slice(0,10) < incident.slice(0,10) || row.impact === 'none') return;
+  const link = new URL(url);
+  if (link.hostname === 'news.google.com' || (socialDomain.test(link.hostname) && !/\/status\/\d+\/?$/.test(link.pathname))) return;
+  const name = clean(row.source_name || row.source?.name || row.publisher, 150) || link.hostname.replace(/^www\./,'');
+  const kind = clean(row.source_kind || row.source?.kind || row.kind || row.source_type, 60) || (socialSite.test(link.hostname) ? 'Social' : 'Published source');
+  const source = {name,kind,url,date:published};
+  const details = [title, summary, clean(row.impact_note)].join(' ');
+  if (hypothetical.test(details)) return;
+  const record = {org,title,date:incident,summary,impact:impacts.has(row.impact) ? row.impact : 'service',
+    impactNote:clean(row.impact_note) || summary, tier:'unresolved'};
+  if (clean(row.sector || row.industry,100)) record.sector = clean(row.sector || row.industry,100);
+  const id = clean(row.incident_id || row.id,180);
+  record.id = /^[\w-]{1,100}$/.test(id) ? id : 'case-'+hash(id || identity(record));
+  if (id) record.composerIncidentId = record.id;
+  const incomingQuote = clean(row.quote || row.denial_quote || row.denial?.quote || row.source_quote);
+  const namedSpeaker = clean(row.speaker || row.denial?.speaker || row.attributed_to,200);
+  return {record,source,matchKey:identity(record),incomingQuote,namedSpeaker,sourceIdentity:sourceIdentity(source, org)};
+}
+function evidenceText(text) {
+  return text.normalize('NFKC').replace(/\[([^\]]+)\]\(https?:\/\/[^)]+\)/g, '$1')
+    .replace(/[*_]/g,'').replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/\s+/g,' ').trim();
+}
+const says = /\b(?:said|says|told|stated|according to|statement|spokesperson|confirmed|wrote|posted|announced|reported|ruled out|sagte|erklärte|déclaré|afirmó|verklaarde)\b/i;
+const declines = /\b(?:can(?:not|'t)|unable to|declined to|did not|would not|could not)\s+(?:yet\s+)?(?:say|confirm|conclude|claim)(?:\s+that)?[\s'":]*$/i;
+const affirmative = /\b(?:confirm(?:ed)?|detect(?:ed)?|attribut(?:ed|e)|caused by|result of|disrupted by|compromised by)\b.{0,70}\b(?:cyber[ -]?attack|ransomware|malicious activity)\b/i;
+function citedOutage(item, page) {
+  const article = evidenceText(page), search = article.toLowerCase();
+  const {record, source, namedSpeaker, sourceIdentity: publisher} = item;
+  const brand = words(record.org);
+  if (!brand.length) brand.push(key(record.org));
+  const mentionsOrg = text => brand.some(w => contains(key(text),w));
+  const pieces = article.split(/(?<=[.!?。])\s+|(?<=。)/u);
+  const outage = pieces.find(part => part.length < 1800 && hasInterruption(part) && mentionsOrg(part));
+  if (!outage && !pieces.some(part => publisher.original && part.length < 1800 && hasInterruption(part))) return;
+  const supplied = evidenceText(item.incomingQuote);
+  const phrases = [];
+  if (supplied.length >= 12 && supplied.length <= 1200) phrases.push(supplied);
+  for (const part of pieces) {
+    if (part.length > 500 || part.length < 12 || (!denialType(part) && !affirmative.test(part))) continue;
+    if (!phrases.some(p => part.includes(p))) phrases.push(part.trim());
   }
-  return {record,source,matchKey:identity(record),corrected:correction,attributed:true,basis};
-}
-function normalizeEvidence(text) {
-  return text.normalize('NFKC').replace(/\[([^\]]+)\]\(https?:\/\/[^)]+\)/g,'$1').replace(/[*_]/g,'').replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/\s+/g,' ').trim().toLowerCase();
-}
-function citedOutage(item,page) {
-  const article=normalizeEvidence(page),target=normalizeEvidence(item.record.quote);
-  if (target.length<15 || target.length>1200) return false;
-  const brand=words(item.record.org),speakers=words(item.record.speaker);
-  for(let at=article.indexOf(target);at!==-1;at=article.indexOf(target,at+target.length)) {
-    const excerpt=article.slice(Math.max(0,at-350),at+target.length+350);
-    if (!(interruption.test(excerpt)||/ausfall|störung|\bpanne\b|\bstoring\b|uitval|onderbreking|avería|interrupción|通信障害|利用しづらい/.test(excerpt))||hypothetical.test(excerpt)) continue;
-    const wordsHere=key(excerpt);
-    if (brand.length&&!brand.some(w=>contains(wordsHere,w))&&item.basis!=='statement') continue;
-    const lead=article.slice(Math.max(0,at-220),at).split(/[.!?]\s+/).at(-1);
-    if (/\b(?:can(?:not|'t)|unable to|declined to|did not|would not|could not)\s+(?:yet\s+)?(?:say|confirm|conclude|claim)(?:\s+that)?[\s'"“”‘’:]*$/i.test(lead)) continue;
-    if (item.basis==='report') {
-      const tail=article.slice(at+target.length,at+target.length+200).replace(/^['"”.]+\s*(?=,)/,'').split(/[.!?]\s+/)[0];
-      const statement=key(lead+' '+tail);
-      if (!speakers.some(w=>contains(statement,w))||!/\b(?:said|says|told|stated|according to|statement|spokesperson|confirmed|wrote|posted|announced|reported|ruled out|sagte|erklärte|déclaré|afirmó|verklaarde)\b/i.test(statement)) continue;
+  const claims = [], corrections = [];
+  for (const phrase of phrases) {
+    const target = phrase.toLowerCase(), type = denialType(phrase);
+    const confirmation = !type && affirmative.test(phrase) && !/\b(?:not|no|unconfirmed|might|possibly|suspect\w*)\b/i.test(phrase);
+    if (!type && !confirmation) continue;
+    for (let at = search.indexOf(target); at !== -1; at = search.indexOf(target, at + target.length)) {
+      const lead = article.slice(Math.max(0,at-220),at).split(/[.!?]\s+/).at(-1);
+      const tail = article.slice(at+target.length,at+target.length+180).split(/[.!?]\s+/)[0];
+      const nearby = lead + ' ' + phrase + ' ' + tail;
+      const previousSentence = article.slice(Math.max(0,at-450),at-lead.length).trim().split(/(?<=[.!?。])\s+/).at(-1) || '';
+      const newSubject = nearby.trim().match(/^(?:Separately,\s*|Meanwhile,\s*)?([A-Z][\w’-]*(?:\s+[A-Z][\w’-]*){0,4})\s+(?:said|reported|announced|confirmed|suffered|experienced|saw|denied)\s+(?:that\s+)?(?:its|their|its own|their own)\s+(?:\w+\s+){0,2}(?:outage|disruption|interruption)/);
+      if (newSubject && !mentionsOrg(newSubject[1]) && !/^(?:It|We|They|The (?:company|operator|airline|agency|department|bank))$/i.test(newSubject[1])) continue;
+      const attached = hasInterruption(nearby) && mentionsOrg(nearby);
+      const continued = hasInterruption(previousSentence) && mentionsOrg(previousSentence) &&
+        (mentionsOrg(nearby) || (!/\b(?:[A-Z][\w’-]+'s|[A-Z]{2,}'s)\s/i.test(nearby) && (
+          /\b(?:this|that|the|our|its|it)\b/i.test(phrase) || /^[\s"'“”:-]*(?:not a cyber|no (?:evidence|indication))/i.test(phrase))));
+      if (!(attached || continued || (publisher.original && hasInterruption(nearby+' '+previousSentence))) || declines.test(lead)) continue;
+      const credited = namedSpeaker && says.test(nearby) && words(namedSpeaker).some(w => contains(key(nearby),w));
+      const speaker = credited ? namedSpeaker : publisher.government ? source.name :
+        publisher.original ? record.org : publisher.handle ? '@'+publisher.handle : source.name;
+      const role = credited && key(speaker) === key(record.org) ? 'Operator' :
+        credited && key(speaker) !== key(source.name) ? 'Quoted source' : publisher.role;
+      const basis = publisher.original || (publisher.handle && !credited) ? 'statement' : 'report';
+      if (confirmation) {
+        if (publisher.original || (credited && key(speaker) === key(record.org) && publisher.role === 'News outlet'))
+          corrections.push({speaker,quote:article.slice(at,at+target.length)});
+        continue;
+      }
+      const quote = article.slice(at,at+target.length);
+      claims.push({type,when:source.date,speaker,speakerRole:role,quote,sourceUrl:source.url,sourceName:source.name,basis,quoteKind:'verbatim'});
+      break;
     }
-    return true;
   }
-  return false;
+  if (claims.length) {
+    preserveDenials(record,{denialHistory:claims});
+    const d = record.denial;
+    Object.assign(record, {speaker:d.speaker,quote:d.quote,rationale:source.name+' published this assessment: “'+d.quote+'”',
+      tier:d.type === 'explicit' && publisher.original ? 'ruled-out' : 'unresolved'});
+  } else record.verifiedOutageContext = true;
+  if (corrections.length) {
+    const {speaker,quote} = corrections[0];
+    Object.assign(record, {speaker,quote,tier:'confirmed',rationale:quote});
+    item.corrected = true;
+  } else if (!claims.length) {
+    record.rationale = source.name + ' documented the service disruption.';
+    // No unauthenticated cyber-cause assertion should escape in the feed's free text.
+    const unverifiable = /cyber|ransomware|malicious|hack(?:er|ed|ing)?|breach/i;
+    if (unverifiable.test(record.title)) record.title = record.org + ' service disruption';
+    if (unverifiable.test(record.summary)) record.summary = record.rationale;
+    if (unverifiable.test(record.impactNote)) record.impactNote = record.rationale;
+  }
+  return true;
 }
 async function readSource(url,fetchImpl,webKey) {
   const headers={'Content-Type':'application/json'};
@@ -157,28 +205,32 @@ async function readSource(url,fetchImpl,webKey) {
   if (!(response.headers.get('content-type')||'').includes('application/json')) return raw;
   try {const j=JSON.parse(raw);return clean(j.markdown||j.data?.markdown||j.content||j.data?.content,4e6)}catch{return ''}
 }
-function validDenialRecord(r) {
-  const d=r.denial;
-  return r.verifiedOutageDenial===true&&impacts.has(r.impact)&&r.impact!=='none'&&['explicit','qualified'].includes(d?.type)&&time(d.when)&&
-    clean(d.speaker,200)&&clean(d.quote)&&publicLink(d.sourceUrl)&&r.sources?.some(s=>publicLink(s.url)===publicLink(d.sourceUrl));
+function validRecord(record) {
+  if (!impacts.has(record.impact) || record.impact === 'none' || !record.sources?.some(s => publicLink(s.url))) return false;
+  if (record.denial || record.verifiedOutageDenial) {
+    const d = record.denial;
+    return record.verifiedOutageDenial === true && ['explicit','qualified'].includes(d?.type) &&
+      time(d.when) && clean(d.speaker,200) && clean(d.quote) && publicLink(d.sourceUrl) &&
+      record.sources.some(source => publicLink(source.url) === publicLink(d.sourceUrl));
+  }
+  return record.verifiedOutageContext === true;
 }
-
 function preserveDenials(target, ...records) {
-  const first = new Map();
-  for (const r of records) {
-    for (const item of [...(r.denialHistory || []), r.denial]) {
-      if (!item || !['explicit','qualified'].includes(item.type) || !time(item.when)) continue;
-      const old = first.get(item.type);
-      const sameSourceDay = old && old.sourceUrl === item.sourceUrl && old.when.slice(0,10) === item.when.slice(0,10);
-      const addsClock = sameSourceDay && old.when.length === 10 && item.when.includes('T');
-      const losesClock = sameSourceDay && item.when.length === 10 && old.when.includes('T');
-      if (!old || addsClock || (!losesClock && time(item.when) < time(old.when)) ||
-          (time(item.when) === time(old.when) && old.basis !== 'statement' && item.basis === 'statement')) first.set(item.type, item);
+  const claims = new Map();
+  for (const record of records) {
+    for (const d of [...(record.denialHistory || []), record.denial]) {
+      if (!d || !['explicit','qualified'].includes(d.type) || !time(d.when)) continue;
+      const id = [d.type, publicLink(d.sourceUrl), d.when.slice(0,10), key(d.speaker || ''), key(d.quote || '')].join('|');
+      const previous = claims.get(id);
+      if (!previous || (d.when.length > previous.when.length)) claims.set(id,d);
     }
   }
-  if (!first.size) return;
-  target.denial = first.get('explicit') || first.get('qualified');
-  if (first.size > 1) target.denialHistory = [...first.values()].sort((a,b) => time(a.when)-time(b.when));
+  if (!claims.size) return;
+  const ordered = [...claims.values()].sort((a,b) => time(a.when)-time(b.when));
+  target.denial = ordered.find(d => d.type === 'explicit') || ordered[0];
+  target.verifiedOutageDenial = true;
+  delete target.verifiedOutageContext;
+  if (ordered.length > 1) target.denialHistory = ordered;
 }
 function unionSources(existing, incoming) {
   const byUrl = new Map(existing.map(s => [publicLink(s.url) || s.url, s]));
@@ -193,44 +245,39 @@ function unionSources(existing, incoming) {
 const latest = r => r.evidenceUpdatedAt || [r.date, ...(r.sources || []).map(s => s.date)].filter(Boolean).sort((a,b) => time(b)-time(a))[0];
 
 function merge(records, item) {
-  const { record, source, corrected, attributed } = item;
-  const evidenceDate = source.date || record.date;
-  const previous = records.find(r => r.id === record.id || (record.composerIncidentId && r.composerIncidentId === record.composerIncidentId) || identity(r) === item.matchKey);
+  const {record,source} = item;
+  const sameSource = r => r.sources.some(s => publicLink(s.url) === source.url);
+  const previous = records.find(r => r.id === record.id || (record.composerIncidentId && r.composerIncidentId === record.composerIncidentId)) ||
+    records.find(r => identity(r) === item.matchKey ||
+      (key(r.org) === key(record.org) && r.date.slice(0,10) === record.date.slice(0,10) && sameSource(r)));
+  const historyEntry = {date:source.date,text:record.rationale,url:source.url};
   if (!previous) {
-    if (!record.verifiedOutageDenial) return false;
-    records.push({ ...record, sources: [source], history: [{ date: evidenceDate, text: record.rationale, url:source.url }], evidenceUpdatedAt: evidenceDate });
+    records.push({...record,sources:[source],history:[historyEntry],evidenceUpdatedAt:source.date});
     return true;
   }
-  if (key(previous.org) !== key(record.org) || !validDenialRecord(previous)) return false; // conflicting upstream ID
-  const firstDate = time(record.date) < time(previous.date) ? record.date : previous.date;
-  if (record.composerIncidentId) previous.composerIncidentId = record.composerIncidentId;
-  const currentTime = time(latest(previous)), incomingTime = time(evidenceDate);
-  const change = incomingTime > currentTime || (incomingTime === currentTime && (corrected || (attributed && !assessed.has(previous.tier))));
-  const canReplace = change && (record.tier === previous.tier || attributed ||
-    (!assessed.has(previous.tier) && previous.tier !== 'unresolved' && record.tier === 'unresolved'));
-  const isNewSource = !(previous.sources || []).some(s => publicLink(s.url) === source.url);
-  const sources = unionSources(previous.sources || [], [source]);
-  const priorDenials = { denial:previous.denial, denialHistory:previous.denialHistory };
-  if (canReplace) {
-    const history = [...(previous.history || [])];
-    if (!history.some(h => h.date === evidenceDate && h.text === record.rationale)) history.push({ date: evidenceDate, text: record.rationale, url:source.url });
-    if (previous.tier !== record.tier) {
-      delete previous.quote; delete previous.speaker; delete previous.cause;
-    }
-    Object.assign(previous, record, { id: previous.id, history, evidenceUpdatedAt: evidenceDate });
-  } else if (!previous.evidenceUpdatedAt && incomingTime > currentTime) {
-    previous.evidenceUpdatedAt = latest(previous);
+  if (key(previous.org) !== key(record.org) || !validRecord(previous)) return false;
+  const previousJSON = JSON.stringify(previous);
+  const oldClaims = {denial:previous.denial,denialHistory:previous.denialHistory};
+  const sources = unionSources(previous.sources,[source]);
+  const history = [...(previous.history || [])];
+  const existingEntry = history.some(h => h.url === source.url && h.date === source.date && h.text === historyEntry.text);
+  if (!existingEntry) history.push(historyEntry);
+  const initialDate = time(record.date) < time(previous.date) ? record.date : previous.date;
+  const recent = time(source.date) >= time(latest(previous));
+  const richer = !!record.denial && !previous.denial;
+  const keepAssessment = previous.tier === 'confirmed' && !item.corrected;
+  if (!keepAssessment && (item.corrected || richer || (recent && (record.denial || !previous.denial)))) {
+    const savedId = previous.id;
+    Object.assign(previous,record,{id:savedId});
   }
-  if (!canReplace && isNewSource) {
-    const entry = { date:evidenceDate, text:source.name + ' published additional coverage.', url:source.url };
-    previous.history = [...(previous.history || []), entry];
-  }
-  preserveDenials(previous, priorDenials, record);
-  previous.date = firstDate;
+  if (!previous.composerIncidentId && record.composerIncidentId) previous.composerIncidentId = record.composerIncidentId;
+  previous.date = initialDate;
   previous.sources = sources;
-  return true;
+  previous.history = history.sort((a,b) => time(a.date)-time(b.date));
+  if (recent) previous.evidenceUpdatedAt = source.date;
+  preserveDenials(previous,oldClaims,record);
+  return previousJSON !== JSON.stringify(previous);
 }
-
 async function bytes(response, limit) {
   const chunks = [];
   let total = 0;
@@ -299,19 +346,17 @@ export async function publish({ html, output, feedName, token, webKey, fetchImpl
   try {
     await lock.writeFile(String(process.pid));
     const seed = loadSeed(await readFile(html, 'utf8')); check(seed, now);
-    if (seed.scope!==scope||!seed.records.every(validDenialRecord)) throw Error('A reviewed outage-denial seed is required');
+    if (seed.scope !== scope || !seed.records.every(validRecord)) throw Error('A reviewed outage-monitor seed is required');
     let prior;
     try { prior = JSON.parse(await readFile(output, 'utf8')); check(prior, now); }
     catch (e) { if (e.code !== 'ENOENT') throw e; }
-    // Discard the previous broad desk and its cursor before processing or claiming delivery.
-    // This removal is valid even if credentials are missing or a later fetch fails.
-    if (prior && (prior.scope!==scope || !prior.records.every(validDenialRecord))) {
-      await writeFile(tmp, JSON.stringify(seed)+'\n', {flag:'wx'});
-      await rename(tmp, output);
-      prior=undefined;
-    }
-    if (!token) return {status:'awaiting_credential',records:seed.records.length};
+    if (!token) return {status:'awaiting_credential',records:prior?.records.length ?? seed.records.length};
     if (prior?.publisherCursor?.feedHash && prior.publisherCursor.feedHash !== hash(feedName)) throw Error('Output belongs to a different feed');
+    if (prior && prior.scope !== scope) {
+      // Replay retained exports under the broader policy; carry forward individually verified legacy records.
+      prior = {...seed,records:prior.records.filter(r => time(r.date) >= time(seed.start) && validRecord(r))};
+    }
+    if (prior && !prior.records.every(validRecord)) throw Error('Invalid existing evidence; preserving the last edition');
     const snapshot = prior || structuredClone(seed);
     const originalRecords = JSON.stringify(snapshot.records);
     if (prior) for (const r of seed.records) {
@@ -334,18 +379,14 @@ export async function publish({ html, output, feedName, token, webKey, fetchImpl
       return { status:'awaiting_subscription', records:snapshot.records.length };
     }
     if (!collection.files.length && !watermark) return {status:'awaiting_first_export', records:snapshot.records.length};
-    const trustedDomains = new Set();
-    for (const r of seed.records) for (const s of r.sources) {
-      if (/\b(?:news|press|wire|reporting)\b/i.test(s.kind)&&publicLink(s.url)) trustedDomains.add(new URL(s.url).hostname.replace(/^www\./,''));
-    }
     const sources = new Map(), corrections=[];
     let lastFileAt=watermark,accepted=0;
     for (const f of collection.files) {
       for (const row of await collection.rows(f)) {
-        const item=candidate(row,seed.start,now,trustedDomains);
+        const item=candidate(row,seed.start,now);
         if (!item) continue;
         const cached=snapshot.records.find(r=>r.id===item.record.id&&key(r.org)===key(item.record.org)&&r.sources.some(s=>s.url===item.source.url&&s.date===item.source.date)&&
-          [r.denial,...(r.denialHistory||[])].some(d=>d?.sourceUrl===item.source.url&&d.quote===item.record.quote&&d.speaker===item.record.speaker));
+          [r.denial,...(r.denialHistory||[])].some(d=>d?.sourceUrl===item.source.url&&d.quote===item.incomingQuote&&d.speaker===item.namedSpeaker));
         if (cached) continue;
         if (!sources.has(item.source.url)) sources.set(item.source.url,await readSource(item.source.url,fetchImpl,webKey));
         if (!citedOutage(item,sources.get(item.source.url))) continue;
@@ -355,7 +396,7 @@ export async function publish({ html, output, feedName, token, webKey, fetchImpl
       lastFileAt=Math.max(lastFileAt,time(f.updated_at));
     }
     for (const item of corrections) if(merge(snapshot.records,item)) accepted++;
-    if (!snapshot.records.every(validDenialRecord)) throw Error('Invalid outage or missing denial evidence');
+    if (!snapshot.records.every(validRecord)) throw Error('Invalid outage or missing source evidence');
     const evidenceChanged = originalRecords !== JSON.stringify(snapshot.records);
     snapshot.start = seed.start;
     const newest = snapshot.records.reduce((t,r) => Math.max(t, time(latest(r)), ...r.sources.map(s => time(s.date))), Math.max(time(seed.asOf), time(snapshot.asOf)));
