@@ -2,6 +2,8 @@
 import {createHash} from 'node:crypto';
 const HOUR = 3600000, DAY = HOUR * 24;
 const origin = 'https://request.usestring.ai/v1';
+const statusIncidentImpacts = new Set(['minor','major','critical']);
+const outageSearchDate = new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});
 
 export const WATCHLIST = [
   {sector:'Aviation', org:'FAA', aliases:['Federal Aviation Administration'], board:'https://www.faa.gov/newsroom', account:'FAANews', locale:'en-US', peers:['United Airlines','Air Canada','NAV CANADA']},
@@ -23,7 +25,7 @@ const searchTerms = {
   es:'caída OR avería OR interrupción', it:'guasto OR interruzione OR disservizio',
   nl:'storing OR uitval OR onderbreking', ja:'通信障害 OR システム障害 OR 利用しづらい'
 };
-const outage = /\boutage|ground stop|interruption|disruption|degraded (?:service|performance)|elevated (?:errors?|error rates?)|(?:login|sign[- ]in) (?:errors?|failures?)|unavailable|inaccessible|offline|service (?:halt|suspension)|power (?:cut|failure)|flights? (?:grounded|cancelled)|störung|ausfall|\bpanne\b|interrupción|indisponible|avería|\bstoring\b|uitval|onderbreking|\bguasto\b|\bdisservizio\b|interruzione|障害|利用しづらい|ご利用できない/iu;
+const outage = /\boutage|ground stop|interruption|disruption|degrad(?:ed (?:service|performance|availability)|ation of service)|intermittent errors|elevated (?:errors?|error rates?|latency)|(?:login|sign[- ]in) (?:errors?|failures?)|unavailable|inaccessible|offline|service (?:halt|suspension)|power (?:cut|failure)|flights? (?:grounded|cancelled)|störung|ausfall|\bpanne\b|interrupción|indisponible|avería|\bstoring\b|uitval|onderbreking|\bguasto\b|\bdisservizio\b|interruzione|障害|利用しづらい|ご利用できない/iu;
 const nonEvent = /\bplanned (?:outage|interruption|maintenance)|scheduled maintenance|(?:test|testing|simulation) (?:of )?(?:an? )?(?:outage|disruption)|no (?:outages?|disruption)(?:\b|s)|(?:how to|what to do|prepare for|risk of|could (?:face|cause)) (?:an? )?(?:outage|disruption)|\bmaintenance window\b/i;
 const isOutage = s => outage.test(s) && !nonEvent.test(s);
 const fold = s => String(s??'').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
@@ -138,6 +140,7 @@ function statusRows(data,lane,ctx) {
   const incidents=data?.incidents;if(!Array.isArray(incidents))throw Error('Invalid status board response');
   const rows=[];
   for(const item of incidents.slice(0,40)){
+    if(!item || !Array.isArray(item.incident_updates))continue;
     const date=dateValue(item.started_at||item.created_at);
     if(!date||!/^\w{6,32}$/.test(item.id||'')||typeof item.name!=='string')continue;
     const url=new URL('/incidents/'+item.id,lane.board).href;
@@ -145,7 +148,7 @@ function statusRows(data,lane,ctx) {
       .sort((a,b)=>Date.parse(b.display_at||b.created_at)-Date.parse(a.display_at||a.created_at));
     for(const update of updates){
       const detail=plain(update.body);
-      const lead=makeLead({org:lane.org,lane,title:item.name,evidence:item.name+'. '+detail,detail:isOutage(detail)?detail:item.name,
+      const lead=makeLead({org:lane.org,lane,title:item.name,evidence:lane.org+' reported: '+item.name+'. '+detail,detail:isOutage(detail)?detail:item.name,
         date,published:dateValue(update.display_at||update.created_at),url,name:lane.org+' Status',kind:'Operator status'},ctx);
       if(lead){rows.push(lead);break;}
     }
@@ -161,6 +164,7 @@ function errStatus(e) {return e.code==='BUDGET'||e.status===429?'budget':'unavai
 async function request(path,body,ctx) {
   const headers={'Content-Type':'application/json'};
   if(ctx.webKey)headers.Authorization='Bearer '+ctx.webKey;
+  if(path==='/fetch' && ctx.webKey)body={...body,solveCaptcha:false};
   const res=await ctx.fetchImpl(origin+path,{method:'POST',headers,body:JSON.stringify(body),redirect:'error',signal:AbortSignal.timeout(22000)});
   if(!res.ok)throw Object.assign(Error('String request failed'),{status:res.status});
   if(path==='/fetch'){
@@ -175,7 +179,7 @@ async function fetchPage(url,ctx) {
   const result=await request('/fetch',{url,format:'raw'},ctx);
   if(result && typeof result==='object' && 'statusCode' in result){
     if(result.statusCode<200||result.statusCode>=300)throw Error('Source unavailable');
-    if(result.finalUrl && normalizedHost(result.finalUrl)!==normalizedHost(url))throw Error('Source changed publisher');
+    if(result.finalUrl && (!urlOf(result.finalUrl) || normalizedHost(result.finalUrl)!==normalizedHost(url)))throw Error('Source changed publisher');
     return result.data;
   }
   return result;
@@ -218,6 +222,39 @@ function searchCandidates(results,lane) {
     return [{url,owner:normalizedHost(url)===normalizedHost(lane.board),source:hit.source}];
   });
 }
+function statusBoardCandidates(results, records) {
+  if(!Array.isArray(results?.results))throw Error('Invalid search results');
+  const watchlistHosts=new Set(WATCHLIST.map(lane=>normalizedHost(lane.board)));
+  const trackedHosts=new Set(records.flatMap(r=>(r.sources||[]).filter(s=>/status/i.test(s.kind||''))
+    .flatMap(s=>{const url=urlOf(s.url);return url?[normalizedHost(url)]:[];})));
+  const candidates=new Map();
+  for(const hit of results.results){
+    const url=urlOf(hit?.url);
+    if(!url)continue;
+    const parsed=new URL(url);
+    const host=normalizedHost(url);
+    if(watchlistHosts.has(host) || candidates.has(host) ||
+       !/^\/(?:history\/?|incidents\/[a-z0-9]{6,32}\/?)?$/i.test(parsed.pathname) ||
+       !/(?:^|[.-])[\w-]*status(?:page)?(?=[.-]|$)/i.test(host))continue;
+    const api=new URL('/api/v2/incidents.json',parsed.origin).href;
+    const active=/(?:elevated|degraded|unresolved incident|call failures|service disruption)/i.test(hit.snippet||'');
+    candidates.set(host,{api,score:Number(!trackedHosts.has(host))*2+Number(active)});
+  }
+  return [...candidates.values()].sort((a,b)=>b.score-a.score).map(({api})=>api);
+}
+function discoveredBoardRows(data, board, ctx) {
+  const page=data?.page, homepage=urlOf(page?.url);
+  const name=typeof page?.name==='string'?plain(page.name).replace(/\s+status(?: page)?$/i,'').trim():'';
+  if(!homepage || normalizedHost(homepage)!==normalizedHost(board) ||
+     !/^[a-z0-9]{6,32}$/i.test(page.id||'') || !name || name.length>120 || /^status(?: page)?$/i.test(name) ||
+     !Array.isArray(data.incidents))throw Error('Unverified status board');
+
+  const incidents=data.incidents.filter(item=>item && statusIncidentImpacts.has(item.impact) &&
+    (!item.page_id || item.page_id===page.id) && !nonEvent.test(item.name||''));
+  const trackedUrls=new Set(ctx.records.flatMap(r=>(r.sources||[]).map(s=>urlOf(s.url)).filter(Boolean)));
+  const lane={org:name,sector:'Technology',board};
+  return statusRows({incidents},lane,ctx).filter(lead=>!trackedUrls.has(lead.row.source_url)).slice(0,2);
+}
 function socialRows(result,lane,ctx) {
   const items=Array.isArray(result)?result:result?.data;
   if(!Array.isArray(items))throw Error('Invalid X timeline');
@@ -252,7 +289,7 @@ export async function discoverIndustryOutages({now=Date.now(),start,records=[],w
     if(Number.isSafeInteger(next[key]) && hour-next[key]<frequency){log.status='not_due';return;}
     next[key]=hour;
     try{
-      await operation(lane,log);
+      await operation(lane,log,index);
       log.status ||= 'ok';
     }catch(e){log.status=errStatus(e);if(Number.isInteger(e.status))log.httpStatus=e.status;}
     // A single unavailable publisher must not starve other industries. Resume the same lane after quota exhaustion.
@@ -276,6 +313,31 @@ export async function discoverIndustryOutages({now=Date.now(),start,records=[],w
   }
   await run('search',keyed?1:3,10,search);
   if(keyed)await run('regionalSearch',1,4,search);
+  await run('operatorDiscovery',keyed?4:12,0,async(_,log,index)=>{
+    log.sector='Cross-industry';
+    const query='("elevated errors" OR "degraded performance" OR outage) "Powered by Atlassian Statuspage" "'+
+      outageSearchDate.format(now)+'"';
+    const result=await request('/search',{query,language:'en'},ctx);
+    const boards=statusBoardCandidates(result,records);
+    log.candidates=boards.length;
+    if(!boards.length)return;
+    const limit=keyed?3:2;
+    // Keep the strongest lead and rotate the remaining checks across discovery runs.
+    const remaining=boards.slice(1);
+    const offset=remaining.length?index%remaining.length:0;
+    const selected=[boards[0],...remaining.slice(offset),...remaining.slice(0,offset)].slice(0,limit);
+    for(const board of selected){
+      try{
+        const data=await fetchPage(board,ctx);
+        const rows=discoveredBoardRows(typeof data==='string'?JSON.parse(data):data,board,ctx);
+        rows.forEach(add);
+        log.accepted+=rows.length;
+      }catch(e){
+        if(errStatus(e)==='budget')throw e;
+        log.status='partial';
+      }
+    }
+  });
   await run('operator',keyed?1:2,9,async(lane,log)=>{
     const content=await fetchPage(lane.board,ctx);
     if(lane.statusPage){const events=typeof content==='string'?JSON.parse(content):content;

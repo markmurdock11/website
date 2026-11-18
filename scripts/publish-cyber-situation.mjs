@@ -46,7 +46,7 @@ const socialDomain = /(?:^|\.)(?:x\.com|twitter\.com)$/i;
 const knownHandles = new Map([['msft365status','microsoft'],['clamanna','microsoft'],['faa','faa'],['united','united airlines'],['chase','chase'],['nttdocomo','docomo']]);
 const words = value => key(value).split(' ').filter(w=>w.length>2&&!['the','and','for','organization','corporation','service','services','group','inc','spokesperson'].includes(w));
 const contains = (text,part) => (' '+text+' ').includes(' '+part+' ');
-const interruption = /\b(?:outages?|degraded (?:service|performance)|elevated (?:error rates?|errors)|sign[ -]?in failures?|service degradation|power cuts?|ground stop|interruption|disruption|shutdown|unavailable|inaccessible|offline|went down|lost access|could not (?:log in|sign in|access)|unable to (?:log in|sign in|access)|cancelled flights?|flights? (?:stopped|cancelled)|disrupted|suspended (?:operations|service|flights)|service (?:failed|stopped))\b/i;
+const interruption = /\b(?:outages?|degrad(?:ed (?:service|performance|availability)|ation of service)|intermittent errors|elevated (?:error rates?|errors|latency)|sign[ -]?in failures?|service degradation|power cuts?|ground stop|interruption|disruption|shutdown|unavailable|inaccessible|offline|went down|lost access|could not (?:log in|sign in|access)|unable to (?:log in|sign in|access)|cancelled flights?|flights? (?:stopped|cancelled)|disrupted|suspended (?:operations|service|flights)|service (?:failed|stopped))\b/i;
 const hypothetical = /\b(?:outage drill|exercise|simulation|simulated|hypothetical|averted an outage|prevented an outage|no (?:actual |operational )?(?:outage|disruption)|no (?:evidence|indication) of (?:a |any )?(?:broad |widespread )?(?:outage|service disruption)|(?:remained|were) (?:fully )?unaffected)\b/i;
 const interruptionOther = /ausfall|störung|\bpanne\b|\bstoring\b|uitval|onderbreking|avería|interrupción|障害|(?:ご)?利用しづらい/iu;
 const hasInterruption = text => (interruption.test(text) || interruptionOther.test(text)) && !hypothetical.test(text);
@@ -198,13 +198,30 @@ function citedOutage(item, page) {
 }
 async function readSource(url,fetchImpl,webKey) {
   const headers={'Content-Type':'application/json'};
-  if(webKey) headers.Authorization='Bearer '+webKey;
-  const response=await fetchImpl('https://request.usestring.ai/v1/fetch',{method:'POST',headers,redirect:'error',signal:AbortSignal.timeout(45000),body:JSON.stringify({url,format:'markdown'})});
-  if([401,402,429].includes(response.status)||response.status>=500) throw Error('String Web Access temporarily unavailable (HTTP '+response.status+')');
-  if (!response.ok) return '';
+  if(webKey)headers.Authorization='Bearer '+webKey;
+  const body={url,format:'markdown',...(webKey?{solveCaptcha:false}:{})};
+  const response=await fetchImpl('https://request.usestring.ai/v1/fetch',{method:'POST',headers,redirect:'error',
+    signal:AbortSignal.timeout(45000),body:JSON.stringify(body)});
+  if([401,402,429].includes(response.status)||response.status>=500)throw Error('String Web Access temporarily unavailable (HTTP '+response.status+')');
+  if(!response.ok)return '';
+
+  const expectedHost=new URL(url).hostname.replace(/^www\./,'');
+  const validDestination=(status,finalUrl)=>{
+    if(status!=null && (!Number.isInteger(Number(status)) || Number(status)<200 || Number(status)>=300))return false;
+    if(!finalUrl)return true;
+    const safe=publicLink(finalUrl);
+    if(!safe)return false;
+    const final=new URL(safe);
+    return final.hostname.replace(/^www\./,'')===expectedHost && (final.pathname!=='/' || new URL(url).pathname==='/');
+  };
+  if(!validDestination(response.headers.get('x-status-code'),response.headers.get('x-final-url')))return '';
   const raw=(await bytes(response,4e6)).toString('utf8');
-  if (!(response.headers.get('content-type')||'').includes('application/json')) return raw;
-  try {const j=JSON.parse(raw);if(Number(j.statusCode)>=400)return '';return clean(j.markdown||j.data?.markdown||j.content||j.data?.content||(typeof j.data==='string'?j.data:''),4e6)}catch{return ''}
+  if(!(response.headers.get('content-type')||'').includes('application/json'))return raw;
+  try{
+    const j=JSON.parse(raw);
+    if(!validDestination(j.statusCode,j.finalUrl))return '';
+    return clean(j.markdown||j.data?.markdown||j.content||j.data?.content||(typeof j.data==='string'?j.data:''),4e6);
+  }catch{return ''}
 }
 function validRecord(record) {
   if (!impacts.has(record.impact) || record.impact === 'none' || !record.sources?.some(s => publicLink(s.url))) return false;
