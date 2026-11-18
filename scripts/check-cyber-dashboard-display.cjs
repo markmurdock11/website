@@ -156,7 +156,18 @@ async function inspect(browser, engine, width, height) {
     assert.equal(await page.locator('#edition-mode').count(), 0);
     assert.ok(await page.locator('#page-title').evaluate(node => parseFloat(getComputedStyle(node).fontSize)) >= (mobile ? 26 : 30));
     await verifyMap(page);
-    assert.equal(await page.locator('.hero-copy').count(),0,'Intro stays out of the landing map');
+    assert.equal(await page.locator('.hero-copy').isVisible(),true);
+    assert.match(await page.locator('.hero-copy').innerText(), /I guess\? Maybe\? Idk\./);
+    if(width>=1280){
+      const intro=await page.evaluate(()=>{
+        const title=document.querySelector('#page-title').getBoundingClientRect();
+        const copy=document.querySelector('.hero-copy');
+        const box=copy.getBoundingClientRect();
+        return {titleRight:title.right,copyLeft:box.left,copyHeight:box.height,lineHeight:parseFloat(getComputedStyle(copy).lineHeight)};
+      });
+      assert.ok(intro.copyLeft>intro.titleRight,'Intro is beside the title on desktop');
+      assert.ok(intro.copyHeight<=2*intro.lineHeight+1,'The desktop intro fits two lines: '+JSON.stringify(intro));
+    }
     const order = await page.evaluate(() => ({
       map: document.querySelector('#board').getBoundingClientRect().top,
       mapBottom: document.querySelector('#board').getBoundingClientRect().bottom,
