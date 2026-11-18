@@ -13,6 +13,7 @@ permissions:
 jobs:
   browser:
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.56.1-noble
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -20,9 +21,7 @@ jobs:
         with:
           node-version: '22'
       - name: Install the isolated browser test tools
-        run: |
-          npm install --prefix "$RUNNER_TEMP/monitor-layout" --ignore-scripts --no-audit --no-fund playwright@1.56.1
-          "$RUNNER_TEMP/monitor-layout/node_modules/.bin/playwright" install --with-deps webkit
+        run: npm install --prefix "$RUNNER_TEMP/monitor-layout" --ignore-scripts --no-audit --no-fund playwright@1.56.1
       - name: Check phone layouts and interactions in Chromium and WebKit
         env:
           NODE_PATH: ${{ runner.temp }}/monitor-layout/node_modules

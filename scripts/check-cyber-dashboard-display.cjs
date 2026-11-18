@@ -128,7 +128,7 @@ async function run() {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   try {
     for (const [engine, type] of Object.entries({ chromium, webkit })) {
-      const browser = await type.launch(engine === 'chromium' ? { channel: 'chrome' } : {});
+      const browser = await type.launch();
       try {
         for (const [width, height] of [[320, 690], [390, 844], [430, 932], [1366, 900]]) {
           await inspect(browser, engine, width, height);
