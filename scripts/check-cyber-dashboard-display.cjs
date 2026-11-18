@@ -11,14 +11,74 @@ async function verifyMap(page, denialsOnly = false) {
     const edition = window.SITUATION;
     const cutoff = Math.min(Date.now(), Date.parse(edition.asOf));
     return edition.records.filter(record => !denials || window.DeskMetrics.denial(record, cutoff))
-      .map(record => ({id: record.id, title: record.title, org: record.org}));
+      .map(record => ({id: record.id, title: record.title, org: record.org, date: record.date, sector: window.DeskMetrics.sector(record)}));
   }, denialsOnly);
   const expected = records.map(record => record.id).sort();
-  const marks = page.locator('#board .cell[data-case]:visible');
   const details = page.locator('#case-atlas .atlas-case[data-case]:visible');
   const ids = nodes => nodes.map(node => node.dataset.case).sort();
-  assert.deepEqual(await marks.evaluateAll(ids), expected, 'Individual tiles for the entire filtered edition');
-  assert.deepEqual(await details.evaluateAll(ids), expected, 'A detailed card for each map tile');
+  const board = page.locator('#board');
+  const sectors = board.locator('button[data-sector]:visible');
+  const sectorNames = await sectors.evaluateAll(nodes => nodes.map(node => node.dataset.sector).sort());
+  assert.deepEqual(sectorNames, [...new Set(records.map(r => r.sector))].sort(), 'Every active industry appears once');
+
+  // Traverse the map using the same drill-down controls available to the reader.
+  const caseLinks = page.locator('dialog .record-link[data-case]');
+  const membersOf = async button => {
+    const provider = await button.getAttribute('data-provider');
+    await button.click();
+    const members = await caseLinks.evaluateAll(nodes => nodes.map(node => node.dataset.case));
+    assert.ok(members.length > 1, 'Grouped provider has multiple incidents: ' + provider);
+    assert.match(await page.locator('dialog').innerText(), new RegExp('\\b' + members.length + ' incidents\\b', 'i'));
+    const dates = members.map(id => records.find(r => r.id === id).date);
+    assert.deepEqual(dates, [...dates].sort().reverse(), provider + ' incidents appear most recent first');
+    if (provider === 'Cloudflare') {
+      assert.deepEqual([...members].sort(), records.filter(r => /^Cloudflare\b/i.test(r.org)).map(r => r.id).sort());
+    }
+    return members;
+  };
+  const overview = await board.locator('.sector-summary').count() > 0;
+  if (await board.evaluate(node => node.clientWidth < 520)) assert.ok(overview, 'A narrow map displays industries');
+  if (overview) {
+    assert.equal(await board.locator('.cell:visible').count(), 0, 'Industry overview has no micro tiles');
+    for (const sectorButton of await sectors.all()) {
+      const sector = await sectorButton.getAttribute('data-sector');
+      await sectorButton.click();
+      const mapped = await caseLinks.evaluateAll(ids);
+      const groupButtons = page.locator('dialog .record-link[data-provider]');
+      for (const group of await groupButtons.all()) {
+        mapped.push(...await membersOf(group));
+        await page.locator('#back').click();
+      }
+      await page.locator('#close').click();
+      assert.deepEqual(mapped.sort(), records.filter(r => r.sector === sector).map(r => r.id).sort(),
+        'Each industry opens all of its filtered incidents: ' + sector);
+    }
+  } else {
+    const singles = board.locator('.cell[data-locate][data-case]:visible');
+    const mapped = await singles.evaluateAll(ids);
+    const groups = board.locator('.provider-group[data-provider]:visible');
+    if (records.filter(r => /^Cloudflare\b/i.test(r.org)).length > 1) {
+      assert.equal(await groups.filter({hasText:'Cloudflare'}).count(), 1, 'One Cloudflare tile for its incidents');
+    }
+    for (const group of await groups.all()) {
+      const label = await group.getAttribute('aria-label');
+      const members = await membersOf(group);
+      assert.match(label, new RegExp('\\b' + members.length + ' incidents\\b', 'i'));
+      mapped.push(...members);
+      await page.locator('#close').click();
+    }
+    assert.deepEqual(mapped.sort(), expected, 'Each incident belongs to exactly one map tile');
+    const single = singles.first();
+    const id = await single.getAttribute('data-case');
+    await single.click();
+    await page.waitForFunction(id => document.activeElement?.id === 'atlas-case-' + id, id);
+  }
+  const disclosures = page.locator('#case-atlas details.atlas-provider');
+  for (const item of await disclosures.all()) {
+    assert.equal(await item.getAttribute('open'), null, 'Repeated providers start collapsed');
+    await item.locator('summary').click();
+  }
+  assert.deepEqual(await details.evaluateAll(ids), expected, 'A detailed card for each incident');
   const displayed = await details.evaluateAll(nodes => nodes.map(node => {
     const text = node.querySelector('.atlas-description');
     const rect = text?.getBoundingClientRect();
@@ -31,19 +91,15 @@ async function verifyMap(page, denialsOnly = false) {
     assert.ok(d?.title?.includes(r.title) && d.org, 'Missing incident headline or organization for ' + r.id);
     assert.ok(d.readable && d.summary?.length >= 16, 'Missing or clipped description for ' + r.id);
   }
+  for (const item of await disclosures.all()) await item.locator('summary').click();
+  await page.evaluate(() => window.scrollTo(0, 0));
 }
 
 async function checkPhone(page, engine, width) {
   const panes = page.locator('.phone-nav');
   assert.equal(await panes.isVisible(), true);
-  const hockey = '#case-atlas .atlas-case[data-case="iihf-1117"]';
-  const locator = page.locator('#board [data-locate][data-case="iihf-1117"]');
-  await locator.tap();
-  await page.waitForFunction(selector => {
-    const card = document.querySelector(selector);
-    return card && document.activeElement === card;
-  }, hockey);
-  await page.locator(hockey).tap();
+  await page.locator('#board [data-sector="Sport"]').tap();
+  await page.locator('dialog .record-link[data-case="iihf-1117"]').tap();
   assert.match(await page.locator('#dialog-body').innerText(), /Confirmed attack/i);
   await page.locator('#dialog-body [data-record-view="evidence"]').tap();
   assert.ok(await page.locator('#dialog-body a[href^="http"]').count());
@@ -145,7 +201,7 @@ async function inspect(browser, engine, width, height) {
     assert.equal(await page.locator('.board-actions').count(),0);
     await page.getByRole('button',{name:'How to read this map',exact:true}).click();
     await page.locator('dialog[open]').waitFor();
-    assert.match(await page.locator('#dialog-body').innerText(), /Larger tiles|larger tiles/);
+    assert.match(await page.locator('#dialog-body').innerText(), /tile size|larger tiles/i);
     assert.match(await page.locator('#dialog-body').innerText(), /No indication/);
     await page.getByRole('button',{name:'Read all incidents',exact:false}).click();
     assert.equal(await page.locator('dialog[open]').count(),0);

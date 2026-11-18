@@ -175,6 +175,143 @@ h1 .title-phrase{color:inherit;white-space:nowrap}
 .hero-copy span{display:block}
 @media(max-width:1100px){.hero-intro{display:block}.hero .hero-copy{margin-top:5px;font-size:12px}.hero-copy span{display:inline}}
 @media(max-width:680px){.hero .hero-copy{margin:5px 0 0;font-size:11.5px;line-height:1.4}}
+
+/* Align the masthead, map toolbar and sidebar on the same desktop grid. */
+:root{--dashboard-columns:minmax(0,1fr) clamp(236px,21vw,340px);--dashboard-gutter:clamp(18px,2vw,30px)}
+.hero h1,.board-head h2,.rail h2{letter-spacing:-.05em}
+.hero .hero-copy{line-height:1.55;letter-spacing:0}
+.hero .reassurance-panel{background:#eaf0e8;border:1px solid #cfdacc;border-radius:7px;width:auto}
+.reassurance-panel .clock{padding:8px 13px;column-gap:7px}
+.reassurance-panel .clock-value{letter-spacing:-.045em}
+.reassurance-panel .clock-name{font-size:10px;letter-spacing:.015em}
+.reassurance-panel .clock:hover{background:#e1eadf}
+@media(min-width:851px){
+ .layout,.hero{grid-template-columns:var(--dashboard-columns);column-gap:var(--dashboard-gutter)}
+ .hero{padding-block:17px}
+ .hero-intro{column-gap:clamp(16px,1.6vw,30px)}
+ .hero h1{font-size:clamp(32px,3.3vw,55px)}
+ .rail{padding-inline-start:var(--dashboard-gutter)}
+ .rail-head{min-height:34px;margin:0 0 5px}
+ .rail h2{font-size:clamp(19px,1.48vw,25px);text-wrap:balance}
+ .rail-head .smallbtn{flex:none}
+ .trend-item{grid-template-columns:21px minmax(0,1fr) 12px;gap:8px;padding:12px 0}
+ .trend-item strong{line-height:1.25}
+ .trend-title{margin:3px 0 0;line-height:1.4;text-wrap:pretty}
+ .trend-item .small{margin-top:5px;line-height:1.4}
+ .rail .block+.block{margin-top:16px;padding-top:13px}
+}
+.map-block{display:grid;grid-template-columns:minmax(0,1fr) auto auto;column-gap:10px;align-content:start;align-items:center}
+.map-block .board-head{display:contents}
+.board-head h2{grid-area:1/1;margin:0;line-height:1.15}
+.board-head .help-button{grid-area:1/3;width:32px;height:32px;border-color:var(--line);font-size:15px}
+.map-block .legend{grid-area:1/2;margin:0}
+.map-block>.board,.map-block>.map-foot,.map-block>.sector-directory{grid-column:1/-1}
+.board{margin-top:10px;background:var(--soft);border:1px solid var(--line);border-radius:6px}
+.scope-switch{background:transparent;padding:2px;border-radius:6px}
+.scope-button{font:550 12px/1.15 var(--sans);padding:6px 11px}
+.scope-button:hover{background:var(--soft)}
+.scope-button[aria-pressed=true]{background:var(--ink);color:white}
+.board .group{border-color:#d7dfd4;border-radius:4px}
+.board .sector-head{font-weight:650;letter-spacing:.055em}
+.board .cell{
+ container:map-tile / size;
+ border-color:color-mix(in srgb,var(--edge) 76%,transparent);
+ border-radius:3px;
+ background:var(--wash);
+ padding:clamp(5px,.65vw,10px);
+ gap:4px
+}
+.board .cell::before{display:none}
+.board .cell:focus-visible{outline:2px solid var(--color);outline-offset:-2px}
+.board .cell-txt{display:grid;gap:3px;align-content:end;min-width:0}
+.board .cell-name{line-height:1.13;letter-spacing:-.023em;overflow-wrap:normal}
+.board .cell-top{align-items:center;min-height:0}
+.board .cell-top .orgsvg{width:20px;height:20px}
+.board .cell-story,.board .tile-statement,.board .tile-credit{margin:0}
+.board .cell-story{line-height:1.33}
+.board .provider-group .cell-txt{grid-template-columns:minmax(0,1fr) auto;align-items:end;column-gap:3px}
+.board .provider-group .cell-story,.board .provider-group .tile-statement,.board .provider-group .tile-credit{grid-column:1/-1}
+.provider-count{
+ justify-self:start;align-self:end;padding:2px 4px;
+ border:1px solid color-mix(in srgb,var(--color) 28%,transparent);
+ border-radius:4px;background:rgba(255,255,255,.68);
+ color:var(--tile-ink);font:600 10px/1 var(--mono);white-space:nowrap
+}
+/* Match the content to the space actually left inside each treemap tile. */
+@container map-tile (max-height:110px){
+ .board .tile-statement,.board .tile-credit{display:none}
+}
+@container map-tile (max-height:83px) or (max-width:130px){
+ .board .cell-story{display:none}
+}
+@container map-tile (max-height:60px){
+ .board .cell-top .orgsvg{width:14px;height:14px}
+}
+@container map-tile (max-height:45px){
+ .board .cell-top{display:none}
+ .board .cell-txt{margin-top:auto}
+}
+@container map-tile (max-height:25px){
+ .board .cell-name{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+@media(max-width:850px) and (min-width:681px){
+ .hero .reassurance-panel{min-width:202px}
+}
+@media(max-width:680px){
+ .hero{padding:12px 0 8px}
+ .hero h1{font-size:clamp(28px,7.8vw,43px)}
+ .hero .hero-copy{font-size:12px;line-height:1.45;max-width:55ch}
+ .hero .reassurance-panel{margin-top:9px}
+ .reassurance-panel .clock{padding:5px 10px}
+ .reassurance-panel .clock-value{font-size:22px}
+ .phone-nav button{height:40px}
+ .layout{margin-top:10px}
+ .map-block{column-gap:6px}
+ .board-head h2{font-size:clamp(16px,4.6vw,22px)}
+ .board-head .help-button{width:30px;height:30px}
+ .map-block .scope-switch{display:flex;width:auto}
+ .scope-button{min-height:30px;padding:4px 7px;font-size:11px}
+ .board{margin-top:8px}
+}
+.board.sector-overview{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ grid-auto-rows:minmax(42px,1fr);gap:5px;
+ min-height:calc(var(--overview-rows,1) * 47px + 5px);
+ padding:5px;background:var(--soft)
+}
+.sector-summary{
+ position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+ gap:3px;padding:7px 10px 8px;text-align:left;
+ border:1px solid var(--line);border-radius:4px;background:var(--plate);overflow:hidden
+}
+.sector-summary:hover,.sector-summary:focus-visible{background:var(--hover)}
+.sector-summary::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:var(--sector-share,0%);background:var(--accent-line)}
+.sector-summary-name{font:650 14px/1.12 var(--sans);letter-spacing:-.02em}
+.sector-summary-count{font:10px/1.2 var(--mono);color:var(--dim)}
+.t-mixed{--color:#5a5268;--wash:#f2eff5;--dark:#e9e5ef;--edge:#c6becf;--tile-ink:#403b49}
+.atlas-provider{align-self:start;min-width:0;border:1px solid var(--line);border-radius:4px;background:var(--soft)}
+.atlas-provider[open]{grid-column:1/-1}
+.atlas-provider summary{
+ display:grid;grid-template-columns:minmax(0,1fr) auto 16px;align-items:center;
+ gap:8px;padding:13px 11px;min-height:52px;cursor:pointer;list-style:none
+}
+.atlas-provider summary::-webkit-details-marker{display:none}
+.atlas-provider summary::after{content:"+";color:var(--lime);font:18px/1 var(--sans);text-align:center}
+.atlas-provider[open] summary::after{content:"−"}
+.atlas-provider summary:focus-visible{outline:2px solid var(--lime);outline-offset:-2px}
+.atlas-provider summary strong{font:650 16px/1.22 var(--sans);letter-spacing:-.02em;overflow-wrap:anywhere}
+.atlas-provider summary span{font:10px/1.25 var(--mono);color:var(--dim)}
+.atlas-provider-cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:6px;padding:0 6px 6px}
+.record-link{gap:12px;padding-block:12px}
+.record-link>span{min-width:0}
+.record-link strong{line-height:1.25}
+.record-link small{margin-top:3px;line-height:1.4}
+.record-link time,.record-link .record-date{display:block;color:var(--dim);font:10px/1.45 var(--mono);margin-top:4px}
+@media(max-width:360px){
+ .map-block{column-gap:4px}
+ .scope-button{padding-inline:5px}
+ .sector-summary{padding-inline:7px}
+}
 </style>
 </head>
 <body>
@@ -195,7 +332,7 @@ h1 .title-phrase{color:inherit;white-space:nowrap}
 <main class="shell" id="desk-main" data-mobile-pane="industries">
 <section class="hero" aria-labelledby="page-title"><div class="hero-intro"><h1 id="page-title">Not a <span class="title-phrase">Cyber Attack<span>?</span></span></h1><p class="hero-copy"><span>Outages are rampant. Everything is going down in the digital world.</span> <span>But nothing is a cyber attack. I guess? Maybe? Idk. We're monitoring the situation.</span></p></div><div class="reassurance-panel"><button class="clock" id="denial-clock" data-view="clock"><span class="caps clock-name" id="clock-name">Time since we were reassured</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><span class="clock-main"><span class="clock-value" id="clock-value" aria-live="off">—</span><span class="clock-unit" id="clock-unit"></span></span><span class="clock-org" id="clock-org"></span><span class="clock-basis">Latest timed statement or report · tap for receipts</span></button></div></section>
 <nav class="phone-nav" id="phone-nav" aria-label="Dashboard views"><button data-pane="industries" aria-pressed="true">Industries</button><button data-pane="trending" aria-pressed="false">Trending</button><button data-pane="sources" aria-pressed="false">Sources</button></nav>
-<div class="layout"><section class="map-block" aria-labelledby="map-title"><div class="board-head"><h2 id="map-title">Industry map</h2><button class="help-button" data-view="method" aria-label="How to read this map">?</button></div><div class="legend" id="legend" role="group" aria-label="Filter outages by coverage"></div><div class="board" id="board" role="group" aria-label="Industry map. Select an incident to reach its description or a sector heading to open its incident list."></div><div class="map-foot"><span id="window"></span><span class="map-links"><a class="map-jump" id="updates-jump" href="#develop-title" hidden>Latest updates ↓</a></span></div><section class="sector-directory" id="sector-directory" aria-labelledby="directory-title" hidden><h3 id="directory-title">Other industries</h3><div class="sector-directory-list" id="other-sectors"></div></section>
+<div class="layout"><section class="map-block" aria-labelledby="map-title"><div class="board-head"><h2 id="map-title">Industry map</h2><button class="help-button" data-view="method" aria-label="How to read this map">?</button></div><div class="legend" id="legend" role="group" aria-label="Filter outages by coverage"></div><div class="board" id="board" role="group" aria-label="Industry map. Choose an industry or organization to explore its incidents."></div><div class="map-foot"><span id="window"></span><span class="map-links"><a class="map-jump" id="updates-jump" href="#develop-title" hidden>Latest updates ↓</a></span></div><section class="sector-directory" id="sector-directory" aria-labelledby="directory-title" hidden><h3 id="directory-title">Other industries</h3><div class="sector-directory-list" id="other-sectors"></div></section>
 </section>
 <aside class="rail"><section class="block trend-block" aria-labelledby="trending-title"><div class="rail-head"><h2 id="trending-title">Trending denials</h2><button class="smallbtn" aria-label="All trending denials and ranking method" data-view="trends">All <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div><div id="trending"></div></section><section class="block source-block" aria-labelledby="sources-title"><div class="rail-head"><h2 id="sources-title">Who broke the news?</h2><button class="smallbtn" data-view="rankings">Rankings <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div><p class="rail-sub rank-prefix">First outage reports among tracked cases</p><div class="news-menu" id="outlets"></div></section></aside></div>
 <section id="case-atlas" class="case-atlas" aria-labelledby="atlas-title"><div class="atlas-head"><h2 id="atlas-title" tabindex="-1">Outages by industry</h2><a href="#map-title">Back to map ↑</a></div><div class="atlas-groups" id="atlas-groups"></div></section>
@@ -574,7 +711,28 @@ function brand(r){
  if(!art){const words=label.trim().split(/\s+/);const letters=label.length<=4?label:words.length>1?words.slice(0,3).map(w=>w[0]).join(''):label.slice(0,2);art='<text x="12" y="15.6" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="'+(letters.length>2?'10':'12')+'" fill="currentColor">'+esc(letters.toUpperCase())+'</text>';}
  return {art:'<svg class="orgsvg" aria-hidden="true" viewBox="0 0 24 24">'+art+'</svg>',label};
 }
-const labelFor=r=>r.org;
+// Group only known product families or identical organization names within an industry.
+function providerName(record) {
+ const name=String(record.org).trim();
+ if (/^Cloudflare(?:\s|$)/i.test(name)) return 'Cloudflare';
+ if (/^Apple(?: iCloud)?$/i.test(name)) return 'Apple';
+ return name;
+}
+function providers(records) {
+ const buckets=new Map();
+ for(const record of ordered(records)){
+  const name=providerName(record),key=name.toLowerCase();
+  if(!buckets.has(key)) buckets.set(key,{name,records:[],weight:0});
+  const entry=buckets.get(key);
+  entry.records.push(record);
+  entry.weight=Math.max(entry.weight,reach[record.impact]||1.28);
+ }
+ return [...buckets.values()];
+}
+const newestFirst=rows=>[...rows].sort((a,b)=>String(b.date).localeCompare(String(a.date))||a.title.localeCompare(b.title));
+const incidentCount=n=>n+' incident'+(n===1?'':'s');
+const shortNames={'Amazon Web Services':'AWS','Oracle NetSuite Service':'NetSuite','Florida DMV / FLHSMV':'Florida DMV','NSA / NSANet':'NSA','Atlassian Bitbucket':'Bitbucket'};
+const labelFor=r=>shortNames[r.org]||r.org;
 const ordered=rows=>[...rows].sort((a,b)=>(reach[b.impact]||1.28)-(reach[a.impact]||1.28)||String(b.date).localeCompare(String(a.date))||String(a.org).localeCompare(String(b.org)));
 const groupName=r=>String(metrics.sector(r)||'Other');
 const sections=(h,body)=>body?'<section class="section"><h3>'+esc(h)+'</h3>'+body+'</section>':'';
@@ -628,11 +786,13 @@ function drawDevelopments(){
 }
 function drawCaseAtlas(){
  const cards=[...groups].map(([sector,records])=>{
-  const count=records.length;
-  const cases=ordered(records).map(r=>{
+  const entries=providers(records),count=entries.length;
+  const card=r=>{
    const k=tier(r),description=r.summary||r.impactNote||r.assessment||'';
    return '<button type="button" class="atlas-case t-'+k+'" id="atlas-case-'+esc(r.id)+'" data-case="'+esc(r.id)+'" aria-haspopup="dialog"><span class="atlas-case-head">'+brand(r).art+'<strong class="atlas-org">'+esc(r.org)+'</strong><time class="atlas-date" datetime="'+esc(r.date)+'">'+esc(stamp(r.date))+'</time></span><span class="atlas-title">'+esc(r.title)+'</span><span class="atlas-description">'+esc(description)+'</span><span class="atlas-status">'+sig(k)+esc(names[k])+'</span></button>';
-  }).join('');
+  };
+  const cases=entries.map(entry=>entry.records.length===1?card(entry.records[0]):
+   '<details class="atlas-provider"><summary><strong>'+esc(entry.name)+'</strong><span>'+incidentCount(entry.records.length)+'</span></summary><div class="atlas-provider-cases">'+newestFirst(entry.records).map(card).join('')+'</div></details>').join('');
   return '<section class="atlas-sector" data-industry="'+esc(sector)+'" style="--span4:'+Math.min(4,count)+';--span3:'+Math.min(3,count)+';--span2:'+Math.min(2,count)+'"><h3>'+esc(metrics.sectorLabel(sector))+'</h3><div class="atlas-cases">'+cases+'</div></section>';
  }).join('');
  $('atlas-groups').innerHTML=cards||'<p class="empty">No matching outages.</p>';
@@ -657,14 +817,17 @@ function packRows(items,w,h){
  return out;
 }
 // Pick a proportional packing that keeps marker names readable at this viewport.
-function unpack(items,w,h){
+function unpack(items,w,h,score){
  let best=[],lowest=Infinity;
  for(const scale of [.48,.62,.72,.88,1,1.2,1.5,1.8]){
   const cells=packRows(items,w*scale,h).map(p=>({...p,x:p.x/scale,w:p.w/scale}));
-  const loss=cells.reduce((sum,p)=>sum+3*Math.max(0,58-p.w)**2+3*Math.max(0,34-p.h)**2+Math.log(p.w/p.h/1.5)**2,0);
+  const loss=cells.reduce((sum,p)=>sum+(score?score(p):tileCost(p)),0);
   if(loss<lowest){best=cells;lowest=loss}
  }
  return best;
+}
+function tileCost(p){
+ return 3*Math.max(0,84-p.w)**2+5*Math.max(0,48-p.h)**2+Math.log(p.w/p.h/1.5)**2;
 }
 function place(el,rect,pad){el.style.left=(rect.x+pad)+'px';el.style.top=(rect.y+pad)+'px';el.style.width=Math.max(1,rect.w-pad*2)+'px';el.style.height=Math.max(1,rect.h-pad*2)+'px'}
 function fitBoard(){
@@ -681,26 +844,47 @@ function renderBoard(){
  const board=$('board'),w=board.clientWidth,h=board.clientHeight;
  if(!visible.length){board.innerHTML='<p class="empty">'+(selected?'No outages match this filter.':'No outages tracked yet.')+'</p>';return}
  if(!w||!h)return;
- const mobile=w<520,headHeight=mobile?20:w>=1450?28:25;
- let all=[...groups].map(([name,records],order)=>({name,records:ordered(records),order,weight:Math.max(1.6,records.reduce((n,r)=>n+(reach[r.impact]||1.28),0))}));
- const slots=unpack(all,w,h),newBoard=document.createDocumentFragment();
+ const industries=[...groups].map(([name,records],order)=>{
+  const entries=providers(records).map((entry,order)=>({...entry,order}));
+  return {name,records,entries,order,weight:Math.max(2.6,entries.reduce((sum,entry)=>sum+entry.weight,0))};
+ });
+ const overview=w<520||w*h<208000;
+ board.classList.toggle('sector-overview',overview);
+ if(overview){
+  board.style.setProperty('--overview-rows',Math.ceil(industries.length/2));
+  const byVolume=industries.sort((a,b)=>b.records.length-a.records.length||a.order-b.order);
+  board.innerHTML=byVolume.map(g=>'<button class="sector-summary" data-sector="'+esc(g.name)+'" aria-haspopup="dialog" style="--sector-share:'+(100*g.records.length/visible.length).toFixed(1)+'%"><span class="sector-summary-name">'+esc(metrics.sectorLabel(g.name))+'</span><span class="sector-summary-count">'+incidentCount(g.records.length)+'</span></button>').join('');
+  return;
+ }
+ const header=24;
+ function cellsFor(g){
+  return unpack(g.entries,Math.max(1,g.w-10),Math.max(1,g.h-8-header));
+ }
+ // Score industry shapes by the labels that actually have to fit under their header.
+ const slots=unpack(industries,w,h,g=>cellsFor(g).reduce((score,p)=>score+tileCost(p),0));
+ const newBoard=document.createDocumentFragment();
  for(const g of slots){
-  const sideTitle=mobile&&g.h<54&&g.w>=82;
-  const header=sideTitle?Math.min(66,Math.round(g.w*.38)):mobile&&g.h<55?13:headHeight;
-  const group=document.createElement('section');group.className=sideTitle?'group side-title':'group';place(group,g,2);
-  const title=document.createElement('button');title.className='sector-head';title.dataset.sector=g.name;title.setAttribute('aria-label','Open '+metrics.sectorLabel(g.name)+' incidents');title.innerHTML='<span>'+esc(metrics.sectorLabel(g.name))+'</span>'+ico('arrow');if(sideTitle)title.style.width=header+'px';else title.style.height=header+'px';
+  const group=document.createElement('section');group.className='group';place(group,g,2);
+  const title=document.createElement('button');title.className='sector-head';title.dataset.sector=g.name;title.setAttribute('aria-label','Open '+metrics.sectorLabel(g.name)+' incidents');title.innerHTML='<span>'+esc(metrics.sectorLabel(g.name))+'</span>'+ico('arrow');title.style.height=header+'px';
   const tiles=document.createElement('div');tiles.className='tiles';group.append(title,tiles);
-  const tileW=Math.max(1,g.w-10-(sideTitle?header:0)),tileH=Math.max(1,g.h-8-(sideTitle?0:header));
-  const caseWeights=g.records.map((r,order)=>({r,order,weight:reach[r.impact]||1.28}));
-  for(const cell of unpack(caseWeights,tileW,tileH)){
-   const b=document.createElement('button');place(b,cell,.9);
-   const r=cell.r,k=tier(r),big=cell.w>=(mobile?85:122)&&cell.h>=(mobile?79:92),compact=cell.h<53||cell.w<55;
-   b.className='cell t-'+k+(big?' big':'')+(cell.h>90?' tall':'')+(compact?' compact':'')+(cell.w<85?' narrow':'')+(cell.h<33?' tiny':'')+(featured.has(r.id)?' featured':'');
+  for(const cell of cellsFor(g)){
+   const b=document.createElement('button');place(b,cell,1);
+   const r=cell.records[0],grouped=cell.records.length>1;
+   const tiers=new Set(cell.records.map(tier)),k=tiers.size===1?tier(r):'mixed';
+   const big=cell.w>=132&&cell.h>=102,compact=cell.h<58||cell.w<62;
+   b.className='cell t-'+k+(grouped?' provider-group':'')+(big?' big':'')+(cell.h>90?' tall':'')+(compact?' compact':'')+(cell.w<85?' narrow':'')+(cell.h<39?' tiny':'')+(cell.records.some(row=>featured.has(row.id))?' featured':'');
+   if(grouped){
+    b.dataset.provider=cell.name;b.dataset.industry=g.name;b.dataset.tier=k;
+    b.setAttribute('aria-haspopup','dialog');
+    b.title=cell.name+' · '+incidentCount(cell.records.length);b.setAttribute('aria-label',b.title);
+    b.innerHTML='<span class="cell-top">'+brand(r).art+(k==='mixed'?'':sig(k))+'</span><span class="cell-txt"><strong class="cell-name">'+esc(cell.name)+'</strong><span class="provider-count">×'+cell.records.length+'</span></span>';
+    tiles.append(b);continue;
+   }
    const d=primaryDenial(r),said=d?speakerText(d):r.impactNote;
-   const details=d?[denialLabel(d),d.speaker,said,d.sourceName,stamp(d.when,true)]:['Outage context',names[k],r.assessment,stamp(r.date,true)];
+   const details=d?[denialLabel(d),d.speaker,said,d.sourceName,stamp(d.when,true)]:[names[k],r.assessment,stamp(r.date,true)];
    b.dataset.case=r.id;b.dataset.locate=r.id;b.setAttribute('aria-controls','atlas-case-'+r.id);b.dataset.tier=k;b.dataset.kind=d?'denial':'context';b.title=[r.org,r.title,...details].filter(Boolean).join(' · ');b.setAttribute('aria-label',b.title);
    const quoteLine=d?(d.translation||(descriptionKind(d)==='quotation'?'“'+said+'”':said)):said;
-   const room=cell.w>=(mobile?108:143)&&cell.h>=(mobile?120:136);
+   const room=cell.w>=180&&cell.h>=170;
    const badge=big?'<span class="cell-status">'+sig(k)+esc(names[k])+'</span>':sig(k);
    const credit=d?(d.quoteSpeaker||d.speaker)+' · '+stamp(d.when):'Outage context · '+stamp(r.date);
    b.innerHTML='<span class="cell-top">'+brand(r).art+badge+'</span><span class="cell-txt"><strong class="cell-name">'+esc(labelFor(r))+'</strong><span class="cell-story">'+esc(r.title)+'</span>'+(room?'<span class="tile-statement">'+esc(quoteLine)+'</span><span class="tile-credit">'+esc(credit)+'</span>':'')+'</span>';tiles.append(b);
@@ -818,10 +1002,16 @@ function sourceRows(r){
  }).join('');
 }
 function recordList(rows){return rows.map(r=>'<button class="record-link t-'+tier(r)+'" data-case="'+esc(r.id)+'">'+brand(r).art+'<span><strong>'+esc(r.org)+'</strong><small>'+esc(r.title)+'</small></span></button>').join('')}
+function providerContent(id){
+ const records=(groups.get(id.industry)||[]).filter(r=>providerName(r).toLowerCase()===id.name.toLowerCase());
+ const rows=newestFirst(records).map(r=>'<button class="record-link t-'+tier(r)+'" data-case="'+esc(r.id)+'"><span><small class="record-date">'+esc(stamp(r.date))+' · '+esc(names[tier(r)])+'</small><strong>'+esc(r.title)+'</strong></span></button>').join('');
+ return '<h2 id="dialog-title">'+esc(id.name)+'</h2><p class="meta">'+incidentCount(records.length)+' · '+esc(metrics.sectorLabel(id.industry))+'</p>'+rows;
+}
 function sectorContent(id){
  const heading='<h2 id="dialog-title">'+esc(metrics.sectorLabel(id))+'</h2>';
  const matches=groups.get(id)||[];
- if(matches.length)return heading+recordList(ordered(matches));
+ if(matches.length)return heading+providers(matches).map(entry=>entry.records.length===1?recordList(entry.records):
+  '<button class="record-link" data-provider="'+esc(entry.name)+'" data-industry="'+esc(id)+'" aria-haspopup="dialog">'+brand(entry.records[0]).art+'<span><strong>'+esc(entry.name)+'</strong><small>'+incidentCount(entry.records.length)+'</small></span></button>').join('');
  const all=data.records.filter(r=>groupName(r)===id);
  if(all.length){
   const message=selected==='denial'?'No denial recorded for outages in this industry.':'All tracked outages in this industry have a sourced denial.';
@@ -906,10 +1096,11 @@ function renderDialog(){
  else if(view==='rankings'){label='Source rankings';html=rankingsContent()}
  else if(view==='rank-source'){label='Reporting record';html=rankedSourceContent(id.which,id.source)}
  else if(view==='developments'){label='Signal desk';html='<h2 id="dialog-title">Latest developments</h2><p class="develop-when">Through '+esc(stamp(data.asOf,true))+'</p><p class="lede">The latest timeline update for each incident over the last three UTC dates. Reports with a published time appear first within each date.</p><div class="develop-list">'+(developments.map(developCard).join('')||para('No dated updates in this window.'))+'</div>'}
+ else if(view==='provider'){label='Tracked incidents';html=providerContent(id)}
  else if(view==='sector'){label='Industry map';html=sectorContent(id)}
  else if(view==='outlet'){const o=metrics.outlets[id];if(!o)return;label='Breaking news desk';html='<h2 id="dialog-title">'+esc(o.name)+'</h2><span class="meta">'+esc(o.kind)+'</span><p class="lede">'+esc(o.description)+'</p><p class="big-link">'+external('Open '+o.name,o.url)+'</p>'}
  else if(view==='outlets'){label='Source directory';html='<h2 id="dialog-title">Breaking news desks</h2>'+metrics.outlets.map((o,i)=>outletButton(o,i,true)).join('')}
- else if(view==='method'){label='Map help';html='<h2 id="dialog-title">What am I looking at?</h2>'+para('One tile per outage. Larger tiles show wider disruption within an industry. Choose a tile to open its incident and sources.')+'<button class="case-action" data-help-jump="incidents">Read all incidents ↓</button>'+sections('The colors, decoded','<ul class="method-key">'+Object.keys(names).map(k=>'<li class="t-'+k+'">'+sig(k)+'<strong>'+esc(names[k])+'</strong>'+para(descriptions[k])+'</li>').join('')+'</ul>')+sections('The reassurance clock',para('The counter starts at the latest published statement or report with an exact timestamp. It is not the time since an outage began. Statements with no exact time remain in the archive without replacing that timestamp. “No indication” is a qualified assessment. Broader government statements do not add incidents.'))+sections('The quotes',para('Open the clock to browse sourced government and company statements, including posts on X. Excerpts, reporter wording and translations are labeled.'))+sections('Update status',monitorHealthContent())}
+ else if(view==='method'){label='Map help';html='<h2 id="dialog-title">What am I looking at?</h2>'+para('Each tile represents an organization within an industry. × shows how many incidents it has in this view. Tile size reflects its widest disruption. A group with different assessments has a neutral tile. On small screens, choose an industry to browse its organizations.')+'<button class="case-action" data-help-jump="incidents">Read all incidents ↓</button>'+sections('The colors, decoded','<ul class="method-key">'+Object.keys(names).map(k=>'<li class="t-'+k+'">'+sig(k)+'<strong>'+esc(names[k])+'</strong>'+para(descriptions[k])+'</li>').join('')+'</ul>')+sections('The reassurance clock',para('The counter starts at the latest published statement or report with an exact timestamp. It is not the time since an outage began. Statements with no exact time remain in the archive without replacing that timestamp. “No indication” is a qualified assessment. Broader government statements do not add incidents.'))+sections('The quotes',para('Open the clock to browse sourced government and company statements, including posts on X. Excerpts, reporter wording and translations are labeled.'))+sections('Update status',monitorHealthContent())}
  else if(view==='trends'){label='Signal desk';html='<h2 id="dialog-title">Trending denials</h2><p class="lede">Ranked by newsroom coverage over the last three tracked UTC dates.</p>'+trendRows(metrics.trend(data.records,data.asOf))+sections('How coverage is ranked',para('A newsroom contributes three points for coverage on the latest date, two the day before, or one the day before that. Each newsroom counts once per case, using its most recent report. Syndicated copies count together.'))+sections('Coverage through',para(stamp(data.asOf,true)))}
  else return;
  $('back').hidden=route.length<2;$('dialog-label').textContent=label;$('dialog-body').innerHTML=html;
@@ -935,6 +1126,7 @@ document.addEventListener('click',e=>{
   $('dialog-body').querySelectorAll('[data-rank-select]').forEach(el=>{if(el.dataset.rankSelect===rankCategory)el.focus({preventScroll:true})});
  }
  else if(b.dataset.rankSource&&Object.hasOwn(rankLabels,b.dataset.rankKind))openView('rank-source',{source:b.dataset.rankSource,which:b.dataset.rankKind});
+ else if(b.dataset.provider)openView('provider',{name:b.dataset.provider,industry:b.dataset.industry});
  else if(b.dataset.locate){
   const tile=$('atlas-case-'+b.dataset.locate);
   if(tile){tile.scrollIntoView({block:'center',behavior:'instant'});tile.focus({preventScroll:true})}
@@ -951,7 +1143,8 @@ document.addEventListener('click',e=>{
 });
 function spotlight(id){
  $('board').querySelectorAll('.cell').forEach(b=>{
-  const match=id&&b.dataset.case===id;
+  const record=id&&visible.find(r=>r.id===id);
+  const match=record&&(b.dataset.case===id||(b.dataset.provider===providerName(record)&&b.dataset.industry===groupName(record)));
   b.classList.toggle('spotlit',!!match);
  });
 }
@@ -1046,4 +1239,3 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)drawClock(
 </script>
 </body>
 </html>
-
