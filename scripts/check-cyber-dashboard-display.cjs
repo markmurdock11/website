@@ -108,7 +108,7 @@ async function inspect(browser, engine, width, height) {
   try {
     const local = 'http://127.0.0.1:' + server.address().port;
     await page.goto(local + '/not-a-cyber-attack/', { waitUntil: 'networkidle' });
-    await page.locator('#clock-org').waitFor({ state: 'visible' });
+    await page.locator('#clock-value').waitFor({ state: 'visible' });
     assert.ok(await page.evaluate(() => window.SITUATION.records.length > 0));
     assert.match(await page.locator('.credit').innerText(), /a dashboard by kram, built with string/i);
     assert.equal(await page.locator('#clock-name').textContent(), 'Time since we were reassured');
@@ -139,14 +139,7 @@ async function inspect(browser, engine, width, height) {
     assert.match(await page.locator('#clock-value').textContent(), /^\d{2,}:\d{2}:\d{2}$/);
     const clockBefore=await page.locator('#clock-value').textContent();
     await page.waitForFunction(before=>document.querySelector('#clock-value').textContent!==before,clockBefore,{timeout:3500});
-    assert.match(await page.locator('#receipt-quote').innerText(), /98%/);
-    assert.match(await page.locator('#receipt-joke').innerText(), /remaining 2%/);
-    const firstReceipt=await page.locator('#receipt-quote').innerText();
-    await page.getByRole('button',{name:'Next reassurance',exact:true}).click();
-    assert.notEqual(await page.locator('#receipt-quote').innerText(),firstReceipt);
-    assert.ok(await page.locator('#receipt-source').getAttribute('href'));
-    await page.getByRole('button',{name:'Previous reassurance',exact:true}).click();
-    assert.equal(await page.locator('#receipt-quote').innerText(),firstReceipt);
+    assert.equal(await page.locator('main .reassurance-receipt').count(),0,'Quotes stay behind the clock');
     assert.equal(await page.locator('.map-caption').count(),0);
     assert.equal(await page.locator('#legend .update-key').count(),0);
     assert.equal(await page.locator('.board-actions').count(),0);
@@ -161,17 +154,19 @@ async function inspect(browser, engine, width, height) {
     assert.ok(tracked.includes('playstation-1118')&&tracked.includes('florida-dmv-1118'));
 
     assert.equal(await page.locator('#edition-mode').count(), 0);
-    assert.ok(await page.locator('#page-title').evaluate(node => parseFloat(getComputedStyle(node).fontSize)) >= (mobile ? 42 : 70));
+    assert.ok(await page.locator('#page-title').evaluate(node => parseFloat(getComputedStyle(node).fontSize)) >= (mobile ? 26 : 30));
     await verifyMap(page);
-    const intro = page.locator('.hero-copy');
-    assert.equal(await intro.isVisible(), true);
-    assert.match(await intro.innerText(), /Outages are rampant[\s\S]*We're monitoring the situation\./);
+    assert.equal(await page.locator('.hero-copy').count(),0,'Intro stays out of the landing map');
     const order = await page.evaluate(() => ({
       map: document.querySelector('#board').getBoundingClientRect().top,
+      mapBottom: document.querySelector('#board').getBoundingClientRect().bottom,
+      footBottom: document.querySelector('.map-foot').getBoundingClientRect().bottom,
       atlas: document.querySelector('#case-atlas').getBoundingClientRect().top,
       news: document.querySelector('#developments').getBoundingClientRect().top,
       height: innerHeight
     }));
+    assert.ok(order.map > 0 && order.mapBottom <= order.height-8 && order.footBottom <= order.height,
+      'The full map and its footer fit the landing viewport: '+JSON.stringify(order));
     assert.ok(order.map < order.height && order.map < order.atlas && order.atlas < order.news,
       'Overview, detailed map, and developments should be in reading order: ' + JSON.stringify(order));
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
@@ -198,12 +193,28 @@ async function inspect(browser, engine, width, height) {
     const clock = page.locator('#denial-clock');
     await clock.click();
     await page.locator('dialog[open]').waitFor();
+    assert.match(await page.locator('#receipt-quote').innerText(), /98%/);
+    assert.equal(await page.locator('#receipt-joke').count(),0);
+    const firstReceipt=await page.locator('#receipt-quote').innerText();
+    await page.getByRole('button',{name:'Next reassurance',exact:true}).click();
+    assert.notEqual(await page.locator('#receipt-quote').innerText(),firstReceipt);
+    assert.ok(await page.locator('#receipt-source').getAttribute('href'));
+    await page.getByRole('button',{name:'Previous reassurance',exact:true}).click();
+    assert.equal(await page.locator('#receipt-quote').innerText(),firstReceipt);
     assert.ok(await page.locator('#dialog-body a[href^="http"]').count());
     assert.match(await page.locator('#dialog-body').innerText(), /Jay Clayton/);
     assert.match(await page.locator('#dialog-body').innerText(), /Qualified|No indication/i);
     assert.match(await page.locator('#dialog-body').innerText(), /12:25|17:25/);
     await page.locator('#close').click();
     assert.equal(await page.locator('dialog[open]').count(), 0);
+    if (width === 1366 && height === 900) {
+      await page.evaluate(()=>window.scrollTo(0,0));
+      await page.setViewportSize({width,height:700});
+      await page.waitForFunction(()=>document.querySelector('#board').getBoundingClientRect().bottom<=innerHeight-8);
+      assert.ok(await page.evaluate(()=>document.querySelector('.map-foot').getBoundingClientRect().bottom<=innerHeight));
+      await page.setViewportSize({width,height});
+      await page.waitForFunction(()=>document.querySelector('#board').getBoundingClientRect().bottom<=innerHeight-8);
+    }
     if (width === 390 || width === 1366) await checkPortfolio(page, local);
     assert.deepEqual(errors, []);
   } finally { await context.close(); }
@@ -215,7 +226,7 @@ async function run() {
     for (const [engine, type] of Object.entries({ chromium, webkit })) {
       const browser = await type.launch();
       try {
-        for (const [width, height] of [[320, 690], [390, 844], [430, 932], [1366, 900]]) {
+        for (const [width, height] of [[320, 690], [390, 844], [430, 932], [1024, 600], [1280, 720], [1366, 900], [1920, 1080]]) {
           await inspect(browser, engine, width, height);
         }
       } finally { await browser.close(); }

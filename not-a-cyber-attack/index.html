@@ -133,11 +133,42 @@ h1 .title-phrase{color:inherit;white-space:nowrap}
 #receipt-quote{font:650 clamp(18px,1.65vw,27px)/1.2 var(--sans);letter-spacing:-.035em;margin-top:4px;overflow-wrap:anywhere}
 #receipt-context{font:12px/1.4 var(--sans);color:var(--body);margin-top:4px}
 #receipt-source{display:block;font:10px/1.5 var(--mono);color:var(--lime);margin-top:5px;overflow-wrap:anywhere}
-.receipt-joke{border-top:1px dashed var(--line);padding-top:7px;margin-top:8px;font:italic 12px/1.4 var(--sans);color:var(--body)}
+
 .help-button{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--accent-line);border-radius:50%;font:600 16px var(--sans);color:var(--lime);flex:none}
 .help-button:hover{background:var(--hover)}.method-key{display:grid;gap:8px}.method-key li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:3px 8px}.method-key .sig{grid-column:1;grid-row:1;color:var(--color)}.method-key strong{grid-column:2;color:var(--color)}.method-key p{grid-column:2}
-@media(max-width:680px){.hero .reassurance-panel{margin-top:12px}.reassurance-panel .clock{padding:10px 12px 8px}.reassurance-panel .clock-value{font-size:36px}.reassurance-receipt{padding:7px 12px 10px}.receipt-controls button{min-width:36px;min-height:36px}#receipt-quote{font-size:21px}#receipt-context{font-size:12px}.receipt-joke{font-size:12px;padding-top:5px;margin-top:6px}.hero{padding-bottom:12px}}
+@media(max-width:680px){.hero .reassurance-panel{margin-top:12px}.reassurance-panel .clock{padding:10px 12px 8px}.reassurance-panel .clock-value{font-size:36px}.reassurance-receipt{padding:7px 12px 10px}.receipt-controls button{min-width:36px;min-height:36px}#receipt-quote{font-size:21px}#receipt-context{font-size:12px}.hero{padding-bottom:12px}}
 @media(max-width:680px){.clock-basis{display:none}}@media(max-width:360px){.hero .hero-copy{font-size:13px;line-height:1.4;margin-block:6px 9px}}
+
+/* Keep the overview in the landing viewport; details open on demand. */
+.credit{min-height:25px;font-size:10px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;padding:15px 0 13px}
+.hero h1{font-size:clamp(30px,3.6vw,54px);line-height:1.02;letter-spacing:-.065em;white-space:nowrap}
+.hero .reassurance-panel{margin:0;border:0;border-left:2px solid var(--line);border-radius:0;background:transparent;overflow:visible;width:245px}
+.reassurance-panel .clock{padding:3px 0 3px 16px;background:transparent;gap:2px 10px;grid-template-columns:minmax(0,1fr) 15px}
+.reassurance-panel .clock-name{font-size:10px;line-height:1.3}
+.reassurance-panel .clock-main{grid-column:1;grid-row:2;margin:0}
+.reassurance-panel .clock-value{font-size:30px;line-height:1.05;letter-spacing:-.065em}
+.reassurance-panel .clock .icon{grid-column:2;grid-row:1/3;align-self:center}
+.reassurance-panel .clock-unit,.reassurance-panel .clock-org,.reassurance-panel .clock-basis{display:none}
+.layout{margin:13px 0 22px}
+.board-head{margin-bottom:4px}.board-head h2{font-size:24px}
+.legend{margin-bottom:7px}.board{height:calc(100svh - 205px);min-height:160px}
+.reassurance-receipt{margin:13px 0;border:1px solid var(--line);border-left:2px solid var(--lime);border-radius:3px}
+@media(max-width:850px){.hero{grid-template-columns:minmax(0,1fr) auto;gap:15px}.hero h1{font-size:clamp(30px,4.6vw,43px)}.hero .reassurance-panel{width:215px}.reassurance-panel .clock-value{font-size:27px}}
+@media(max-width:680px){
+ .credit{min-height:24px}.credit a{min-height:24px}
+ .hero{display:block;padding:10px 0 8px}.hero h1{font-size:clamp(27px,7.6vw,40px);line-height:1.04;white-space:nowrap}
+ .hero .reassurance-panel{width:100%;border:0;margin-top:7px}
+ .reassurance-panel .clock{grid-template-columns:minmax(0,1fr) auto 13px;gap:7px;align-items:center;padding:3px 0;min-height:33px}
+ .reassurance-panel .clock-name{grid-column:1;grid-row:1;font-size:10px}
+ .reassurance-panel .clock-main{grid-column:2;grid-row:1}.reassurance-panel .clock-value{font-size:23px}
+ .reassurance-panel .clock .icon{grid-column:3;grid-row:1}
+ .phone-nav{margin-top:0}.phone-nav button{height:38px;font-size:13px}
+ .layout{margin-top:7px}.board-head{margin-bottom:2px}.board-head h2{font-size:21px}
+ .legend{margin-bottom:5px}.scope-button{min-height:36px;font-size:12px}.scope-switch{padding:2px}
+ .help-button{width:32px;height:32px;font-size:15px}.map-foot{margin-top:4px;padding-top:0}
+ .reassurance-receipt{padding:10px 12px}
+}
 </style>
 </head>
 <body>
@@ -156,7 +187,7 @@ h1 .title-phrase{color:inherit;white-space:nowrap}
 </svg>
 <header class="credit"><span>a dashboard by <a href="https://kram.bio/">kram</a>, built with <a href="https://usestring.ai/">string</a></span></header>
 <main class="shell" id="desk-main" data-mobile-pane="industries">
-<section class="hero" aria-labelledby="page-title"><div><h1 id="page-title">Not a <span class="title-phrase">Cyber Attack<span>?</span></span></h1><p class="hero-copy">Outages are rampant. Everything is going down in the digital world. But nothing is a cyber attack. I guess? Maybe? Idk. We're monitoring the situation.</p></div><div class="reassurance-panel"><button class="clock" id="denial-clock" data-view="clock"><span class="caps clock-name" id="clock-name">Time since we were reassured</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><span class="clock-main"><span class="clock-value" id="clock-value" aria-live="off">—</span><span class="clock-unit" id="clock-unit"></span></span><span class="clock-org" id="clock-org"></span><span class="clock-basis">Latest timed statement or report · tap for receipts</span></button><section class="reassurance-receipt" aria-label="Sourced reassurances"><div class="receipt-head"><span id="receipt-kind" class="caps">They said the thing</span><div class="receipt-controls"><span id="receipt-position"></span><button id="receipt-prev" aria-label="Previous reassurance">←</button><button id="receipt-next" aria-label="Next reassurance">→</button></div></div><blockquote id="receipt-quote"></blockquote><p id="receipt-context"></p><a id="receipt-source" target="_blank" rel="noopener noreferrer"></a><p class="receipt-joke" id="receipt-joke"></p></section></div></section>
+<section class="hero" aria-labelledby="page-title"><div><h1 id="page-title">Not a <span class="title-phrase">Cyber Attack<span>?</span></span></h1></div><div class="reassurance-panel"><button class="clock" id="denial-clock" data-view="clock"><span class="caps clock-name" id="clock-name">Time since we were reassured</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><span class="clock-main"><span class="clock-value" id="clock-value" aria-live="off">—</span><span class="clock-unit" id="clock-unit"></span></span><span class="clock-org" id="clock-org"></span><span class="clock-basis">Latest timed statement or report · tap for receipts</span></button></div></section>
 <nav class="phone-nav" id="phone-nav" aria-label="Dashboard views"><button data-pane="industries" aria-pressed="true">Industries</button><button data-pane="trending" aria-pressed="false">Trending</button><button data-pane="sources" aria-pressed="false">Sources</button></nav>
 <div class="layout"><section class="map-block" aria-labelledby="map-title"><div class="board-head"><h2 id="map-title">Industry map</h2><button class="help-button" data-view="method" aria-label="How to read this map">?</button></div><div class="legend" id="legend" role="group" aria-label="Filter outages by coverage"></div><div class="board" id="board" role="group" aria-label="Industry map. Select an incident to reach its description or a sector heading to open its incident list."></div><div class="map-foot"><span id="window"></span><span class="map-links"><a class="map-jump" id="updates-jump" href="#develop-title" hidden>Latest updates ↓</a></span></div><section class="sector-directory" id="sector-directory" aria-labelledby="directory-title" hidden><h3 id="directory-title">Other industries</h3><div class="sector-directory-list" id="other-sectors"></div></section>
 </section>
@@ -618,7 +649,17 @@ function unpack(items,w,h){
  return best;
 }
 function place(el,rect,pad){el.style.left=(rect.x+pad)+'px';el.style.top=(rect.y+pad)+'px';el.style.width=Math.max(1,rect.w-pad*2)+'px';el.style.height=Math.max(1,rect.h-pad*2)+'px'}
+function fitBoard(){
+ const board=$('board');if(!board.clientWidth)return;
+ const top=board.getBoundingClientRect().top+window.scrollY;
+ const foot=document.querySelector('.map-foot');
+ const bottomSpace=Math.max(32,foot?.getBoundingClientRect().height||0)+12;
+ const viewport=window.visualViewport?.height||window.innerHeight;
+ const height=Math.max(160,Math.floor(viewport-top-bottomSpace));
+ if(Math.abs(board.clientHeight-height)>1)board.style.height=height+'px';
+}
 function renderBoard(){
+ fitBoard();
  const board=$('board'),w=board.clientWidth,h=board.clientHeight;
  if(!visible.length){board.innerHTML='<p class="empty">'+(selected?'No outages match this filter.':'No outages tracked yet.')+'</p>';return}
  if(!w||!h)return;
@@ -661,19 +702,19 @@ function drawLegend(){
   '<button class="scope-button" data-denial-filter="'+value+'" aria-pressed="'+String(selected===value)+'">'+label+'</button>').join('')+'</div>';
 }
 let receiptIndex=0,receiptItems=[];
-const receiptNotes={
- 'us-outages-mullin-1118':{priority:100,credit:'Markwayne Mullin · FOX23',context:'Certain the FAA incident was not a cyberattack, according to The National Desk.',joke:'I’d like to speak to the remaining 2%.'},
- 'us-outages-rubio-1118':{priority:95,credit:'Marco Rubio · news.com.au',context:'Rubio’s assessment of a malicious connection between the outages.',joke:'Zero evidence. Several press conferences.'},
- 'microsoft-1112':{priority:90,credit:'Charles Lamanna · X',joke:'The AI has an alibi.'},
- 'apple-1117':{priority:85,credit:'Apple, via Mark Gurman · X',joke:'The update has declined to comment.'},
- 'us-outages-clayton-1118':{priority:80,credit:'Jay Clayton · CNN',context:'That recent private and government outages were not cyberattacks.',joke:'The confidence is online. Some of the infrastructure is not.'},
- 'nsa-1117':{priority:75,joke:'Classified network. Publicly having a bad day.'},
- 'faa-1113':{priority:70,joke:'Have you tried turning the country off and on again?'},
- 'united-1116':{priority:65,joke:'Your flight is delayed. Your reassurance is on time.'},
- 'marriott-1117':{priority:60,joke:'Confidence remains fully booked.'}
+const receiptCredits={
+ 'us-outages-mullin-1118':{priority:100,credit:'Markwayne Mullin · FOX23',context:'Certain the FAA incident was not a cyberattack, according to The National Desk.'},
+ 'us-outages-rubio-1118':{priority:95,credit:'Marco Rubio · news.com.au',context:'Rubio’s assessment of a malicious connection between the outages.'},
+ 'microsoft-1112':{priority:90,credit:'Charles Lamanna · X'},
+ 'apple-1117':{priority:85,credit:'Apple, via Mark Gurman · X'},
+ 'us-outages-clayton-1118':{priority:80,credit:'Jay Clayton · CNN',context:'That recent private and government outages were not cyberattacks.'},
+ 'nsa-1117':{priority:75},
+ 'faa-1113':{priority:70},
+ 'united-1116':{priority:65},
+ 'marriott-1117':{priority:60}
 };
 function drawReceipt(){
- if(!receiptItems.length)return;
+ if(!receiptItems.length||!$('receipt-quote'))return;
  receiptIndex=((receiptIndex%receiptItems.length)+receiptItems.length)%receiptItems.length;
  const {record,d,note,words,form}=receiptItems[receiptIndex];
  $('receipt-kind').textContent=(d.speakerRole==='authority'?'Government':/x[.]com|twitter[.]com/.test(d.sourceUrl)?'On X':'On the record')+' · '+form;
@@ -681,7 +722,6 @@ function drawReceipt(){
  $('receipt-quote').textContent='“'+words+'”';
  $('receipt-context').textContent=note.context||'';$('receipt-context').hidden=!note.context;
  $('receipt-source').textContent=(note.credit||d.speaker+' · '+d.sourceName)+' ↗';$('receipt-source').href=safe(d.sourceUrl);$('receipt-source').setAttribute('aria-label',d.speaker+' · '+d.sourceName+' · Open source');
- $('receipt-joke').textContent='Desk note · '+(note.joke||'Another isolated incident. We’re collecting the set.');
 }
 function refreshReceipts(){
  const cutoff=editionCutoff();
@@ -693,7 +733,7 @@ function refreshReceipts(){
   if(!words||words.split(/\s+/).length>32||(!d.quoteExcerpt&&!d.translation&&descriptionKind(d)==='paraphrase'))continue;
   const key=[d.speaker,d.sourceUrl,words].join('|');if(seen.has(key))continue;seen.add(key);
   const form=d.quoteType==='reporter wording'?'reported wording':d.translation?'translation':d.quoteExcerpt?'excerpt':'quote';
-  receiptItems.push({record,d,words,form,note:receiptNotes[record.id]||{}});
+  receiptItems.push({record,d,words,form,note:receiptCredits[record.id]||{}});
  }
  receiptItems.sort((a,b)=>(b.note.priority||0)-(a.note.priority||0)||Date.parse(b.d.when)-Date.parse(a.d.when));
  drawReceipt();
@@ -802,7 +842,7 @@ function clockContent(){
  const explanation=para('The counter uses the latest timed publication. An untimed statement cannot reset it to midnight. Statements of “no indication” remain qualified. Times marked “Reported” belong to the source, not the spoken statement. Broader government assessments do not add incidents.');
  const entries=c.entries.map(({record,d})=>'<div class="dorg">'+esc(record.org)+'</div><h3>'+esc(record.title)+'</h3>'+claimProof(d)+(record.kind==='official-assessment'?'':recordAction(record,'evidence','Incident evidence'))).join('');
  const previous=(data.officialAssessments||[]).length?sections('Earlier official assessments',metrics.officialAssessments(data.officialAssessments,editionCutoff()).filter(r=>!c.entries.some(e=>e.record.id===r.id)).map(r=>claimProof(r.denial)).join('')):'';
- return intro+explanation+entries+previous;
+ return intro+"<section class=\"reassurance-receipt\" aria-label=\"Sourced reassurances\"><div class=\"receipt-head\"><span id=\"receipt-kind\" class=\"caps\">They said the thing</span><div class=\"receipt-controls\"><span id=\"receipt-position\"></span><button id=\"receipt-prev\" aria-label=\"Previous reassurance\">←</button><button id=\"receipt-next\" aria-label=\"Next reassurance\">→</button></div></div><blockquote id=\"receipt-quote\"></blockquote><p id=\"receipt-context\"></p><a id=\"receipt-source\" target=\"_blank\" rel=\"noopener noreferrer\"></a></section>"+explanation+entries+previous;
 }
 function caseContent(r,development){
  const k=tier(r),parts=['<div class="dorg t-'+k+'">'+brand(r).art+esc(r.org)+'</div><h2 id="dialog-title">'+esc(r.title)+'</h2><div class="dmeta"><span class="flag t-'+k+'">'+sig(k)+esc(names[k])+'</span><span class="meta">'+esc(metrics.sectorLabel(groupName(r)))+' · '+esc(stamp(r.date,true))+'</span></div>'];
@@ -850,10 +890,11 @@ function renderDialog(){
  else if(view==='sector'){label='Industry map';html=sectorContent(id)}
  else if(view==='outlet'){const o=metrics.outlets[id];if(!o)return;label='Breaking news desk';html='<h2 id="dialog-title">'+esc(o.name)+'</h2><span class="meta">'+esc(o.kind)+'</span><p class="lede">'+esc(o.description)+'</p><p class="big-link">'+external('Open '+o.name,o.url)+'</p>'}
  else if(view==='outlets'){label='Source directory';html='<h2 id="dialog-title">Breaking news desks</h2>'+metrics.outlets.map((o,i)=>outletButton(o,i,true)).join('')}
- else if(view==='method'){label='Map help';html='<h2 id="dialog-title">What am I looking at?</h2>'+para('One tile per outage. Larger tiles show wider disruption within an industry. Choose a tile to open its incident and sources.')+'<button class="case-action" data-help-jump="incidents">Read all incidents ↓</button>'+sections('The colors, decoded','<ul class="method-key">'+Object.keys(names).map(k=>'<li class="t-'+k+'">'+sig(k)+'<strong>'+esc(names[k])+'</strong>'+para(descriptions[k])+'</li>').join('')+'</ul>')+sections('The reassurance clock',para('The counter starts at the latest published statement or report with an exact timestamp. It is not the time since an outage began. Statements with no exact time remain in the archive without replacing that timestamp. “No indication” is a qualified assessment. Broader government statements do not add incidents.'))+sections('The quotes',para('Use the arrows below the counter for sourced government and company statements, including posts on X. Excerpts, reporter wording and translations are labeled. Desk notes are our commentary.'))}
+ else if(view==='method'){label='Map help';html='<h2 id="dialog-title">What am I looking at?</h2>'+para('One tile per outage. Larger tiles show wider disruption within an industry. Choose a tile to open its incident and sources.')+'<button class="case-action" data-help-jump="incidents">Read all incidents ↓</button>'+sections('The colors, decoded','<ul class="method-key">'+Object.keys(names).map(k=>'<li class="t-'+k+'">'+sig(k)+'<strong>'+esc(names[k])+'</strong>'+para(descriptions[k])+'</li>').join('')+'</ul>')+sections('The reassurance clock',para('The counter starts at the latest published statement or report with an exact timestamp. It is not the time since an outage began. Statements with no exact time remain in the archive without replacing that timestamp. “No indication” is a qualified assessment. Broader government statements do not add incidents.'))+sections('The quotes',para('Open the clock to browse sourced government and company statements, including posts on X. Excerpts, reporter wording and translations are labeled.'))}
  else if(view==='trends'){label='Signal desk';html='<h2 id="dialog-title">Trending denials</h2><p class="lede">Ranked by newsroom coverage over the last three tracked UTC dates.</p>'+trendRows(metrics.trend(data.records,data.asOf))+sections('How coverage is ranked',para('A newsroom contributes three points for coverage on the latest date, two the day before, or one the day before that. Each newsroom counts once per case, using its most recent report. Syndicated copies count together.'))+sections('Coverage through',para(stamp(data.asOf,true)))}
  else return;
  $('back').hidden=route.length<2;$('dialog-label').textContent=label;$('dialog-body').innerHTML=html;
+ if(view==='clock')drawReceipt();
 }
 function openView(view,id){
  const d=$('overlay');if(view==='clock'&&!currentClock)return;
@@ -921,7 +962,9 @@ window.updateSituation=updateSituation;
 updateSituation(JSON.parse($('snapshot').textContent));
 let queued=false;
 const resize=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;renderBoard()})};
-if('ResizeObserver' in window)new ResizeObserver(resize).observe($('board'));else window.addEventListener('resize',resize);
+if('ResizeObserver' in window)new ResizeObserver(resize).observe($('board'));
+window.addEventListener('resize',resize);
+window.visualViewport?.addEventListener('resize',resize);
 setInterval(()=>{if(!document.hidden)drawClock()},1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)drawClock()});
 })();
