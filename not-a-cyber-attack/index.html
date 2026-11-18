@@ -137,6 +137,7 @@ h1 .title-phrase{color:inherit;white-space:nowrap}
 .help-button{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--accent-line);border-radius:50%;font:600 16px var(--sans);color:var(--lime);flex:none}
 .help-button:hover{background:var(--hover)}.method-key{display:grid;gap:8px}.method-key li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:3px 8px}.method-key .sig{grid-column:1;grid-row:1;color:var(--color)}.method-key strong{grid-column:2;color:var(--color)}.method-key p{grid-column:2}
 @media(max-width:680px){.hero .reassurance-panel{margin-top:12px}.reassurance-panel .clock{padding:10px 12px 8px}.reassurance-panel .clock-value{font-size:36px}.reassurance-receipt{padding:7px 12px 10px}.receipt-controls button{min-width:36px;min-height:36px}#receipt-quote{font-size:21px}#receipt-context{font-size:12px}.receipt-joke{font-size:12px;padding-top:5px;margin-top:6px}.hero{padding-bottom:12px}}
+@media(max-width:680px){.clock-basis{display:none}}@media(max-width:360px){.hero .hero-copy{font-size:13px;line-height:1.4;margin-block:6px 9px}}
 </style>
 </head>
 <body>
@@ -661,11 +662,11 @@ function drawLegend(){
 }
 let receiptIndex=0,receiptItems=[];
 const receiptNotes={
- 'us-outages-mullin-1118':{priority:100,context:'Certain the FAA incident was not a cyberattack, according to The National Desk.',joke:'I’d like to speak to the remaining 2%.'},
- 'us-outages-rubio-1118':{priority:95,context:'Rubio’s assessment of a malicious connection between the outages.',joke:'Zero evidence. Several press conferences.'},
- 'microsoft-1112':{priority:90,joke:'The AI has an alibi.'},
- 'apple-1117':{priority:85,joke:'The update has declined to comment.'},
- 'us-outages-clayton-1118':{priority:80,context:'That recent private and government outages were not cyberattacks.',joke:'The confidence is online. Some of the infrastructure is not.'},
+ 'us-outages-mullin-1118':{priority:100,credit:'Markwayne Mullin · FOX23',context:'Certain the FAA incident was not a cyberattack, according to The National Desk.',joke:'I’d like to speak to the remaining 2%.'},
+ 'us-outages-rubio-1118':{priority:95,credit:'Marco Rubio · news.com.au',context:'Rubio’s assessment of a malicious connection between the outages.',joke:'Zero evidence. Several press conferences.'},
+ 'microsoft-1112':{priority:90,credit:'Charles Lamanna · X',joke:'The AI has an alibi.'},
+ 'apple-1117':{priority:85,credit:'Apple, via Mark Gurman · X',joke:'The update has declined to comment.'},
+ 'us-outages-clayton-1118':{priority:80,credit:'Jay Clayton · CNN',context:'That recent private and government outages were not cyberattacks.',joke:'The confidence is online. Some of the infrastructure is not.'},
  'nsa-1117':{priority:75,joke:'Classified network. Publicly having a bad day.'},
  'faa-1113':{priority:70,joke:'Have you tried turning the country off and on again?'},
  'united-1116':{priority:65,joke:'Your flight is delayed. Your reassurance is on time.'},
@@ -679,7 +680,7 @@ function drawReceipt(){
  $('receipt-position').textContent=(receiptIndex+1)+' / '+receiptItems.length;
  $('receipt-quote').textContent='“'+words+'”';
  $('receipt-context').textContent=note.context||'';$('receipt-context').hidden=!note.context;
- $('receipt-source').textContent=d.speaker+' · '+d.sourceName+' ↗';$('receipt-source').href=safe(d.sourceUrl);
+ $('receipt-source').textContent=(note.credit||d.speaker+' · '+d.sourceName)+' ↗';$('receipt-source').href=safe(d.sourceUrl);$('receipt-source').setAttribute('aria-label',d.speaker+' · '+d.sourceName+' · Open source');
  $('receipt-joke').textContent='Desk note · '+(note.joke||'Another isolated incident. We’re collecting the set.');
 }
 function refreshReceipts(){
@@ -863,7 +864,7 @@ document.addEventListener('click',e=>{
  if(b.id==='close')$('overlay').close();
  else if(b.id==='back'){if(route.length>1){route.pop();renderDialog();$('overlay').scrollTop=0;($('back').hidden?$('close'):$('back')).focus()}}
  else if(b.id==='receipt-next'||b.id==='receipt-prev'){receiptIndex+=b.id==='receipt-next'?1:-1;drawReceipt();}
- else if(b.dataset.helpJump){$('overlay').close();$('desk-main').dataset.mobilePane='industries';selected='';drawEdition();$('atlas-title').scrollIntoView({block:'start',behavior:'instant'});$('atlas-title').focus({preventScroll:true});}
+ else if(b.dataset.helpJump){returnTo=$('atlas-title');$('overlay').close();$('desk-main').dataset.mobilePane='industries';selected='';drawEdition();$('atlas-title').scrollIntoView({block:'start',behavior:'instant'});$('atlas-title').focus({preventScroll:true});}
  else if(b.dataset.pane&&['industries','trending','sources'].includes(b.dataset.pane)){
   $('desk-main').dataset.mobilePane=b.dataset.pane;
   $('phone-nav').querySelectorAll('[data-pane]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.pane===b.dataset.pane)));
