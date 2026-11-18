@@ -520,6 +520,17 @@ export async function publish({html,output,feedName,token,webKey,fetchImpl=fetch
     }
     if(scheduled){
       snapshot.sync.channels.composer=runtime.composerChannel(snapshot.sync.channels.composer,stamp,result);
+      const official=modules?.assessments||await import('./discover-official-assessments.mjs');
+      try{
+        const found=await official.discoverOfficialAssessments({now,start:snapshot.start,assessments:snapshot.officialAssessments,
+          webKey,fetchString:transport.fetchString,state:snapshot.officialAssessmentState});
+        snapshot.officialAssessmentState=found.state;
+        const before=JSON.stringify(snapshot.officialAssessments);
+        snapshot.officialAssessments=mergeOfficialAssessments(snapshot.officialAssessments,found.assessments,now);
+        const diagnostics=found.diagnostics||{},status=diagnostics.status||'unavailable';
+        snapshot.sync.channels.reassurances={...snapshot.sync.channels.reassurances,lastAttemptAt:stamp,status,...diagnostics,
+          ...(status==='checked'?{lastSuccessAt:stamp}:{}),accepted:Number(before!==JSON.stringify(snapshot.officialAssessments))};
+      }catch(error){snapshot.sync.channels.reassurances=runtime.failedChannel(snapshot.sync.channels.reassurances,stamp,error);}
       const follow=modules?.followup||await import('./follow-up-outages.mjs');
       await runtime.supplement({snapshot,now,webKey,transport,readPage,verify,
         runDiscovery:discovery.discoverIndustryOutages,runFollowups:follow.runFollowups,

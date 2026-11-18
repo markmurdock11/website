@@ -36,11 +36,12 @@ test('publisher accepts verified water events as context without creating a cybe
  try{
   const sourceHtml=await readFile(new URL('../not-a-cyber-attack/index.html',import.meta.url),'utf8');
   const input=join(temp,'index.html'),output=join(temp,'feed.json');await writeFile(input,sourceHtml);
-  const now=Date.parse('2026-11-18T22:00:00Z'),url='https://cedarwater.org/notices/boil-water-2026-11-18';
+  const seed=JSON.parse(sourceHtml.match(/<script id="snapshot" type="application\/json">([\s\S]*?)<\/script>/)[1]);
+  const now=Math.max(Date.parse('2026-11-18T22:00:00Z'),Date.parse(seed.asOf))+3600000,url='https://cedarwater.org/notices/boil-water-2026-11-18';
   const row={org:'Cedar Water',title:'Cedar Water issues boil-water advisory',date:'2026-11-18',sector:'Water',incident_id:'water-fixture',source_name:'Cedar Water',source_kind:'Operator statement',source_date:'2026-11-18',source_url:url,summary:'Cedar Water has issued a boil-water advisory after a water-main break.'};
   const result=await publish({html:input,output,feedName:'news.cyber_evidence_wire',scheduled:true,webKey:'fixture-key',now,
    fetchImpl:async()=>{throw Error('No external requests in this fixture');},
-   modules:{discovery:{ownsWatchlistSource:()=>true,discoverIndustryOutages:async()=>({leads:[{row,page:'<article>Cedar Water has issued a boil-water advisory after a water-main break on November 18, 2026.</article>'}],state:{},diagnostics:{channels:[{status:'ok',channel:'utilityDiscovery',accepted:1}]}})},
+   modules:{assessments:{discoverOfficialAssessments:async()=>({assessments:[],state:{},diagnostics:{status:'checked'}})},discovery:{ownsWatchlistSource:()=>true,discoverIndustryOutages:async()=>({leads:[{row,page:'<article>Cedar Water has issued a boil-water advisory after a water-main break on November 18, 2026.</article>'}],state:{},diagnostics:{channels:[{status:'ok',channel:'utilityDiscovery',accepted:1}]}})},
    followup:{runFollowups:async()=>({state:{},stats:{checked:0},updates:[]})}}});
   const data=JSON.parse(await readFile(output,'utf8')),record=data.records.find(r=>r.id==='water-fixture');
   assert.ok(record);assert.equal(record.sector,'Water');assert.equal(record.tier,'unresolved');assert.equal(record.denial,undefined);
@@ -62,4 +63,17 @@ test('reviewed water records remain in the feed and browser scripts compile',asy
  assert.ok(html.includes("sections('Update status',monitorHealthContent())"));
  assert.ok(data.records.filter(r=>r.sector==='Water').every(r=>!r.denial && r.tier==='unresolved'));
 });
+
+test('reassurance clock selects a newer report but excludes observation timestamps',async()=>{
+ const html=await readFile(new URL('../not-a-cyber-attack/index.html',import.meta.url),'utf8');
+ const code=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].find(m=>m[2].includes('window.DeskMetrics ='))[2];
+ const sandbox={window:{},Intl,URL};vm.runInNewContext(code,sandbox);
+ const make=(id,when,timeBasis)=>({id,kind:'official-assessment',org:'Public authority',title:'Outage reassurance',date:when,verifiedOutageDenial:true,
+  sources:[{name:'News source',url:'https://www.cnn.com/'+id,date:when}],
+  denial:{type:'qualified',when,basis:'report',speaker:'Public authority',speakerRole:'authority',paraphrase:'No evidence of a cyberattack was identified.',sourceName:'News source',sourceUrl:'https://www.cnn.com/'+id,...(timeBasis?{timeBasis}:{})}});
+ const old=make('old','2026-11-18T17:25:00Z'),later=make('later','2026-11-18T19:38:26Z'),untimed=make('untimed','2026-11-18'),observed=make('observed','2026-11-18T22:00:00Z','observed');
+ const now=Date.parse('2026-11-18T22:10:00Z'),clock=sandbox.window.DeskMetrics.clock([],now,now,[old,untimed,later,observed]);
+ assert.equal(clock.when,'2026-11-18T19:38:26Z');assert.equal(clock.value,'02:31:34');
+});
+
 

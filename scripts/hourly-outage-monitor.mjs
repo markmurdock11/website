@@ -63,10 +63,10 @@ export function monitorHealth(snapshot, now, webKey) {
   const publicWindow=Math.floor(now/dayMs);
   const used=!webKey && usage.mode==='public' && usage.window===publicWindow ? Number(usage.credits)||0 : 0;
   const channels=snapshot.sync?.channels||{};
-  const successes=[channels.watchlists?.lastSuccessAt,channels.followups?.lastSuccessAt].filter(t=>Number.isFinite(Date.parse(t)));
-  const attempts=[channels.watchlists?.lastAttemptAt,channels.followups?.lastAttemptAt].filter(t=>Number.isFinite(Date.parse(t)));
+  const successes=[channels.watchlists?.lastSuccessAt,channels.followups?.lastSuccessAt,channels.reassurances?.lastSuccessAt].filter(t=>Number.isFinite(Date.parse(t)));
+  const attempts=[channels.watchlists?.lastAttemptAt,channels.followups?.lastAttemptAt,channels.reassurances?.lastAttemptAt].filter(t=>Number.isFinite(Date.parse(t)));
   const exhausted=!webKey && (used>=90 || (usage.window===publicWindow && (usage.requests>=45 || usage.retryAfter>now)));
-  const degraded=[channels.watchlists,channels.followups].some(c=>['budget','unavailable','deferred'].includes(c?.status));
+  const degraded=[channels.watchlists,channels.followups,channels.reassurances].some(c=>['budget','unavailable','deferred'].includes(c?.status));
   return {status:exhausted?'paused':degraded?'degraded':webKey?'configured':'limited',mode:webKey?'authenticated':'public',
     webAccessKeyConfigured:Boolean(webKey),...(attempts.length?{lastAttemptAt:attempts.sort((a,b)=>Date.parse(b)-Date.parse(a))[0]}:{}),
     ...(successes.length?{lastSuccessfulCheckAt:successes.sort((a,b)=>Date.parse(b)-Date.parse(a))[0]}:{}),
