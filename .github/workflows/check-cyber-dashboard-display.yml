@@ -33,3 +33,29 @@ jobs:
           name: phone-browser-previews
           path: ${{ runner.temp }}/monitor-screens
           retention-days: 7
+      - name: Read the phone preview for visual review
+        if: always()
+        shell: bash
+        env:
+          OUTPUT_DIR: ${{ runner.temp }}/monitor-screens
+        run: |
+          python3 - <<'PY'
+          import base64, os, subprocess
+          from pathlib import Path
+          for filename in ['chromium-390.png','chromium-industry-map-390.png','chromium-case-atlas-390.png']:
+              path = Path(os.environ['OUTPUT_DIR']) / filename
+              if path.exists():
+                  try:
+                      from PIL import Image
+                      from io import BytesIO
+                      buf = BytesIO()
+                      Image.open(path).convert('RGB').save(buf, format='JPEG', quality=75)
+                      raw = buf.getvalue()
+                      mime = 'jpeg'
+                  except ImportError:
+                      raw = path.read_bytes()
+                      mime = 'png'
+                  data = base64.b64encode(raw).decode()
+                  for i in range(0,len(data),3000):
+                      print('SHOT|%s|%s|%05d|%s' % (filename,mime,i//3000,data[i:i+3000]))
+          PY
