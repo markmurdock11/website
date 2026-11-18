@@ -72,6 +72,35 @@ h1 .title-phrase{color:inherit;white-space:nowrap}
  .sector-band+.sector-band{border-left:1px solid #10140e}.sector-brands .orgsvg{width:21px;height:21px}.sector-brands small,.sector-brands .extra{color:#d8dfcf}
  .map-foot{padding-top:2px}.developments{margin-top:14px}.board-head{margin-bottom:2px}.board-head h2{font-size:25px}
 }
+
+/* Keep the spatial map and its incident descriptions in the same edition. */
+.map-jump,.atlas-head a{display:inline-flex;align-items:center;min-height:34px;color:#d4edb6;font:12px/1.3 var(--sans);text-decoration-thickness:1px}
+.case-atlas{margin:8px 0 0;container-type:inline-size}.atlas-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:12px}
+.atlas-groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:row dense;gap:8px;align-items:stretch}
+.atlas-sector{--columns:var(--span4);grid-column:span var(--columns);display:flex;flex-direction:column;min-width:0;padding:4px;border:1px solid #49513f;background:#12160f;border-radius:3px}
+.atlas-sector h3{padding:5px 5px 8px;font:590 11px/1.25 var(--mono);color:#dce6ce;letter-spacing:.075em;text-transform:uppercase}
+.atlas-cases{flex:1;display:grid;grid-template-columns:repeat(var(--columns),minmax(0,1fr));gap:3px}
+.atlas-case{position:relative;min-width:0;display:flex;flex-direction:column;align-items:stretch;gap:7px;padding:13px;text-align:left;border:1px solid var(--edge);border-radius:2px;background:linear-gradient(125deg,color-mix(in srgb,var(--wash) 82%,#11160d),var(--dark));color:var(--tile-ink);scroll-margin-block:18px}
+.atlas-case:before{content:"";position:absolute;top:-1px;left:-1px;width:26px;height:3px;background:var(--color)}
+.atlas-case:hover,.atlas-case:focus{outline:2px solid var(--color);outline-offset:-2px;filter:brightness(1.1)}
+.atlas-case-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:7px}.atlas-case-head .orgsvg{width:22px;height:22px;color:var(--color)}
+.atlas-org{font:680 15px/1.2 var(--sans);letter-spacing:-.022em;overflow-wrap:anywhere}.atlas-date{color:var(--color);white-space:nowrap;font:10px/1.4 var(--mono)}
+.atlas-title{font:630 clamp(15px,1.25vw,20px)/1.2 var(--sans);letter-spacing:-.027em;overflow-wrap:anywhere}
+.atlas-description{color:var(--tile-ink);font:400 13px/1.42 var(--sans);overflow-wrap:anywhere}
+.atlas-status{display:flex;gap:5px;align-items:center;margin-top:auto;padding-top:3px;color:var(--color);font:10px/1.3 var(--mono)}.atlas-status .sig{width:12px;height:12px}
+@container(max-width:1150px){.atlas-groups{grid-template-columns:repeat(3,minmax(0,1fr))}.atlas-sector{--columns:var(--span3)}}
+@container(max-width:825px){.atlas-groups{grid-template-columns:repeat(2,minmax(0,1fr))}.atlas-sector{--columns:var(--span2)}}
+@container(max-width:570px){.atlas-groups{display:block}.atlas-sector{--columns:1;margin-bottom:9px}}
+@media(max-width:680px){
+ .hero-copy{display:block;font:14px/1.38 var(--sans);margin:9px 0 12px;color:#c2cbb8}.hero{padding-top:15px}
+ .board{display:block;height:clamp(330px,96vw,485px);border-color:#546248}
+ .board .sector-head{font-size:9px;letter-spacing:.025em}.board .sector-head .icon{display:none}
+ .board .cell{padding:4px;gap:4px}.board .cell.compact{padding:3px;gap:2px}.board .cell-name{font-size:clamp(10px,2.9vw,14px);line-height:1.06}.board .cell-description{display:none}
+ .map-foot{font-size:11px}.map-jump,.atlas-head a{min-height:44px;font-size:13px}
+ .case-atlas{margin-top:4px}.atlas-head{margin-bottom:5px}.atlas-head h2{font-size:23px}.atlas-sector h3{font-size:12px;padding:6px 6px 9px}
+ .atlas-case{padding:11px 13px;gap:6px}.atlas-org{font-size:16px}.atlas-title{font-size:18px}.atlas-description{font-size:15px;line-height:1.44}.atlas-date,.atlas-status{font-size:11px}
+ #desk-main[data-mobile-pane=trending] #case-atlas,#desk-main[data-mobile-pane=sources] #case-atlas,#desk-main[data-mobile-pane=trending] #developments,#desk-main[data-mobile-pane=sources] #developments{display:none}
+}
 </style>
 </head>
 <body>
@@ -90,12 +119,13 @@ h1 .title-phrase{color:inherit;white-space:nowrap}
 </svg>
 <header class="credit"><span>a dashboard by <a href="https://kram.bio/">kram</a>, built with <a href="https://usestring.ai/">string</a></span></header>
 <main class="shell" id="desk-main" data-mobile-pane="industries">
-<section class="hero" aria-labelledby="page-title"><div><h1 id="page-title">Not a <span class="title-phrase">Cyber Attack<span>?</span></span></h1><p class="hero-copy">Outages are rampant. Everything is going down in the digital world. But nothing is a cyber attack. I guess? Maybe? Idk. We're monitoring the situation.</p><div class="intro-line"><span>Outages are rampant.</span><button data-view="about" aria-haspopup="dialog">About this dashboard</button></div></div><button class="clock" id="denial-clock" data-view="clock"><span class="caps clock-name" id="clock-name">Since the last denial</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><span class="clock-main"><span class="clock-value" id="clock-value">—</span><span class="clock-unit" id="clock-unit"></span></span><span class="clock-org" id="clock-org"></span></button></section>
+<section class="hero" aria-labelledby="page-title"><div><h1 id="page-title">Not a <span class="title-phrase">Cyber Attack<span>?</span></span></h1><p class="hero-copy">Outages are rampant. Everything is going down in the digital world. But nothing is a cyber attack. I guess? Maybe? Idk. We're monitoring the situation.</p></div><button class="clock" id="denial-clock" data-view="clock"><span class="caps clock-name" id="clock-name">Since the last denial</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><span class="clock-main"><span class="clock-value" id="clock-value">—</span><span class="clock-unit" id="clock-unit"></span></span><span class="clock-org" id="clock-org"></span></button></section>
 <nav class="phone-nav" id="phone-nav" aria-label="Dashboard views"><button data-pane="industries" aria-pressed="true">Industries</button><button data-pane="trending" aria-pressed="false">Trending</button><button data-pane="sources" aria-pressed="false">Sources</button></nav>
-<div class="layout"><section class="map-block" aria-labelledby="map-title"><div class="board-head"><h2 id="map-title">Industry map</h2><button class="smallbtn" data-view="method">Map key <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></button></div><div class="legend" id="legend" role="group" aria-label="Filter outages by coverage"></div><div class="board" id="board" role="group" aria-label="Industry map. Select an organization for its incident or a sector for its list."></div><div class="phone-industries" id="phone-industries" role="group" aria-label="Browse outages by industry"></div><div class="map-foot"><span id="window"></span></div><section class="sector-directory" id="sector-directory" aria-labelledby="directory-title" hidden><h3 id="directory-title">Other industries</h3><div class="sector-directory-list" id="other-sectors"></div></section>
-<section class="developments" id="developments" aria-labelledby="develop-title" hidden><div class="develop-head"><h2 id="develop-title"><span class="develop-mark" aria-hidden="true"></span>Latest developments</h2><button class="smallbtn" data-view="developments" aria-label="See all recent developments">All updates <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div><div class="develop-grid" id="develop-grid"></div></section>
+<div class="layout"><section class="map-block" aria-labelledby="map-title"><div class="board-head"><h2 id="map-title">Industry map</h2><button class="smallbtn" data-view="method">Map key <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></button></div><div class="legend" id="legend" role="group" aria-label="Filter outages by coverage"></div><div class="board" id="board" role="group" aria-label="Industry map. Select an incident to reach its description or a sector heading to open its incident list."></div><div class="map-foot"><span id="window"></span><a class="map-jump" href="#atlas-title">Read all incidents ↓</a></div><section class="sector-directory" id="sector-directory" aria-labelledby="directory-title" hidden><h3 id="directory-title">Other industries</h3><div class="sector-directory-list" id="other-sectors"></div></section>
 </section>
 <aside class="rail"><section class="block trend-block" aria-labelledby="trending-title"><div class="rail-head"><h2 id="trending-title">Trending denials</h2><button class="smallbtn" aria-label="All trending denials and ranking method" data-view="trends">All <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div><div id="trending"></div></section><section class="block source-block" aria-labelledby="sources-title"><div class="rail-head"><h2 id="sources-title">Who broke the news?</h2><button class="smallbtn" data-view="rankings">Rankings <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div><p class="rail-sub rank-prefix">First outage reports among tracked cases</p><div class="news-menu" id="outlets"></div></section></aside></div>
+<section id="case-atlas" class="case-atlas" aria-labelledby="atlas-title"><div class="atlas-head"><h2 id="atlas-title" tabindex="-1">Outages by industry</h2><a href="#map-title">Back to map ↑</a></div><div class="atlas-groups" id="atlas-groups"></div></section>
+<section class="developments" id="developments" aria-labelledby="develop-title" hidden><div class="develop-head"><h2 id="develop-title"><span class="develop-mark" aria-hidden="true"></span>Latest developments</h2><button class="smallbtn" data-view="developments" aria-label="See all recent developments">All updates <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div><div class="develop-grid" id="develop-grid"></div></section>
 <footer><span>Times in UTC</span></footer>
 <noscript><p class="noscript">Enable JavaScript to open the sector map and incident records.</p></noscript>
 </main>
@@ -496,17 +526,16 @@ function drawDevelopments(){
  const lead=developments.slice(0,3);featured=new Set(lead.map(item=>item.record.id));
  $('developments').hidden=!lead.length;$('develop-grid').innerHTML=lead.map(developCard).join('');
 }
-function drawPhoneIndustries(){
- const items=[...groups].map(([name,records])=>{
-  const first=ordered(records)[0],mark=brand(first),more=records.length-1;
-  const tally=new Map();
-  for(const r of records){const assessment=tier(r);tally.set(assessment,(tally.get(assessment)||0)+1)}
-  const composition=Object.keys(names).filter(k=>tally.has(k));
-  const band=composition.map(k=>'<span class="sector-band t-'+k+'" style="flex-grow:'+tally.get(k)+'"></span>').join('');
-  const caption=[metrics.sectorLabel(name),records.length+(more?' outages':' outage'),...composition.map(k=>names[k]+' '+tally.get(k))].join(' · ');
-  return '<button class="industry-card" data-sector="'+esc(name)+'" aria-label="'+esc(caption)+'" aria-haspopup="dialog"><span class="sector-bands" aria-hidden="true">'+band+'</span><strong>'+esc(metrics.sectorLabel(name))+'</strong>'+ico('arrow')+'<span class="sector-brands t-'+tier(first)+'">'+mark.art+'<small>'+esc(mark.label)+'</small>'+(more?'<span class="extra">+'+more+'</span>':'')+'</span></button>';
- });
- $('phone-industries').innerHTML=items.join('')||'<p class="empty">No outages match this filter.</p>';
+function drawCaseAtlas(){
+ const cards=[...groups].map(([sector,records])=>{
+  const count=records.length;
+  const cases=ordered(records).map(r=>{
+   const k=tier(r),description=r.summary||r.impactNote||r.assessment||'';
+   return '<button type="button" class="atlas-case t-'+k+'" id="atlas-case-'+esc(r.id)+'" data-case="'+esc(r.id)+'" aria-haspopup="dialog"><span class="atlas-case-head">'+brand(r).art+'<strong class="atlas-org">'+esc(r.org)+'</strong><time class="atlas-date" datetime="'+esc(r.date)+'">'+esc(stamp(r.date))+'</time></span><span class="atlas-title">'+esc(r.title)+'</span><span class="atlas-description">'+esc(description)+'</span><span class="atlas-status">'+sig(k)+esc(names[k])+'</span></button>';
+  }).join('');
+  return '<section class="atlas-sector" data-industry="'+esc(sector)+'" style="--span4:'+Math.min(4,count)+';--span3:'+Math.min(3,count)+';--span2:'+Math.min(2,count)+'"><h3>'+esc(metrics.sectorLabel(sector))+'</h3><div class="atlas-cases">'+cases+'</div></section>';
+ }).join('');
+ $('atlas-groups').innerHTML=cards||'<p class="empty">No matching outages.</p>';
 }
 function packRows(items,w,h){
  const total=items.reduce((n,i)=>n+i.weight,0);
@@ -550,24 +579,14 @@ function renderBoard(){
   const title=document.createElement('button');title.className='sector-head';title.dataset.sector=g.name;title.setAttribute('aria-label','Open '+metrics.sectorLabel(g.name)+' incidents');title.innerHTML='<span>'+esc(metrics.sectorLabel(g.name))+'</span>'+ico('arrow');title.style.height=headHeight+'px';
   const tiles=document.createElement('div');tiles.className='tiles';group.append(title,tiles);
   const tileW=Math.max(1,g.w-10),tileH=Math.max(1,g.h-headHeight-8);
-  // A sector list retains every record as additional reports arrive. Clusters keep marks usable.
-  const maxVisible=Math.max(1,Math.min(24,Math.floor(tileW*tileH/(mobile?1150:2200))));
-  const items=g.records.length<=maxVisible?g.records:g.records.slice(0,Math.max(0,maxVisible-1));
-  const caseWeights=items.map((r,order)=>({r,order,weight:reach[r.impact]||1.28}));
-  if(items.length<g.records.length)caseWeights.push({remainder:g.records.length-items.length,order:items.length,weight:1.1});
+  const caseWeights=g.records.map((r,order)=>({r,order,weight:reach[r.impact]||1.28}));
   for(const cell of unpack(caseWeights,tileW,tileH)){
    const b=document.createElement('button');place(b,cell,.9);
-   if(cell.remainder){
-    const hiddenFeatured=g.records.slice(items.length).filter(r=>featured.has(r.id)).map(r=>r.id);
-    b.className='cell more-cell t-unresolved'+(hiddenFeatured.length?' featured':'');b.dataset.sector=g.name;
-    if(hiddenFeatured.length)b.dataset.hiddenFeatured=JSON.stringify(hiddenFeatured);
-    b.innerHTML='<span class="cell-name">+'+cell.remainder+' more</span>';b.setAttribute('aria-label','Open all '+metrics.sectorLabel(g.name)+' reports');tiles.append(b);continue;
-   }
    const r=cell.r,k=tier(r),big=cell.w>=(mobile?85:122)&&cell.h>=(mobile?79:92),compact=cell.h<53||cell.w<55;
    b.className='cell t-'+k+(big?' big':'')+(cell.h>90?' tall':'')+(compact?' compact':'')+(cell.w<85?' narrow':'')+(cell.h<33?' tiny':'')+(featured.has(r.id)?' featured':'');
    const d=primaryDenial(r),said=d?speakerText(d):r.impactNote;
    const details=d?[denialLabel(d),d.speaker,said,d.sourceName,stamp(d.when,true)]:['Outage context',names[k],r.assessment,stamp(r.date,true)];
-   b.dataset.case=r.id;b.dataset.tier=k;b.dataset.kind=d?'denial':'context';b.title=[r.org,r.title,...details].filter(Boolean).join(' · ');b.setAttribute('aria-label',b.title);
+   b.dataset.case=r.id;b.dataset.locate=r.id;b.setAttribute('aria-controls','atlas-case-'+r.id);b.dataset.tier=k;b.dataset.kind=d?'denial':'context';b.title=[r.org,r.title,...details].filter(Boolean).join(' · ');b.setAttribute('aria-label',b.title);
    const quoteLine=d?(d.translation||(descriptionKind(d)==='quotation'?'“'+said+'”':said)):said;
    const room=cell.w>=(mobile?108:143)&&cell.h>=(mobile?120:136);
    const badge=big?'<span class="cell-status">'+sig(k)+esc(names[k])+'</span>':sig(k);
@@ -733,7 +752,7 @@ function renderDialog(){
  else if(view==='sector'){label='Industry map';html=sectorContent(id)}
  else if(view==='outlet'){const o=metrics.outlets[id];if(!o)return;label='Breaking news desk';html='<h2 id="dialog-title">'+esc(o.name)+'</h2><span class="meta">'+esc(o.kind)+'</span><p class="lede">'+esc(o.description)+'</p><p class="big-link">'+external('Open '+o.name,o.url)+'</p>'}
  else if(view==='outlets'){label='Source directory';html='<h2 id="dialog-title">Breaking news desks</h2>'+metrics.outlets.map((o,i)=>outletButton(o,i,true)).join('')}
- else if(view==='method'){label='Map key';html='<h2 id="dialog-title">Reading the industry map</h2><p class="lede">On the desktop map, larger tiles show wider disruption within an industry. On phones, each industry’s color bands show the share of tracked outages by assessment. Select an industry or outage to see the evidence.</p>'+sections('Reported denials',para('A denial can come from an operator, an authority, a news outlet, a commentator or a public post. Open the record for the speaker, their words and the source.'))+sections('Outage context',para('These cases document a disruption without an attributed denial. Some have a confirmed cyber cause.'))+sections('Latest developments',para('A white corner marks a case in the latest developments strip. Hover or focus an update to locate it on the map.'))+sections('What the colors mean','<ul class="method-list">'+Object.keys(names).map(k=>'<li><strong class="signal-label t-'+k+'">'+sig(k)+esc(names[k])+'</strong>'+para(descriptions[k])+'</li>').join('')+'</ul>')+sections('Denials and timing',para('The clock starts when a source rules out a cyberattack. A statement of “no indication” keeps its own label. When only the day is known, the clock shows the date.'))}
+ else if(view==='method'){label='Map key';html='<h2 id="dialog-title">Reading the industry map</h2><p class="lede">Each map tile is an outage. Larger tiles show wider disruption within the same industry. Choose a tile to reach its description, then open the incident for statements, reporting times and sources.</p>'+sections('Reported denials',para('A denial can come from an operator, an authority, a news outlet, a commentator or a public post. Open the record for the speaker, their words and the source.'))+sections('Outage context',para('These cases document a disruption without an attributed denial. Some have a confirmed cyber cause.'))+sections('Latest developments',para('A white corner marks a case in the latest developments strip. Hover or focus an update to locate it on the map.'))+sections('What the colors mean','<ul class="method-list">'+Object.keys(names).map(k=>'<li><strong class="signal-label t-'+k+'">'+sig(k)+esc(names[k])+'</strong>'+para(descriptions[k])+'</li>').join('')+'</ul>')+sections('Denials and timing',para('The clock starts when a source rules out a cyberattack. A statement of “no indication” keeps its own label. When only the day is known, the clock shows the date.'))}
  else if(view==='trends'){label='Signal desk';html='<h2 id="dialog-title">Trending denials</h2><p class="lede">Ranked by newsroom coverage over the last three tracked UTC dates.</p>'+trendRows(metrics.trend(data.records,data.asOf))+sections('How coverage is ranked',para('A newsroom contributes three points for coverage on the latest date, two the day before, or one the day before that. Each newsroom counts once per case, using its most recent report. Syndicated copies count together.'))+sections('Coverage through',para(stamp(data.asOf,true)))}
  else return;
  $('back').hidden=route.length<2;$('dialog-label').textContent=label;$('dialog-body').innerHTML=html;
@@ -756,6 +775,10 @@ document.addEventListener('click',e=>{
   $('dialog-body').querySelectorAll('[data-rank-select]').forEach(el=>{if(el.dataset.rankSelect===rankCategory)el.focus({preventScroll:true})});
  }
  else if(b.dataset.rankSource&&Object.hasOwn(rankLabels,b.dataset.rankKind))openView('rank-source',{source:b.dataset.rankSource,which:b.dataset.rankKind});
+ else if(b.dataset.locate){
+  const tile=$('atlas-case-'+b.dataset.locate);
+  if(tile){tile.scrollIntoView({block:'center',behavior:'instant'});tile.focus({preventScroll:true})}
+ }
  else if(b.dataset.case)openView('case',b.dataset.case);
  else if(b.dataset.development)openView('development',b.dataset.development);
  else if(b.dataset.sector)openView('sector',b.dataset.sector);
@@ -768,7 +791,7 @@ document.addEventListener('click',e=>{
 });
 function spotlight(id){
  $('board').querySelectorAll('.cell').forEach(b=>{
-  const match=id&&(b.dataset.case===id||(b.dataset.hiddenFeatured&&JSON.parse(b.dataset.hiddenFeatured).includes(id)));
+  const match=id&&b.dataset.case===id;
   b.classList.toggle('spotlit',!!match);
  });
 }
@@ -783,7 +806,7 @@ function drawEdition(){
  groups=new Map();
  for(const r of visible){const name=groupName(r);if(!groups.has(name))groups.set(name,[]);groups.get(name).push(r)}
  groups=new Map([...groups].sort(([a],[b])=>a.localeCompare(b)));
- drawClock();drawTrends();drawLegend();drawDevelopments();renderBoard();drawPhoneIndustries();drawOtherSectors();
+ drawClock();drawTrends();drawLegend();drawDevelopments();renderBoard();drawCaseAtlas();drawOtherSectors();
  $('outlets').innerHTML=rankedRows('outage',4);
  $('window').textContent=data.start&&data.asOf?stamp(data.start)+' – '+stamp(data.asOf):'';
  if(route.length)renderDialog();
