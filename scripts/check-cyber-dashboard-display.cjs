@@ -111,7 +111,31 @@ async function inspect(browser, engine, width, height) {
     await page.locator('#clock-org').waitFor({ state: 'visible' });
     assert.ok(await page.evaluate(() => window.SITUATION.records.length > 0));
     assert.match(await page.locator('.credit').innerText(), /a dashboard by kram, built with string/i);
-    assert.equal(await page.locator('#clock-name').textContent(), 'Since the last denial');
+    assert.match(await page.locator('#clock-name').textContent(), /^Latest official assessment/);
+    const clockCases = await page.evaluate(() => {
+      const edition=window.SITUATION, now=Date.now(), cutoff=Date.parse('2026-11-18T18:08:46.465Z');
+      const clock=(records=edition.records,assessments=edition.officialAssessments,asOf=cutoff)=>
+        window.DeskMetrics.clock(records,now,asOf,assessments);
+      const current=clock();
+      const future=structuredClone(edition.officialAssessments[0]);
+      future.id='future-assessment';future.date=future.denial.when=new Date(now+86400000).toISOString();
+      const missing=structuredClone(edition.officialAssessments[0]);missing.id='uncited-assessment';missing.sources=[];
+      const newsroom=structuredClone(edition.officialAssessments[0]);newsroom.id='reporter-assessment';newsroom.denial.speakerRole='newsroom';
+      const isolated=clock([],edition.officialAssessments);
+      const priorCutoff=Date.parse('2026-11-17T23:59:59Z');
+      const earlier=clock(edition.records,edition.officialAssessments,priorCutoff);
+      return {record:current?.record.id,date:current?.when,unit:current?.unit,
+        entries:current?.entries.map(e=>e.record.id),minutes:isolated?.value,isolated:isolated?.record.id,
+        futureIgnored:clock([], [future])===null,missingIgnored:clock([], [missing])===null,
+        newsroomIgnored:clock([], [newsroom])===null,earlier:earlier?.when};
+    });
+    assert.notEqual(clockCases.record,'apple-1117','Morning official assessments supersede Apple');
+    assert.ok(clockCases.entries.includes('us-outages-clayton-1118'),'The morning hearing is visible');
+    assert.equal(clockCases.date,'2026-11-18','An untimed statement on the latest day preserves date precision');
+    assert.equal(clockCases.unit,'','An unknown statement time must not become a minute counter');
+    assert.equal(clockCases.isolated,'us-outages-clayton-1118','Latest timed report selected when all times are known');
+    assert.ok(clockCases.futureIgnored && clockCases.missingIgnored && clockCases.newsroomIgnored);
+    assert.ok(clockCases.earlier?.startsWith('2026-11-17'),'Historical cutoff excludes morning reports');
     assert.equal(await page.locator('#edition-mode').count(), 0);
     assert.ok(await page.locator('#page-title').evaluate(node => parseFloat(getComputedStyle(node).fontSize)) >= (mobile ? 42 : 70));
     await verifyMap(page);
@@ -151,6 +175,9 @@ async function inspect(browser, engine, width, height) {
     await clock.click();
     await page.locator('dialog[open]').waitFor();
     assert.ok(await page.locator('#dialog-body a[href^="http"]').count());
+    assert.match(await page.locator('#dialog-body').innerText(), /Jay Clayton/);
+    assert.match(await page.locator('#dialog-body').innerText(), /Qualified|No indication/i);
+    assert.match(await page.locator('#dialog-body').innerText(), /12:25|17:25/);
     await page.locator('#close').click();
     assert.equal(await page.locator('dialog[open]').count(), 0);
     if (width === 390 || width === 1366) await checkPortfolio(page, local);

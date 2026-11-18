@@ -433,6 +433,23 @@ export function reconcileReviewed(saved, reviewed) {
   return merged;
 }
 
+// Reviewed statements about several outages stay outside the incident count.
+export function mergeOfficialAssessments(saved = [], reviewed = [], now = Date.now()) {
+  const claims = new Map();
+  for (const r of [...(Array.isArray(saved)?saved:[]), ...(Array.isArray(reviewed)?reviewed:[])]) {
+    const d = r?.denial;
+    if (r?.kind !== 'official-assessment' || !clean(r.id) || !clean(r.org) || !clean(r.title) ||
+        !date(r.date,now) || r.verifiedOutageDenial !== true || !Array.isArray(r.sources) ||
+        !d || !['explicit','qualified'].includes(d.type) || !['statement','report'].includes(d.basis) ||
+        !/^(operator|authority|public authority)$/i.test(d.speakerRole||'') || d.timeBasis === 'observed' ||
+        !clean(d.speaker) || !clean(d.sourceName) || !(clean(d.quote)||clean(d.paraphrase)) ||
+        !date(d.when,now) || !publicLink(d.sourceUrl) ||
+        !r.sources.some(s=>s && clean(s.name) && publicLink(s.url)===publicLink(d.sourceUrl) && date(s.date,now))) continue;
+    claims.set(r.id,r);
+  }
+  return [...claims.values()].sort((a,b)=>time(b.denial.when)-time(a.denial.when));
+}
+
 export async function publish({html,output,feedName,token,webKey,fetchImpl=fetch,now=Date.now(),scheduled=false,modules}) {
   if (!feedName || !/^[A-Za-z0-9_.-]+$/.test(feedName) || ['.','..'].includes(feedName)) throw Error('Set a valid STRING_FEED_NAME on the server');
   if (resolve(html)===resolve(output)) throw Error('Use a separate JSON output path');
@@ -451,6 +468,8 @@ export async function publish({html,output,feedName,token,webKey,fetchImpl=fetch
     if(prior&&!prior.records.every(validRecord))throw Error('Invalid existing evidence; preserving the last edition');
     let snapshot=prior||structuredClone(seed);
     const originalRecords=JSON.stringify(snapshot.records);
+    const originalAssessments=JSON.stringify(snapshot.officialAssessments||[]);
+    snapshot.officialAssessments=mergeOfficialAssessments(snapshot.officialAssessments,seed.officialAssessments,now);
     if(prior)for(const r of seed.records){
       const i=snapshot.records.findIndex(old=>old.id===r.id);
       if(i<0)snapshot.records.push(r);
@@ -511,9 +530,9 @@ export async function publish({html,output,feedName,token,webKey,fetchImpl=fetch
       snapshot.webAccessUsage=transport.state;
     }
     if(!snapshot.records.every(validRecord))throw Error('Invalid outage or missing source evidence');
-    const evidenceChanged=originalRecords!==JSON.stringify(snapshot.records);
+    const evidenceChanged=originalRecords!==JSON.stringify(snapshot.records)||originalAssessments!==JSON.stringify(snapshot.officialAssessments);
     snapshot.start=seed.start;
-    const newest=snapshot.records.reduce((t,r)=>Math.max(t,time(latest(r)),...r.sources.map(s=>time(s.date)),...(r.changes||[]).map(c=>time(c.detectedAt))),Math.max(time(seed.asOf),time(snapshot.asOf)));
+    const newest=snapshot.records.reduce((t,r)=>Math.max(t,time(latest(r)),...r.sources.map(s=>time(s.date)),...(r.changes||[]).map(c=>time(c.detectedAt))),Math.max(time(seed.asOf),time(snapshot.asOf),...snapshot.officialAssessments.map(r=>time(r.denial.when))));
     if(newest>time(snapshot.asOf))snapshot.asOf=new Date(newest).toISOString();
     if(['received','checked','awaiting_first_export','awaiting_subscription'].includes(result.status))snapshot.sync.checkedAt=stamp;
     if(evidenceChanged)snapshot.sync.publishedAt=stamp;
