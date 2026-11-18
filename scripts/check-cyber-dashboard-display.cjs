@@ -111,7 +111,7 @@ async function inspect(browser, engine, width, height) {
     await page.locator('#clock-org').waitFor({ state: 'visible' });
     assert.ok(await page.evaluate(() => window.SITUATION.records.length > 0));
     assert.match(await page.locator('.credit').innerText(), /a dashboard by kram, built with string/i);
-    assert.match(await page.locator('#clock-name').textContent(), /^Latest official assessment/);
+    assert.equal(await page.locator('#clock-name').textContent(), 'Time since we were reassured');
     const clockCases = await page.evaluate(() => {
       const edition=window.SITUATION, now=Date.now(), cutoff=Date.parse('2026-11-18T18:08:46.465Z');
       const clock=(records=edition.records,assessments=edition.officialAssessments,asOf=cutoff)=>
@@ -131,11 +131,35 @@ async function inspect(browser, engine, width, height) {
     });
     assert.notEqual(clockCases.record,'apple-1117','Morning official assessments supersede Apple');
     assert.ok(clockCases.entries.includes('us-outages-clayton-1118'),'The morning hearing is visible');
-    assert.equal(clockCases.date,'2026-11-18','An untimed statement on the latest day preserves date precision');
-    assert.equal(clockCases.unit,'','An unknown statement time must not become a minute counter');
+    assert.equal(clockCases.date,'2026-11-18T17:25:00Z','The counter uses the latest timed report while retaining untimed claims');
+    assert.equal(clockCases.unit,'hours : min : sec','The timer identifies elapsed time');
     assert.equal(clockCases.isolated,'us-outages-clayton-1118','Latest timed report selected when all times are known');
     assert.ok(clockCases.futureIgnored && clockCases.missingIgnored && clockCases.newsroomIgnored);
     assert.ok(clockCases.earlier?.startsWith('2026-11-17'),'Historical cutoff excludes morning reports');
+    assert.match(await page.locator('#clock-value').textContent(), /^\d{2,}:\d{2}:\d{2}$/);
+    const clockBefore=await page.locator('#clock-value').textContent();
+    await page.waitForFunction(before=>document.querySelector('#clock-value').textContent!==before,clockBefore,{timeout:3500});
+    assert.match(await page.locator('#receipt-quote').innerText(), /98%/);
+    assert.match(await page.locator('#receipt-joke').innerText(), /remaining 2%/);
+    const firstReceipt=await page.locator('#receipt-quote').innerText();
+    await page.getByRole('button',{name:'Next reassurance',exact:true}).click();
+    assert.notEqual(await page.locator('#receipt-quote').innerText(),firstReceipt);
+    assert.ok(await page.locator('#receipt-source').getAttribute('href'));
+    await page.getByRole('button',{name:'Previous reassurance',exact:true}).click();
+    assert.equal(await page.locator('#receipt-quote').innerText(),firstReceipt);
+    assert.equal(await page.locator('.map-caption').count(),0);
+    assert.equal(await page.locator('#legend .update-key').count(),0);
+    assert.equal(await page.locator('.board-actions').count(),0);
+    await page.getByRole('button',{name:'How to read this map',exact:true}).click();
+    await page.locator('dialog[open]').waitFor();
+    assert.match(await page.locator('#dialog-body').innerText(), /Larger tiles|larger tiles/);
+    assert.match(await page.locator('#dialog-body').innerText(), /No indication/);
+    await page.getByRole('button',{name:'Read all incidents',exact:false}).click();
+    assert.equal(await page.locator('dialog[open]').count(),0);
+    await page.evaluate(()=>window.scrollTo(0,0));
+    const tracked=await page.evaluate(()=>window.SITUATION.records.map(r=>r.id));
+    assert.ok(tracked.includes('playstation-1118')&&tracked.includes('florida-dmv-1118'));
+
     assert.equal(await page.locator('#edition-mode').count(), 0);
     assert.ok(await page.locator('#page-title').evaluate(node => parseFloat(getComputedStyle(node).fontSize)) >= (mobile ? 42 : 70));
     await verifyMap(page);
