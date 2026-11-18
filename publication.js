@@ -19,7 +19,8 @@
     { id:'personal', label:'Personal essays' },
     { id:'work', label:'Work examples' },
     { id:'video', label:'Videos' },
-    { id:'games', label:'Games' }
+    { id:'games', label:'Games' },
+    { id:'projects', label:'Projects' }
   ];
   const readFilter = () => {
     const filter = new URL(location.href).searchParams.get('archive');
@@ -173,7 +174,9 @@
     'x-social-network-features':['internet','attention','technology'],
     'x-tech-founder-beer-matrix':['culture','marketing','internet'],
     'near-bag-experience':['money','technology','culture'],
-    'cheeky-pint-matrix':['culture','technology','internet']
+    'cheeky-pint-matrix':['culture','technology','internet'],
+    'not-a-cyber-attack':['infrastructure','technology','internet'],
+    'portfolio-company-map':['money','technology','place']
   };
   // Explicit first connections make each trail a reading choice, not random motion.
   const preferredConnections = {
@@ -199,12 +202,18 @@
     { slug:'near-bag-experience', title:'The Near-Bag Experience', subtitle:'A startup equity game by Kram + Emma.', category:'games', kind:'game', url:'/near-bag-experience/', action:'Play game' },
     { slug:'cheeky-pint-matrix', title:'The Tech Founder Beer Matrix', subtitle:'Make your own beer chugger matrix. Drag the founders, add someone new, and export your chart.', category:'games', kind:'game', url:'/cheeky-pint-matrix/', action:'Open matrix' }
   ];
+  const projects = [
+    { slug:'not-a-cyber-attack', title:'Not a Cyber Attack?', subtitle:'An industry dashboard tracking outages and public cyberattack denials.', category:'projects', kind:'project', url:'/not-a-cyber-attack/', action:'Open dashboard' },
+    { slug:'portfolio-company-map', title:'The Portfolio Company Map', subtitle:'Explore U.S. company hubs and job openings across 15 venture capital portfolios.', category:'projects', kind:'project', url:'/portfolio-company-map', action:'Open company map' }
+  ];
   const escape = value => String(value || '').replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
   const titleFor = post => displayTitles[post.slug] || post.title.replace(/^(?:KURATE|KOMPLEX)\s*(?:#?\d+)?\s*[–—:\-]\s*/i, '').trim();
   const topicsFor = post => topicMap[post.slug] || (post.category === 'work' ? ['marketing','internet'] : ['culture','writing']);
-  const linkAttributes = post => post.kind === 'game'
-    ? `href="${escape(post.url)}?era=${document.documentElement.dataset.era || 'signal'}" target="_top"`
-    : `href="${post.external ? escape(post.url) : postURL(post.slug)}"${post.external ? ' target="_blank" rel="noopener"' : ` data-native-post="${post.slug}"`}`;
+  const linkAttributes = post => {
+    if (post.kind === 'project') return `href="${escape(post.url)}" target="_top"`;
+    if (post.kind === 'game') return `href="${escape(post.url)}?era=${document.documentElement.dataset.era || 'signal'}" target="_top"`;
+    return `href="${post.external ? escape(post.url) : postURL(post.slug)}"${post.external ? ' target="_blank" rel="noopener"' : ` data-native-post="${post.slug}"`}`;
+  };
   const date = value => new Date(value).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', timeZone:'UTC' });
   const duration = seconds => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
   const currentSlug = () => {
@@ -290,7 +299,7 @@
   }
 
   function fileLink(post) {
-    const extension = post.kind === 'game' ? 'app' : post.kind === 'video' ? 'mp4' : post.kind === 'post' ? 'url' : post.external ? 'link' : 'txt';
+    const extension = ['game','project'].includes(post.kind) ? 'app' : post.kind === 'video' ? 'mp4' : post.kind === 'post' ? 'url' : post.external ? 'link' : 'txt';
     const caption = desktopNames[post.slug] || titleFor(post);
     const accessibleTitle = caption === titleFor(post) ? caption : `${caption}: ${titleFor(post)}`;
     return `<a class="native-file" ${linkAttributes(post)} title="${escape(titleFor(post))}" aria-label="${escape(accessibleTitle)}${post.kind === 'video' ? ', video' : ''}"><span class="native-file-icon native-file-icon-${extension}" aria-hidden="true">${post.kind === 'video' ? '<span>MP4</span>' : ''}</span><span class="native-file-title">${escape(caption)}</span>${post.kind === 'video' ? `<span class="native-file-size">${duration(post.duration)}</span>` : ''}</a>`;
@@ -318,10 +327,11 @@
     const focus = posts.find(post => post.slug === selectedIdea) || posts[0];
     selectedIdea = focus.slug;
     const connections = connectionsFor(focus, allItems);
-    const image = focus.kind === 'game' ? null : focus.cover || (focus.category === 'work' ? '/work-bridge-v1.jpg' : '/archive-library-v1.jpg');
+    const isApp = ['game','project'].includes(focus.kind);
+    const image = isApp ? null : focus.cover || (focus.category === 'work' ? '/work-bridge-v1.jpg' : '/archive-library-v1.jpg');
     const action = focus.action || (focus.kind === 'video' ? 'Watch video' : focus.kind === 'post' ? 'Open post' : 'Read essay');
     const indexButton = post => `<button type="button" data-idea-select="${post.slug}" aria-pressed="${post.slug === focus.slug}">${escape(titleFor(post))}${post.kind === 'video' ? `<span>${duration(post.duration)}</span>` : ''}</button>`;
-    return `<div class="native-idea-map${focus.kind === 'game' ? ' native-idea-map-game' : ''}">
+    return `<div class="native-idea-map${isApp ? ' native-idea-map-game' : ''}">
       <svg class="native-idea-paths" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path d="M530 250 C620 250 615 90 715 90"/><path d="M530 250 L715 250"/><path d="M530 250 C620 250 615 410 715 410"/></svg>
       <article class="native-idea-focus">${ideaHistory.length ? '<button type="button" class="native-idea-previous" data-idea-back>Previous idea</button>' : ''}<h3 tabindex="-1" data-idea-focus-title>${escape(titleFor(focus))}</h3>${focus.viral ? `<p class="native-idea-excerpt">${escape(focus.publisher)}</p>` : ''}<a class="native-idea-open" ${linkAttributes(focus)}>${action}${focus.kind === 'video' ? ` · ${duration(focus.duration)}` : ''}</a>${image ? `<figure><img src="${escape(image)}" alt="" width="720" height="400" loading="lazy" decoding="async"></figure>` : ''}</article>
       <nav class="native-idea-connections" aria-label="Related work"><h4 class="native-connections-heading">Related</h4>${connections.map(({ item }) => `<button type="button" data-idea-select="${item.slug}"><span class="native-connection-title">${escape(titleFor(item))}${item.kind === 'video' ? ' (video)' : item.kind === 'game' ? ' (play)' : item.kind === 'post' ? ' (post)' : ''}</span></button>`).join('')}</nav>
@@ -338,7 +348,7 @@
     archiveItems = index.posts.map(post => ({
       ...post,
       category:post.kind === 'video' ? 'video' : post.series?.toLowerCase() === 'komplex' ? 'work' : 'personal'
-    })).concat(externalWriting, socialClips, games).sort((a, b) => (rank.get(a.slug) ?? 100) - (rank.get(b.slug) ?? 100));
+    })).concat(externalWriting, socialClips, games, projects).sort((a, b) => (rank.get(a.slug) ?? 100) - (rank.get(b.slug) ?? 100));
     const query = search.trim().toLocaleLowerCase();
     const filtered = archiveItems.filter(post => query
       ? `${post.title} ${post.subtitle || ''} ${post.series || ''} ${post.publisher || ''} ${topicsFor(post).map(topic => topicNames[topic]).join(' ')}`.toLocaleLowerCase().includes(query)

@@ -1,4 +1,4 @@
-// Run on the website's publisher with a private STRING_FEED_BUILDER_KEY.
+// Runs public source monitoring and optionally imports a private String Composer feed.
 // Expects String-storage default gzipped JSONL exports; cadence is configured in Composer.
 import { createHash, randomUUID } from 'node:crypto';
 import { open, readFile, rename, rm, writeFile } from 'node:fs/promises';
@@ -46,9 +46,9 @@ const socialDomain = /(?:^|\.)(?:x\.com|twitter\.com)$/i;
 const knownHandles = new Map([['msft365status','microsoft'],['clamanna','microsoft'],['faa','faa'],['united','united airlines'],['chase','chase'],['nttdocomo','docomo']]);
 const words = value => key(value).split(' ').filter(w=>w.length>2&&!['the','and','for','organization','corporation','service','services','group','inc','spokesperson'].includes(w));
 const contains = (text,part) => (' '+text+' ').includes(' '+part+' ');
-const interruption = /\b(?:outages?|ground stop|interruption|disruption|shutdown|unavailable|inaccessible|offline|went down|lost access|could not (?:log in|sign in|access)|unable to (?:log in|sign in|access)|cancelled flights?|flights? (?:stopped|cancelled)|disrupted|suspended (?:operations|service|flights)|service (?:failed|stopped))\b/i;
+const interruption = /\b(?:outages?|degraded (?:service|performance)|elevated (?:error rates?|errors)|sign[ -]?in failures?|service degradation|power cuts?|ground stop|interruption|disruption|shutdown|unavailable|inaccessible|offline|went down|lost access|could not (?:log in|sign in|access)|unable to (?:log in|sign in|access)|cancelled flights?|flights? (?:stopped|cancelled)|disrupted|suspended (?:operations|service|flights)|service (?:failed|stopped))\b/i;
 const hypothetical = /\b(?:outage drill|exercise|simulation|simulated|hypothetical|averted an outage|prevented an outage|no (?:actual |operational )?(?:outage|disruption)|no (?:evidence|indication) of (?:a |any )?(?:broad |widespread )?(?:outage|service disruption)|(?:remained|were) (?:fully )?unaffected)\b/i;
-const interruptionOther = /ausfall|störung|\bpanne\b|\bstoring\b|uitval|onderbreking|avería|interrupción|通信障害|利用しづらい/iu;
+const interruptionOther = /ausfall|störung|\bpanne\b|\bstoring\b|uitval|onderbreking|avería|interrupción|障害|(?:ご)?利用しづらい/iu;
 const hasInterruption = text => (interruption.test(text) || interruptionOther.test(text)) && !hypothetical.test(text);
 function denialType(quote) {
   const explicit = /\b(?:(?:was|were|is|are)(?: not|n't) (?:the result of |due to |caused by |related to |linked to )?(?:an? )?(?:cyber[ -]?(?:attack|incident|intrusion)|malicious activity)|(?:ruled|rule) out (?:an? )?cyber[ -]?attack|there (?:was|is) no cyber[ -]?attack|no cyber[ -]?attack (?:occurred|took place))\b/i;
@@ -78,7 +78,7 @@ function denialType(quote) {
   return result;
 }
 const socialSite = /(?:^|\.)(?:x\.com|twitter\.com|reddit\.com|bsky\.app|threads\.(?:net|com)|facebook\.com|tiktok\.com|mastodon\.social)$/i;
-function sourceIdentity(source, org) {
+function sourceIdentity(source, org, ownsSource) {
   const url = new URL(source.url), host = url.hostname.replace(/^www\./, '');
   const social = socialSite.test(host);
   const handle = socialDomain.test(host) && url.pathname.match(/^\/([\w]+)\/status\/\d+\/?$/i)?.[1];
@@ -87,12 +87,12 @@ function sourceIdentity(source, org) {
   const brand = key(org), hostParts = host.split('.');
   const initials = brand.split(' ').map(w => w[0]).join('');
   const orgHost = words(org).some(w => hostParts.includes(w)) || (initials.length > 1 && hostParts.includes(initials));
-  const original = (officialKind && (orgHost || government)) || (handle && knownHandles.get(handle.toLowerCase()) === brand);
-  const role = original ? (government ? 'Public authority' : 'Operator') : social ? 'Public post' :
+  const original = ownsSource?.(org,source.url) || (officialKind && orgHost) || (handle && knownHandles.get(handle.toLowerCase()) === brand);
+  const role = original ? (government ? 'Public authority' : 'Operator') : government ? 'Public authority' : social ? 'Public post' :
     /news|press|wire|journalis|reporting/i.test(source.kind) ? 'News outlet' : 'Published source';
   return {original, role, handle, government};
 }
-function candidate(row, start, now) {
+function candidate(row, start, now, ownsSource) {
   if (!row || row.approved === false || row.approved === 'false' || /^(?:rejected|excluded|invalid|discarded)$/i.test(row.review_status)) return;
   const org = clean(row.org || row.organization || row.organisation || row.entity, 150);
   const title = clean(row.title || row.headline, 320);
@@ -106,7 +106,7 @@ function candidate(row, start, now) {
   if (link.hostname === 'news.google.com' || (socialDomain.test(link.hostname) && !/\/status\/\d+\/?$/.test(link.pathname))) return;
   const name = clean(row.source_name || row.source?.name || row.publisher, 150) || link.hostname.replace(/^www\./,'');
   const kind = clean(row.source_kind || row.source?.kind || row.kind || row.source_type, 60) || (socialSite.test(link.hostname) ? 'Social' : 'Published source');
-  const source = {name,kind,url,date:published};
+  const source = {name,kind,url,date:published,...(row.timeBasis==='observed'?{timeBasis:'observed'}:{})};
   const details = [title, summary, clean(row.impact_note)].join(' ');
   if (hypothetical.test(details)) return;
   const record = {org,title,date:incident,summary,impact:impacts.has(row.impact) ? row.impact : 'service',
@@ -117,7 +117,7 @@ function candidate(row, start, now) {
   if (id) record.composerIncidentId = record.id;
   const incomingQuote = clean(row.quote || row.denial_quote || row.denial?.quote || row.source_quote);
   const namedSpeaker = clean(row.speaker || row.denial?.speaker || row.attributed_to,200);
-  return {record,source,matchKey:identity(record),incomingQuote,namedSpeaker,sourceIdentity:sourceIdentity(source, org)};
+  return {record,source,matchKey:identity(record),incomingQuote,namedSpeaker,sourceIdentity:sourceIdentity(source, org, ownsSource)};
 }
 function evidenceText(text) {
   return text.normalize('NFKC').replace(/\[([^\]]+)\]\(https?:\/\/[^)]+\)/g, '$1')
@@ -185,6 +185,7 @@ function citedOutage(item, page) {
     const {speaker,quote} = corrections[0];
     Object.assign(record, {speaker,quote,tier:'confirmed',rationale:quote});
     item.corrected = true;
+    if (source.timeBasis !== 'observed') source.officialAssessment = {when:source.date,speaker,type:'confirmed'};
   } else if (!claims.length) {
     record.rationale = source.name + ' documented the service disruption.';
     // No unauthenticated cyber-cause assertion should escape in the feed's free text.
@@ -199,11 +200,11 @@ async function readSource(url,fetchImpl,webKey) {
   const headers={'Content-Type':'application/json'};
   if(webKey) headers.Authorization='Bearer '+webKey;
   const response=await fetchImpl('https://request.usestring.ai/v1/fetch',{method:'POST',headers,redirect:'error',signal:AbortSignal.timeout(45000),body:JSON.stringify({url,format:'markdown'})});
-  if(response.status===429||response.status>=500) throw Error('String Web Access temporarily unavailable (HTTP '+response.status+')');
+  if([401,402,429].includes(response.status)||response.status>=500) throw Error('String Web Access temporarily unavailable (HTTP '+response.status+')');
   if (!response.ok) return '';
   const raw=(await bytes(response,4e6)).toString('utf8');
   if (!(response.headers.get('content-type')||'').includes('application/json')) return raw;
-  try {const j=JSON.parse(raw);return clean(j.markdown||j.data?.markdown||j.content||j.data?.content,4e6)}catch{return ''}
+  try {const j=JSON.parse(raw);if(Number(j.statusCode)>=400)return '';return clean(j.markdown||j.data?.markdown||j.content||j.data?.content||(typeof j.data==='string'?j.data:''),4e6)}catch{return ''}
 }
 function validRecord(record) {
   if (!impacts.has(record.impact) || record.impact === 'none' || !record.sources?.some(s => publicLink(s.url))) return false;
@@ -338,88 +339,186 @@ function check(snapshot, now) {
         Array.isArray(r.sources))) throw Error('Invalid existing snapshot; preserving it unchanged');
 }
 
-export async function publish({ html, output, feedName, token, webKey, fetchImpl = fetch, now = Date.now() }) {
-  if (!feedName || !/^[A-Za-z0-9_.-]+$/.test(feedName) || ['.', '..'].includes(feedName)) throw Error('Set a valid STRING_FEED_NAME on the server');
-  if (resolve(html) === resolve(output)) throw Error('Use a separate JSON output path');
-  const lockPath = output + '.lock', tmp = output + '.' + randomUUID() + '.tmp';
-  const lock = await open(lockPath, 'wx').catch(e => { if (e.code === 'EEXIST') throw Error('Another publisher holds the output lock. Clear a leftover lock only after verifying the previous process exited.'); throw e });
-  try {
-    await lock.writeFile(String(process.pid));
-    const seed = loadSeed(await readFile(html, 'utf8')); check(seed, now);
-    if (seed.scope !== scope || !seed.records.every(validRecord)) throw Error('A reviewed outage-monitor seed is required');
-    let prior;
-    try { prior = JSON.parse(await readFile(output, 'utf8')); check(prior, now); }
-    catch (e) { if (e.code !== 'ENOENT') throw e; }
-    if (!token) return {status:'awaiting_credential',records:prior?.records.length ?? seed.records.length};
-    if (prior?.publisherCursor?.feedHash && prior.publisherCursor.feedHash !== hash(feedName)) throw Error('Output belongs to a different feed');
-    if (prior && prior.scope !== scope) {
-      // Replay retained exports under the broader policy; carry forward individually verified legacy records.
-      prior = {...seed,records:prior.records.filter(r => time(r.date) >= time(seed.start) && validRecord(r))};
-    }
-    if (prior && !prior.records.every(validRecord)) throw Error('Invalid existing evidence; preserving the last edition');
-    const snapshot = prior || structuredClone(seed);
-    const originalRecords = JSON.stringify(snapshot.records);
-    if (prior) for (const r of seed.records) {
-      const i = snapshot.records.findIndex(old => old.id === r.id);
-      if (i < 0) snapshot.records.push(r);
-      else {
-        const old = snapshot.records[i];
-        if (time(latest(r)) > time(latest(old))) {
-          snapshot.records[i] = { ...old, ...r, sources:unionSources(old.sources, r.sources) };
-        }
-        if (r.sector) snapshot.records[i].sector = r.sector;
-        preserveDenials(snapshot.records[i], old, r);
-      }
-    }
-    const watermark = time(prior?.publisherCursor?.lastFileAt);
-    const lower = Math.max(time(seed.start), watermark - 2 * day);
-    const collection = await collect(feedName, token, lower, now, fetchImpl);
-    if (collection.awaitingSubscription) {
-      if (watermark) throw Error('The previously published Composer subscription is unavailable; preserving the last edition');
-      return { status:'awaiting_subscription', records:snapshot.records.length };
-    }
-    if (!collection.files.length && !watermark) return {status:'awaiting_first_export', records:snapshot.records.length};
-    const sources = new Map(), corrections=[];
-    let lastFileAt=watermark,accepted=0;
-    for (const f of collection.files) {
-      for (const row of await collection.rows(f)) {
-        const item=candidate(row,seed.start,now);
-        if (!item) continue;
+async function importComposer({snapshot,seed,feedName,token,fetchImpl,now,readPage,scheduled,ownsSource}) {
+  if (!token) return {status:'awaiting_credential'};
+  const oldWatermark = time(snapshot.publisherCursor?.lastFileAt);
+  const lower = Math.max(time(seed.start), oldWatermark - 2*day);
+  const collection = await collect(feedName,token,lower,now,fetchImpl);
+  if (collection.awaitingSubscription) {
+    if (oldWatermark) throw Error('Composer subscription unavailable');
+    return {status:'awaiting_subscription'};
+  }
+  if (!collection.files.length && !oldWatermark) return {status:'awaiting_first_export'};
+  let accepted=0, files=0, watermark=oldWatermark;
+  const progress = scheduled ? (snapshot.publisherCursor?.files || {}) : {};
+  const commitProgress = () => {
+    const recent = Object.fromEntries(Object.entries(progress).filter(([, entry]) => time(entry.version)>=Math.max(time(seed.start),watermark-2*day)));
+    snapshot.publisherCursor = {feedHash:hash(feedName),...(watermark?{lastFileAt:new Date(watermark).toISOString()}:{}),
+      ...(scheduled?{files:recent}:{})};
+    if (watermark) snapshot.sync.lastExportAt = new Date(watermark).toISOString();
+  };
+  for (const f of collection.files) {
+    const id = hash(f.path);
+    const checkpoint = scheduled && progress[id]?.version === f.updated_at ? progress[id] : {version:f.updated_at,offset:0};
+    if (checkpoint.complete) continue;
+    const rows = await collection.rows(f);
+    for (let i=checkpoint.offset; i<rows.length; i++) {
+      const item = candidate(rows[i],seed.start,now,ownsSource);
+      if (item) {
         const cached=snapshot.records.find(r=>r.id===item.record.id&&key(r.org)===key(item.record.org)&&r.sources.some(s=>s.url===item.source.url&&s.date===item.source.date)&&
           [r.denial,...(r.denialHistory||[])].some(d=>d?.sourceUrl===item.source.url&&d.quote===item.incomingQuote&&d.speaker===item.namedSpeaker));
-        if (cached) continue;
-        if (!sources.has(item.source.url)) sources.set(item.source.url,await readSource(item.source.url,fetchImpl,webKey));
-        if (!citedOutage(item,sources.get(item.source.url))) continue;
-        if (item.corrected) corrections.push(item);
-        else if (merge(snapshot.records,item)) accepted++;
+        if (!cached) {
+          let page;
+          try {page=await readPage(item.source.url);}
+          catch (error) {
+            if (!scheduled) throw error;
+            progress[id] = {...checkpoint,offset:i};
+            commitProgress();
+            return {status:error.code==='BUDGET'?'budget':'partial',accepted,files};
+          }
+          if (citedOutage(item,page) && merge(snapshot.records,item)) accepted++;
+        }
       }
-      lastFileAt=Math.max(lastFileAt,time(f.updated_at));
+      checkpoint.offset = i+1;
     }
-    for (const item of corrections) if(merge(snapshot.records,item)) accepted++;
-    if (!snapshot.records.every(validRecord)) throw Error('Invalid outage or missing source evidence');
-    const evidenceChanged = originalRecords !== JSON.stringify(snapshot.records);
-    snapshot.start = seed.start;
-    const newest = snapshot.records.reduce((t,r) => Math.max(t, time(latest(r)), ...r.sources.map(s => time(s.date))), Math.max(time(seed.asOf), time(snapshot.asOf)));
-    if (newest > time(snapshot.asOf)) snapshot.asOf = new Date(newest).toISOString();
-    snapshot.publisherCursor = { feedHash: hash(feedName), ...(lastFileAt ? { lastFileAt: new Date(lastFileAt).toISOString() } : {}) };
-    snapshot.sync = { ...snapshot.sync, publisher: 'String Composer', checkedAt: new Date(now).toISOString(),
-      ...(lastFileAt ? {lastExportAt:new Date(lastFileAt).toISOString()} : {}),
-      ...(evidenceChanged ? {publishedAt:new Date(now).toISOString()} : {}),
-      statusDetail: lastFileAt ? 'The website checked the subscribed Composer feed. The latest export time records when String wrote a file. Each source carries its own publication date when available.' : 'The website checked the subscribed Composer feed. No retained export has been delivered in the coverage window yet.' };
-    const serialized = JSON.stringify(snapshot);
-    await writeFile(tmp, serialized + '\n', { flag: 'wx' });
-    await rename(tmp, output);
-    return { files: collection.files.length, accepted, records: snapshot.records.length, asOf: snapshot.asOf };
-  } finally {
-    await rm(tmp, { force:true }); await lock.close(); await rm(lockPath, { force:true });
+    files++;
+    progress[id] = {...checkpoint,complete:true};
+    watermark = Math.max(watermark,time(f.updated_at));
   }
+  commitProgress();
+  return {status:files?'received':'checked',files,accepted};
 }
 
-if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
-  const [html, output] = process.argv.slice(2);
-  if (!html || !output) { console.error('Usage: node scripts/publish-cyber-situation.mjs DASHBOARD.html SNAPSHOT.json'); process.exitCode = 2; }
-  else try {
-    console.log(JSON.stringify(await publish({ html, output, feedName:process.env.STRING_FEED_NAME, token:process.env.STRING_FEED_BUILDER_KEY,
-      webKey:process.env.STRING_WEB_ACCESS_KEY })));
-  } catch (e) { console.error(e.message); process.exitCode = 1; }
+export function reconcileReviewed(saved, reviewed) {
+  const fresher = time(latest(reviewed)) > time(latest(saved));
+  const merged = fresher ? {...saved,...reviewed} : {...saved};
+  const sourceMap = new Map(saved.sources.map(source => [publicLink(source.url),source]));
+  for (const source of reviewed.sources) {
+    const url = publicLink(source.url), current = sourceMap.get(url);
+    if (!current) { sourceMap.set(url,source); continue; }
+    const preferred = time(source.date)>time(current.date) ? {...current,...source} : {...source,...current};
+    for (const field of ['publishedAt','officialAssessment','byline','originalPublisher']) {
+      if(source[field])preferred[field]=source[field];
+    }
+    sourceMap.set(url,preferred);
+  }
+  merged.sources=[...sourceMap.values()];
+  const changes = new Map([...(reviewed.changes || []), ...(saved.changes || [])].map(c=>[c.id||JSON.stringify(c),c]));
+  if(changes.size)merged.changes=[...changes.values()];
+  const history = new Map([...(reviewed.history || []), ...(saved.history || [])].map(h=>[[h.date,h.text,h.url].join('|'),h]));
+  if(history.size)merged.history=[...history.values()].sort((a,b)=>time(a.date)-time(b.date));
+  if(reviewed.sector)merged.sector=reviewed.sector;
+  preserveDenials(merged,saved,reviewed);
+  // A source review can carry several different claims, all displayed in history.
+  // Keep the already chosen primary claim unless the existing record gains its first one.
+  const main=fresher?(reviewed.denial||saved.denial):(saved.denial||reviewed.denial);
+  if(main)merged.denial=main;
+  return merged;
+}
+
+export async function publish({html,output,feedName,token,webKey,fetchImpl=fetch,now=Date.now(),scheduled=false,modules}) {
+  if (!feedName || !/^[A-Za-z0-9_.-]+$/.test(feedName) || ['.','..'].includes(feedName)) throw Error('Set a valid STRING_FEED_NAME on the server');
+  if (resolve(html)===resolve(output)) throw Error('Use a separate JSON output path');
+  const lockPath=output+'.lock', tmp=output+'.'+randomUUID()+'.tmp';
+  const lock=await open(lockPath,'wx').catch(e=>{if(e.code==='EEXIST')throw Error('Another publisher holds the output lock');throw e});
+  try {
+    const seed=loadSeed(await readFile(html,'utf8'));
+    check(seed,now);
+    if(seed.scope!==scope||!seed.records.every(validRecord))throw Error('A reviewed outage-monitor seed is required');
+    let prior;
+    try {prior=JSON.parse(await readFile(output,'utf8'));check(prior,now);}
+    catch(e){if(e.code!=='ENOENT')throw e;}
+    if(!scheduled&&!token)return {status:'awaiting_credential',records:prior?.records.length??seed.records.length};
+    if(prior?.publisherCursor?.feedHash&&prior.publisherCursor.feedHash!==hash(feedName))throw Error('Output belongs to a different feed');
+    if(prior&&prior.scope!==scope)prior={...seed,records:prior.records.filter(r=>time(r.date)>=time(seed.start)&&validRecord(r))};
+    if(prior&&!prior.records.every(validRecord))throw Error('Invalid existing evidence; preserving the last edition');
+    let snapshot=prior||structuredClone(seed);
+    const originalRecords=JSON.stringify(snapshot.records);
+    if(prior)for(const r of seed.records){
+      const i=snapshot.records.findIndex(old=>old.id===r.id);
+      if(i<0)snapshot.records.push(r);
+      else snapshot.records[i]=reconcileReviewed(snapshot.records[i],r);
+    }
+    const stamp=new Date(now).toISOString();
+    // Leave time for writing, committing and deploying the edition before the scheduled job times out.
+    if(scheduled){
+      const sourceFetch=fetchImpl, deadline=Date.now()+18*60*1000;
+      fetchImpl=(url,opts={})=>{
+        const left=deadline-Date.now();
+        if(left<=0)throw Object.assign(Error('Hourly job time budget reached'),{code:'BUDGET'});
+        const timeout=AbortSignal.timeout(left);
+        return sourceFetch(url,{...opts,signal:opts.signal?AbortSignal.any([opts.signal,timeout]):timeout});
+      };
+    }
+    const runtime=scheduled?await import('./hourly-outage-monitor.mjs'):null;
+    const discovery=scheduled?(modules?.discovery||await import('./discover-industry-outages.mjs')):null;
+    const transport=scheduled?runtime.stringTransport({fetchImpl,webKey,now,previous:snapshot.webAccessUsage}):null;
+    const sourceCache=new Map();
+    const readPage=async url=>{
+      const safe=publicLink(url);
+      if(!safe)return '';
+      if(!sourceCache.has(safe))sourceCache.set(safe,await readSource(safe,transport?.fetchString||fetchImpl,webKey));
+      return sourceCache.get(safe);
+    };
+    const verify=({candidate:row,page})=>{
+      const item=candidate(row,seed.start,now,discovery?.ownsWatchlistSource);
+      return item&&typeof page==='string'&&citedOutage(item,page)?item:null;
+    };
+    snapshot.sync={...snapshot.sync,channels:{...snapshot.sync?.channels}};
+    const composer=structuredClone(snapshot);
+    let composerReads=0;
+    const verifyComposerPage=async url=>{
+      if(scheduled && !sourceCache.has(url) && composerReads >= (webKey?24:2))throw Object.assign(Error('Composer verification budget reached'),{code:'BUDGET'});
+      if(!sourceCache.has(url))composerReads++;
+      return readPage(url);
+    };
+    let result;
+    try{
+      result=await importComposer({snapshot:composer,seed,feedName,token,now,fetchImpl,scheduled,readPage:verifyComposerPage,ownsSource:discovery?.ownsWatchlistSource});
+      if(!scheduled&&!['received','checked'].includes(result.status))return {...result,records:snapshot.records.length};
+      snapshot=composer;
+    }catch(error){
+      if(!scheduled)throw error;
+      result={status:error.code==='BUDGET'?'budget':'unavailable',files:0,accepted:0};
+    }
+    if(scheduled){
+      snapshot.sync.channels.composer=runtime.composerChannel(snapshot.sync.channels.composer,stamp,result);
+      const follow=modules?.followup||await import('./follow-up-outages.mjs');
+      await runtime.supplement({snapshot,now,webKey,transport,readPage,verify,
+        runDiscovery:discovery.discoverIndustryOutages,runFollowups:follow.runFollowups,
+        accept:(row,page)=>{const i=verify({candidate:row,page});return i?merge(snapshot.records,i):false;}});
+      if(follow.reviewedChanges)for(const record of snapshot.records){
+        const changes=follow.reviewedChanges(record);
+        if(changes.length)record.changes=changes;
+      }
+      snapshot.webAccessUsage=transport.state;
+    }
+    if(!snapshot.records.every(validRecord))throw Error('Invalid outage or missing source evidence');
+    const evidenceChanged=originalRecords!==JSON.stringify(snapshot.records);
+    snapshot.start=seed.start;
+    const newest=snapshot.records.reduce((t,r)=>Math.max(t,time(latest(r)),...r.sources.map(s=>time(s.date)),...(r.changes||[]).map(c=>time(c.detectedAt))),Math.max(time(seed.asOf),time(snapshot.asOf)));
+    if(newest>time(snapshot.asOf))snapshot.asOf=new Date(newest).toISOString();
+    if(['received','checked','awaiting_first_export','awaiting_subscription'].includes(result.status))snapshot.sync.checkedAt=stamp;
+    if(evidenceChanged)snapshot.sync.publishedAt=stamp;
+    const exported=!!snapshot.sync.lastExportAt;
+    snapshot.sync.publisher=exported?'String Composer and Web Access':(snapshot.sync.channels.watchlists?.lastSuccessAt||snapshot.sync.channels.followups?.lastSuccessAt)?'String Web Access':'Source-reviewed edition';
+    snapshot.sync.statusDetail=exported?'The website has received a private Composer export. The public-source checks are tracked separately.':
+      'The website monitors public sources with String Web Access. The private Composer import has its own delivery status.';
+    if(scheduled)snapshot.sync.deliveryNote=exported?'A Composer export has been received.':'The latest private Composer export has not been received.';
+    await writeFile(tmp,JSON.stringify(snapshot)+'\n',{flag:'wx'});await rename(tmp,output);
+    return {...result,records:snapshot.records.length,asOf:snapshot.asOf,...(scheduled?{channels:snapshot.sync.channels}:{})};
+  }finally{await rm(tmp,{force:true});await lock.close();await rm(lockPath,{force:true});}
+}
+
+if(process.argv[1]&&pathToFileURL(resolve(process.argv[1])).href===import.meta.url){
+  const [html,output]=process.argv.slice(2);
+  if(!html||!output){console.error('Usage: node scripts/publish-cyber-situation.mjs DASHBOARD.html SNAPSHOT.json');process.exitCode=2;}
+  else try{
+    const result=await publish({html,output,feedName:process.env.STRING_FEED_NAME||'news.cyber_evidence_wire',token:process.env.STRING_FEED_BUILDER_KEY,
+      webKey:process.env.STRING_WEB_ACCESS_KEY,scheduled:true});
+    console.log(JSON.stringify(result));
+    for(const [name,detail] of Object.entries(result.channels||{})){
+      if(['awaiting_credential','budget','unavailable','partial'].includes(detail.status))console.warn('::warning::String '+name+' status: '+detail.status);
+    }
+  }catch(error){console.error(error.message);process.exitCode=1;}
 }

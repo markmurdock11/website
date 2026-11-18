@@ -13,7 +13,7 @@
   <meta property="og:type" content="website">
   <link rel="preload" href="home-arrival-v1.jpg" as="image">
   <link rel="stylesheet" href="eras-shell.css?v=20261020c">
-  <script src="publication.js?v=20261020g" defer></script>
+  <script src="publication.js?v=20261117-projects" defer></script>
   <script src="eras.js?v=20261020g" defer></script>
   <style>
     html, body { width: 100%; min-height: 100%; margin: 0; background: #e5d5f1; }
@@ -67,7 +67,7 @@
         pointLink(headerWriting, "writing", "portfolio");
         doc.querySelector('.kram-site-head nav [data-site-page="media"]')?.remove();
         if (headerWriting && headerAbout) headerWriting.before(headerAbout);
-        headerWriting?.insertAdjacentHTML("afterend", '<a href="#library" data-site-page="library">library</a><a href="/portfolio-company-map" target="_top">company map</a><a href="/not-a-cyber-attack/" target="_top" aria-label="Not a Cyber Attack? Signal Desk">signal desk</a>');
+        headerWriting?.insertAdjacentHTML("afterend", '<a href="#library" data-site-page="library">library</a>');
 
         doc.querySelector(".kram-doors")?.remove();
         doc.querySelector(".kram-newsletter-line")?.remove();

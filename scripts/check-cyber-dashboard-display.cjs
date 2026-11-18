@@ -1,10 +1,10 @@
 const assert = require('node:assert/strict');
 const { createServer } = require('node:http');
 const { readFile, mkdir } = require('node:fs/promises');
-const { join } = require('node:path');
+const { join, extname } = require('node:path');
 const { chromium, webkit } = require('playwright');
 
-const root = join(__dirname, '..', 'not-a-cyber-attack');
+const root = join(__dirname, '..');
 const out = process.env.OUTPUT_DIR || '/tmp/monitor-screens';
 async function checkPhone(page, engine, width) {
   const panes = page.locator('.phone-nav');
@@ -47,13 +47,31 @@ async function checkPhone(page, engine, width) {
 }
 const server = createServer(async (request, response) => {
   const pathname = new URL(request.url, 'http://localhost').pathname;
-  const json = pathname === '/situation-feed.json';
-  if (!json && pathname !== '/') { response.writeHead(404).end(); return; }
+  const path = pathname.endsWith('/') ? pathname + 'index.html' : pathname;
+  const types = { '.html':'text/html;charset=utf-8', '.css':'text/css', '.js':'text/javascript',
+    '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.jpg':'image/jpeg',
+    '.webp':'image/webp', '.woff2':'font/woff2' };
+  const type = types[extname(path)];
+  if (!type || path.split('/').some(segment => segment.startsWith('.'))) { response.writeHead(404).end(); return; }
   try {
-    const body = await readFile(join(root, json ? 'situation-feed.json' : 'index.html'));
-    response.writeHead(200, { 'Content-Type': json ? 'application/json' : 'text/html;charset=utf-8' }).end(body);
-  } catch { response.writeHead(500).end(); }
+    const body = await readFile(join(root, path));
+    response.writeHead(200, { 'Content-Type': type }).end(body);
+  } catch { response.writeHead(404).end(); }
 });
+async function checkPortfolio(page, local) {
+  await page.goto(local + '/', {waitUntil:'domcontentloaded'});
+  const frame = page.frameLocator('#knm-preview');
+  const nav = frame.locator('.kram-site-head nav');
+  const link = nav.locator('[data-site-page="writing"]');
+  await link.waitFor();
+  assert.equal(await nav.locator('a[href*="not-a-cyber-attack"],a[href*="portfolio-company-map"]').count(), 0);
+  await link.click();
+  const projects = frame.locator('[data-native-filter="projects"]');
+  await projects.click();
+  const dashboard = frame.locator('a[href="/not-a-cyber-attack/"]:visible').first();
+  await dashboard.click();
+  await page.waitForURL('**/not-a-cyber-attack/');
+}
 
 async function inspect(browser, engine, width, height) {
   const mobile = width < 600;
@@ -63,9 +81,24 @@ async function inspect(browser, engine, width, height) {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   try {
-    await page.goto('http://127.0.0.1:' + server.address().port + '/', { waitUntil: 'networkidle' });
+    const local = 'http://127.0.0.1:' + server.address().port;
+    await page.goto(local + '/not-a-cyber-attack/', { waitUntil: 'networkidle' });
     await page.locator('#clock-org').waitFor({ state: 'visible' });
     assert.ok(await page.evaluate(() => window.SITUATION.records.length > 0));
+    assert.match(await page.locator('.credit').innerText(), /a dashboard by kram, built with string/i);
+    assert.equal(await page.locator('#clock-name').textContent(), 'Since the last denial');
+    assert.equal(await page.locator('#edition-mode').count(), 0);
+    assert.ok(await page.locator('#page-title').evaluate(node => parseFloat(getComputedStyle(node).fontSize)) >= (mobile ? 42 : 70));
+    const order = await page.evaluate(() => ({
+      mapTop: document.querySelector('#map-title').getBoundingClientRect().top,
+      newsTop: document.querySelector('#developments').getBoundingClientRect().top,
+      industriesOnFirstScreen: [...document.querySelectorAll('.industry-card')].filter(node => {
+        const r = node.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= innerHeight;
+      }).length
+    }));
+    assert.ok(order.mapTop < order.newsTop, 'Industry map should precede developments');
+    if (mobile) assert.ok(order.industriesOnFirstScreen >= 4, 'Four industries should fit above the fold');
+    console.log('Map placement', engine, width, order);
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
       engine + ' horizontal overflow at ' + width);
     await page.screenshot({ path: join(out, engine + '-' + width + '.png') });
@@ -86,6 +119,7 @@ async function inspect(browser, engine, width, height) {
     assert.ok(await page.locator('#dialog-body a[href^="http"]').count());
     await page.locator('#close').click();
     assert.equal(await page.locator('dialog[open]').count(), 0);
+    if (width === 390 || width === 1366) await checkPortfolio(page, local);
     assert.deepEqual(errors, []);
   } finally { await context.close(); }
 }

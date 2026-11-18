@@ -2,6 +2,8 @@ name: Check outage dashboard on phones
 on:
   push:
     paths:
+      - 'index.html'
+      - 'publication.js'
       - 'not-a-cyber-attack/index.html'
       - 'scripts/check-cyber-dashboard-display.cjs'
       - '.github/workflows/check-cyber-dashboard-display.yml'
