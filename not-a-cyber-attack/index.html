@@ -93,7 +93,7 @@ h1 .title-phrase{color:inherit;white-space:nowrap}
 @container(max-width:570px){.atlas-groups{display:block}.atlas-sector{--columns:1;margin-bottom:9px}}
 @media(max-width:680px){
  .hero-copy{display:block;font:14px/1.38 var(--sans);margin:9px 0 12px;color:#c2cbb8}.hero{padding-top:15px}
- .board{display:block;height:clamp(330px,96vw,485px);border-color:#546248}
+ .board{display:block;height:clamp(440px,124vw,610px);border-color:#546248}
  .board .sector-head{font-size:9px;letter-spacing:.025em}.board .sector-head .icon{display:none}
  .board .cell{padding:4px;gap:4px}.board .cell.compact{padding:3px;gap:2px}.board .cell-name{font-size:clamp(10px,2.9vw,14px);line-height:1.06}.board .cell-description{display:none}
  .map-foot{font-size:11px}.map-jump,.atlas-head a{min-height:44px;font-size:13px}
@@ -102,6 +102,16 @@ h1 .title-phrase{color:inherit;white-space:nowrap}
  #desk-main[data-mobile-pane=trending] #case-atlas,#desk-main[data-mobile-pane=sources] #case-atlas,#desk-main[data-mobile-pane=trending] #developments,#desk-main[data-mobile-pane=sources] #developments{display:none}
 }
 .map-links{display:inline-flex;flex-wrap:wrap;gap:0 14px}
+
+.map-caption{margin:3px 0 10px;color:#b7bfac;font:13px/1.4 var(--sans)}
+@media(max-width:680px){
+ .legend[role=group]{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px}
+ .legend[role=group] .scope-switch{flex:0 0 100%}
+ .legend[role=group] .update-key{display:inline-flex;font-size:10px;white-space:nowrap}
+ .board .cell.compact .cell-txt{min-height:1.12em;flex-shrink:0}
+ .board .cell.compact .cell-name{display:block;line-height:1.12;white-space:nowrap;text-overflow:ellipsis}
+ .board .cell .cell-name{overflow-wrap:normal}
+}
 </style>
 </head>
 <body>
@@ -122,7 +132,7 @@ h1 .title-phrase{color:inherit;white-space:nowrap}
 <main class="shell" id="desk-main" data-mobile-pane="industries">
 <section class="hero" aria-labelledby="page-title"><div><h1 id="page-title">Not a <span class="title-phrase">Cyber Attack<span>?</span></span></h1><p class="hero-copy">Outages are rampant. Everything is going down in the digital world. But nothing is a cyber attack. I guess? Maybe? Idk. We're monitoring the situation.</p></div><button class="clock" id="denial-clock" data-view="clock"><span class="caps clock-name" id="clock-name">Since the last denial</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg><span class="clock-main"><span class="clock-value" id="clock-value">—</span><span class="clock-unit" id="clock-unit"></span></span><span class="clock-org" id="clock-org"></span></button></section>
 <nav class="phone-nav" id="phone-nav" aria-label="Dashboard views"><button data-pane="industries" aria-pressed="true">Industries</button><button data-pane="trending" aria-pressed="false">Trending</button><button data-pane="sources" aria-pressed="false">Sources</button></nav>
-<div class="layout"><section class="map-block" aria-labelledby="map-title"><div class="board-head"><h2 id="map-title">Industry map</h2><button class="smallbtn" data-view="method">Map key <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></button></div><div class="legend" id="legend" role="group" aria-label="Filter outages by coverage"></div><div class="board" id="board" role="group" aria-label="Industry map. Select an incident to reach its description or a sector heading to open its incident list."></div><div class="map-foot"><span id="window"></span><span class="map-links"><a class="map-jump" href="#atlas-title">Read all incidents ↓</a><a class="map-jump" id="updates-jump" href="#develop-title" hidden>Latest updates ↓</a></span></div><section class="sector-directory" id="sector-directory" aria-labelledby="directory-title" hidden><h3 id="directory-title">Other industries</h3><div class="sector-directory-list" id="other-sectors"></div></section>
+<div class="layout"><section class="map-block" aria-labelledby="map-title"><div class="board-head"><h2 id="map-title">Industry map</h2><button class="smallbtn" data-view="method">Map key <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></button></div><p class="map-caption">One tile per outage. Larger tiles show wider disruption within an industry.</p><div class="legend" id="legend" role="group" aria-label="Filter outages by coverage"></div><div class="board" id="board" role="group" aria-label="Industry map. Select an incident to reach its description or a sector heading to open its incident list."></div><div class="map-foot"><span id="window"></span><span class="map-links"><a class="map-jump" href="#atlas-title">Read all incidents ↓</a><a class="map-jump" id="updates-jump" href="#develop-title" hidden>Latest updates ↓</a></span></div><section class="sector-directory" id="sector-directory" aria-labelledby="directory-title" hidden><h3 id="directory-title">Other industries</h3><div class="sector-directory-list" id="other-sectors"></div></section>
 </section>
 <aside class="rail"><section class="block trend-block" aria-labelledby="trending-title"><div class="rail-head"><h2 id="trending-title">Trending denials</h2><button class="smallbtn" aria-label="All trending denials and ranking method" data-view="trends">All <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div><div id="trending"></div></section><section class="block source-block" aria-labelledby="sources-title"><div class="rail-head"><h2 id="sources-title">Who broke the news?</h2><button class="smallbtn" data-view="rankings">Rankings <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></div><p class="rail-sub rank-prefix">First outage reports among tracked cases</p><div class="news-menu" id="outlets"></div></section></aside></div>
 <section id="case-atlas" class="case-atlas" aria-labelledby="atlas-title"><div class="atlas-head"><h2 id="atlas-title" tabindex="-1">Outages by industry</h2><a href="#map-title">Back to map ↑</a></div><div class="atlas-groups" id="atlas-groups"></div></section>
@@ -605,7 +615,7 @@ function drawOtherSectors(){
 }
 function drawLegend(){
  const choices=[['','All outages'],['denial','Denials'],['context','Context']];
- const changes=['ruled-out','unresolved','indications','confirmed'].filter(k=>visible.some(r=>tier(r)===k));
+ const changes=['ruled-out','unresolved','context','indications','confirmed'].filter(k=>visible.some(r=>tier(r)===k));
  $('legend').innerHTML='<div class="scope-switch">'+choices.map(([value,label])=>{
   return '<button class="scope-button" data-denial-filter="'+value+'" aria-pressed="'+String(selected===value)+'">'+label+'</button>';
  }).join('')+'</div>'+changes.map(k=>'<span class="update-key t-'+k+'">'+sig(k)+esc(names[k])+'</span>').join('');

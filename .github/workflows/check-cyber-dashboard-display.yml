@@ -59,3 +59,29 @@ jobs:
                   for i in range(0,len(data),3000):
                       print('SHOT|%s|%s|%05d|%s' % (filename,mime,i//3000,data[i:i+3000]))
           PY
+  public-page:
+    needs: browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Verify the detailed map on the public kram.bio page
+        shell: python
+        run: |
+          import time, urllib.request
+          from html.parser import HTMLParser
+          from urllib.parse import urlsplit
+          markers = ['id="case-atlas"', 'One tile per outage.', 'class="atlas-description"', 'data-locate']
+          for attempt in range(42):
+              try:
+                  url = 'https://kram.bio/not-a-cyber-attack/?map-review=' + str(int(time.time()))
+                  req = urllib.request.Request(url, headers={'User-Agent':'KramDashboardDisplayCheck/1.0'})
+                  with urllib.request.urlopen(req,timeout=10) as response:
+                      body = response.read().decode('utf-8')
+                      if response.status == 200 and urlsplit(response.url).hostname == 'kram.bio' and all(x in body for x in markers):
+                          print('Verified kram.bio public response, new overview, caption and incident descriptions')
+                          break
+              except OSError as err:
+                  print('Waiting for public origin:', str(err))
+              time.sleep(12)
+          else:
+              raise SystemExit('The latest map has not appeared at the public URL')
