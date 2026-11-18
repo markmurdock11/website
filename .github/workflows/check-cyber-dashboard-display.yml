@@ -69,7 +69,7 @@ jobs:
         run: |
           import time, urllib.request
           from urllib.parse import urlsplit
-          markers = ['id="case-atlas"', 'One tile per outage.', 'class="atlas-description"', 'b.dataset.locate=r.id']
+          markers = ['id="case-atlas"', 'One tile per outage.', 'class="atlas-description"', 'b.dataset.locate=r.id', '.group.side-title']
           for attempt in range(42):
               try:
                   url = 'https://kram.bio/not-a-cyber-attack/?map-review=' + str(int(time.time()))
