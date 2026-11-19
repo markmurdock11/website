@@ -260,7 +260,14 @@ async function inspect(browser, engine, width, height) {
     const clock = page.locator('#denial-clock');
     await clock.click();
     await page.locator('dialog[open]').waitFor();
-    assert.match(await page.locator('#receipt-quote').innerText(), /98%/);
+    const activeReceipt=await page.evaluate(()=>{
+      const edition=window.SITUATION, anchor=window.DeskMetrics.clock(edition.records,Date.now(),Date.parse(edition.asOf),edition.officialAssessments);
+      return {words:anchor.d.quoteExcerpt||anchor.d.translation||anchor.d.quote,url:anchor.d.sourceUrl};
+    });
+    if(activeReceipt.words){
+      assert.equal(await page.locator('#receipt-quote').innerText(), '“'+activeReceipt.words+'”');
+      assert.equal(await page.locator('#receipt-source').getAttribute('href'),activeReceipt.url);
+    }
     assert.equal(await page.locator('#receipt-joke').count(),0);
     const firstReceipt=await page.locator('#receipt-quote').innerText();
     await page.getByRole('button',{name:'Next reassurance',exact:true}).click();

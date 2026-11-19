@@ -9,6 +9,8 @@ export function stringTransport({fetchImpl, webKey, now, previous = {}}) {
   const state = previous.window === window && previous.mode === mode
     ? {...previous} : {mode, window, requests:0, credits:0};
   const maxRequests = webKey ? 36 : 45, maxCredits = 90;
+  const canSpend = (requests, credits) => state.requests + requests <= maxRequests
+    && state.credits + credits <= maxCredits && !(state.retryAfter > now);
   const fetchString = async (url, options) => {
     const target = new URL(url);
     if (target.origin !== publicOrigin) throw Error('Unexpected String Web Access destination');
@@ -16,7 +18,7 @@ export function stringTransport({fetchImpl, webKey, now, previous = {}}) {
     const isFetch = target.pathname === '/v1/fetch';
     if (!webKey && !isSearch && !isFetch) throw Error('String site integration requires a Web Access key');
     const cost = isSearch || !isFetch || JSON.parse(options.body || '{}').executeJS ? 5 : 1;
-    if (state.requests >= maxRequests || state.credits + cost > maxCredits || state.retryAfter > now) {
+    if (!canSpend(1,cost)) {
       throw Object.assign(Error('String request budget reached'), {code:'BUDGET'});
     }
     state.requests++;
@@ -28,7 +30,7 @@ export function stringTransport({fetchImpl, webKey, now, previous = {}}) {
     }
     return response;
   };
-  return {fetchString, state};
+  return {fetchString, canSpend, state};
 }
 
 export async function searchForFollowup(query, {fetchString, webKey}) {

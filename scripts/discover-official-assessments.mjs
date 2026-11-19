@@ -117,7 +117,9 @@ function claim(sentence,official) {
   return {speaker:attributed.speaker,type:qualified?'qualified':'explicit',paraphrase,...(excerpt?{quoteExcerpt:excerpt}: {})};
 }
 async function request(path,body,{webKey,fetchString}) {
-  const response=await fetchString(ORIGIN+path,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json',Authorization:'Bearer '+webKey},
+  const headers={'Content-Type':'application/json'};
+  if(webKey)headers.Authorization='Bearer '+webKey;
+  const response=await fetchString(ORIGIN+path,{method:'POST',redirect:'error',headers,
     body:JSON.stringify(body),signal:AbortSignal.timeout(25000)});
   if(!response.ok)throw Object.assign(Error('String request unavailable'),{status:response.status});
   if(path==='/fetch') {
@@ -129,14 +131,21 @@ async function request(path,body,{webKey,fetchString}) {
   const text=Buffer.concat(chunks).toString('utf8');
   return /json/.test(response.headers.get('content-type')||'')?JSON.parse(text):text;
 }
-export async function discoverOfficialAssessments({now=Date.now(),start,assessments=[],webKey,fetchString,state={}}={}) {
+export async function discoverOfficialAssessments({now=Date.now(),start,assessments=[],webKey,fetchString,canSpend,state={}}={}) {
   const next={...state}, diagnostics={checkedAt:iso(now),status:'checked',searched:0,candidates:0,fetched:0,accepted:0,unavailable:0};
   const result=[];
   const done=()=>{diagnostics.accepted=result.length;return {assessments:result,state:next,diagnostics};};
-  if(!webKey){diagnostics.status='requires_key';return done();}
-  if(typeof fetchString!=='function')throw Error('Use the shared authenticated String transport');
+  if(typeof fetchString!=='function')throw Error('Use the shared String transport');
   const hour=Math.floor(now/HOUR);
-  if(next.checkedHour===hour){diagnostics.status='not_due';return done();}
+  if(next.checkedHour===hour || (!webKey && now-Date.parse(next.lastPublicAttemptAt)<6*HOUR)){
+    diagnostics.status='not_due';return done();
+  }
+  if(!webKey){
+    // One search costs five credits. Leave room to verify a hit with one raw read.
+    if(typeof canSpend!=='function')throw Error('Use the shared public String budget');
+    if(!canSpend(2,6)){diagnostics.status='budget';return done();}
+    next.lastPublicAttemptAt=iso(now);
+  }
   next.checkedHour=hour;next.lastAttemptAt=iso(now);
   const lower=Math.max(Date.parse(start)||now-3*DAY,now-3*DAY);
   try {
@@ -147,10 +156,17 @@ export async function discoverOfficialAssessments({now=Date.now(),start,assessme
     if(!Array.isArray(hits))throw Error('Invalid search results');
     const urls=[...new Set(hits.map(hit=>sourceUrl(hit?.url)).filter(Boolean))];
     diagnostics.candidates=urls.length;
-    for(const url of urls.slice(0,2)) {
+    let candidates=urls.slice(0,2);
+    if(!webKey){
+      const known=new Set(assessments.flatMap(r=>[r.denial,...(r.denialHistory||[])].map(d=>sourceUrl(d?.sourceUrl))));
+      candidates=urls.filter(url=>!known.has(url)).slice(0,1);
+    }
+    for(const url of candidates) {
       try {
         diagnostics.fetched++;
-        let raw=await request('/fetch',{url,format:'raw',solveCaptcha:false},{webKey,fetchString});
+        const options={url,format:'raw'};
+        if(webKey)options.solveCaptcha=false;
+        let raw=await request('/fetch',options,{webKey,fetchString});
         if(raw&&typeof raw==='object') {
           if(raw.statusCode&&(raw.statusCode<200||raw.statusCode>=300)||raw.finalUrl&&sourceUrl(raw.finalUrl)!==url)throw Error('Source blocked or redirected');
           raw=raw.data;
@@ -173,11 +189,11 @@ export async function discoverOfficialAssessments({now=Date.now(),start,assessme
         }
       } catch(error) {
         if(error.code==='BUDGET'||error.status===429)throw error;
-        diagnostics.unavailable++;diagnostics.status='partial';
+        diagnostics.unavailable++;diagnostics.status=webKey?'partial':'unavailable';
       }
     }
     diagnostics.accepted=result.length;
-    next.lastSuccessAt=iso(now);
+    if(diagnostics.status==='checked')next.lastSuccessAt=iso(now);
   } catch(error) {diagnostics.status=error.code==='BUDGET'||error.status===429?'budget':'unavailable';}
   return done();
 }

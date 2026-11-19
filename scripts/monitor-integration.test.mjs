@@ -6,6 +6,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import vm from 'node:vm';
 import {stringTransport,monitorHealth,supplement} from './hourly-outage-monitor.mjs';
+import {discoverOfficialAssessments} from './discover-official-assessments.mjs';
 import {publish} from './publish-cyber-situation.mjs';
 
 test('public quota remains enforced and rollover does not reuse yesterday credits',async()=>{
@@ -29,6 +30,28 @@ test('half-hour workflow does not double the public followup allowance',async()=
  const opts={snapshot,now,transport:{fetchString:async()=>{throw Error('unexpected request');}},runDiscovery:async()=>({leads:[],state:{},diagnostics:{channels:[]}}),
   runFollowups:async o=>{checks++;assert.equal(o.search,undefined);return {state:{},stats:{checked:1},updates:[]};},accept:()=>false,verify:()=>{},readPage:()=>''};
  await supplement(opts);await supplement({...opts,now:now+30*60000});assert.equal(checks,1);
+});
+
+test('public reassurance checks share the daily budget and can resume after midnight',async()=>{
+ const now=Date.parse('2026-11-18T23:47:00Z'),window=Math.floor(now/86400000);
+ let calls=0;
+ const fetchImpl=async()=>{calls++;return new Response(JSON.stringify({results:[]}),{headers:{'Content-Type':'application/json'}});};
+ const scan=(at,transport,state)=>discoverOfficialAssessments({now:at,...transport,state});
+ for(const previous of [{mode:'public',window,requests:12,credits:85},{mode:'public',window,requests:44,credits:60}]){
+  const transport=stringTransport({now,previous,fetchImpl});
+  const denied=await scan(now,transport,{});
+  assert.equal(denied.diagnostics.status,'budget');
+  assert.equal(denied.diagnostics.searched,0);
+  assert.equal(denied.state.lastPublicAttemptAt,undefined);
+  assert.deepEqual(transport.state,previous);
+ }
+ assert.equal(calls,0);
+ const midnight=Date.parse('2026-11-19T00:17:00Z');
+ const next=stringTransport({now:midnight,previous:{mode:'public',window,requests:44,credits:86},fetchImpl});
+ const checked=await scan(midnight,next,{});
+ assert.equal(checked.diagnostics.status,'checked');
+ assert.equal(calls,1);
+ assert.deepEqual([next.state.requests,next.state.credits],[1,5]);
 });
 
 test('publisher accepts verified water events as context without creating a cyber denial',async()=>{

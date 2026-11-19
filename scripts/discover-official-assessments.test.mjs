@@ -12,15 +12,17 @@ function article({body=words,published='2026-11-18T20:00:00Z',modified='',jsonPu
       ...(jsonPublished?{datePublished:jsonPublished}:{}),...(modified?{dateModified:modified}:{})})+'</script>':'')+
     '<article><h1>'+title+'</h1><p>'+body+'</p></article></html>';
 }
-async function run({html=article(),urls=[url],existing=[],key='fixture-only',state={},fetchStatus=200}={}) {
+async function run({html=article(),urls=[url],existing=[],key='fixture-only',at=now,state={},fetchStatus=200}={}) {
   const calls=[];
-  const result=await discoverOfficialAssessments({now,start:'2026-11-09',webKey:key,state,assessments:existing,
+  const result=await discoverOfficialAssessments({now:at,start:'2026-11-09',webKey:key,state,assessments:existing,canSpend:()=>true,
     fetchString:async(target,options)=>{
       const body=JSON.parse(options.body);calls.push({target,body});
       assert.equal(options.redirect,'error');
-      assert.equal(options.headers.Authorization,'Bearer fixture-only');
+      if(key)assert.equal(options.headers.Authorization,'Bearer fixture-only');
+      else assert.ok(!Object.hasOwn(options.headers,'Authorization'));
       if(target.endsWith('/search'))return new Response(JSON.stringify({results:urls.map(link=>({url:link,title:'Fresh reassurance',snippet:words,timestamp:'2026-11-18T21:59:59Z'}))}),{headers:{'content-type':'application/json'}});
-      assert.equal(body.solveCaptcha,false);
+      if(key)assert.equal(body.solveCaptcha,false);
+      else assert.deepEqual(body,{url:body.url,format:'raw'});
       return new Response(html,{status:fetchStatus,headers:{'content-type':'text/html'}});
     }});
   assert(calls.length<=3,'bounded to one search and two source reads');
@@ -108,10 +110,26 @@ test('one search and two underlying reads is a strict upper bound',async()=>{
   assert.equal(calls.length,3);
   assert.equal(assessments.length,2);
 });
-test('missing authentication never uses public allowance',async()=>{
-  const {calls,diagnostics}=await run({key:''});
-  assert.equal(calls.length,0);
-  assert.equal(diagnostics.status,'requires_key');
+test('public mode checks at most one new source every six hours and preserves its publication time',async()=>{
+  const known=(await run()).assessments;
+  const options={key:'',existing:known,urls:[url,url+'2',url+'3']};
+  const first=await run(options);
+  assert.equal(first.calls.length,2);
+  assert.equal(first.calls[1].body.url,url+'2');
+  assert.equal(first.assessments[0].denial.when,'2026-11-18T20:00:00.000Z');
+  assert.equal(first.diagnostics.status,'checked');
+  const retry=await run({...options,state:first.state,at:now+6*3600000-1});
+  assert.equal(retry.calls.length,0);
+  assert.equal(retry.diagnostics.status,'not_due');
+  assert.equal((await run({...options,state:retry.state,at:now+6*3600000})).calls.length,2);
+});
+test('public search only publishes a dated underlying source and records a failed read',async()=>{
+  const empty=await run({key:'',html:article({body:'Officials attended a hearing today.'})});
+  assert.equal(empty.assessments.length,0);
+  const refused=await run({key:'',fetchStatus:403});
+  assert.equal(refused.calls.length,2);
+  assert.equal(refused.diagnostics.status,'unavailable');
+  assert.equal(refused.state.lastSuccessAt,undefined);
 });
 test('already checked hour makes no calls',async()=>{
   const {calls,diagnostics}=await run({state:{checkedHour:Math.floor(now/3600000)}});
@@ -131,5 +149,5 @@ test('shared quota failure stops the invocation',async()=>{
   assert.equal(diagnostics.status,'budget');
 });
 test('no implicit unbudgeted network transport exists',async()=>{
-  await assert.rejects(discoverOfficialAssessments({now,webKey:'fixture-only'}),/shared authenticated String transport/);
+  await assert.rejects(discoverOfficialAssessments({now,webKey:'fixture-only'}),/shared String transport/);
 });

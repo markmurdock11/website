@@ -523,13 +523,16 @@ export async function publish({html,output,feedName,token,webKey,fetchImpl=fetch
       const official=modules?.assessments||await import('./discover-official-assessments.mjs');
       try{
         const found=await official.discoverOfficialAssessments({now,start:snapshot.start,assessments:snapshot.officialAssessments,
-          webKey,fetchString:transport.fetchString,state:snapshot.officialAssessmentState});
+          webKey,fetchString:transport.fetchString,canSpend:transport.canSpend,state:snapshot.officialAssessmentState});
         snapshot.officialAssessmentState=found.state;
         const before=JSON.stringify(snapshot.officialAssessments);
         snapshot.officialAssessments=mergeOfficialAssessments(snapshot.officialAssessments,found.assessments,now);
         const diagnostics=found.diagnostics||{},status=diagnostics.status||'unavailable';
-        snapshot.sync.channels.reassurances={...snapshot.sync.channels.reassurances,lastAttemptAt:stamp,status,...diagnostics,
-          ...(status==='checked'?{lastSuccessAt:stamp}:{}),accepted:Number(before!==JSON.stringify(snapshot.officialAssessments))};
+        if(status!=='not_due'||!snapshot.sync.channels.reassurances){
+          snapshot.sync.channels.reassurances={...snapshot.sync.channels.reassurances,status,...diagnostics,
+            ...(status!=='not_due'?{lastAttemptAt:stamp}:{}),...(status==='checked'?{lastSuccessAt:stamp}:{}),
+            accepted:Number(before!==JSON.stringify(snapshot.officialAssessments))};
+        }
       }catch(error){snapshot.sync.channels.reassurances=runtime.failedChannel(snapshot.sync.channels.reassurances,stamp,error);}
       const follow=modules?.followup||await import('./follow-up-outages.mjs');
       await runtime.supplement({snapshot,now,webKey,transport,readPage,verify,
